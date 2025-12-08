@@ -1,24 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CULT OF PAIN: DYNAMIC IMPACT</title>
-    <!-- Telegram Script -->
+    <title>CULT OF PAIN: STABLE MATH</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Nosifer&family=Cinzel:wght@400;700;900&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Nosifer&family=Cinzel:wght@400;700;900&family=Courier+Prime&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Palette */
-            --c-bg: #050000;
+            --c-bg: #050505;
             --c-blood: #8a0303;
+            --c-accent: #7c3aed; 
             --c-gold: #FFD700;
-            
-            /* PHYSICS: Aggressive Slam (High overshoot to 1.15) */
             --ease-slam: cubic-bezier(0.25, 1, 0.25, 1.15); 
         }
 
@@ -51,9 +46,22 @@
 
         /* --- LAYOUT --- */
         .app-layout { display: flex; flex-direction: column; height: 100%; padding-bottom: env(safe-area-inset-bottom); }
-        .header-area { flex-shrink: 0; z-index: 20; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #311; }
+        
+        .header-area { 
+            flex-shrink: 0; z-index: 20; 
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); 
+            border-bottom: 1px solid #311; 
+            cursor: pointer;
+        }
+        
         .game-viewport { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; z-index: 10; }
-        .controls-dock { flex-shrink: 0; z-index: 30; background: linear-gradient(to top, #000 90%, transparent); padding: 15px; }
+        
+        .controls-dock { 
+            flex-shrink: 0; z-index: 30; 
+            background: linear-gradient(to top, #080303 95%, rgba(0,0,0,0)); 
+            padding: 20px 15px 30px 15px; 
+            border-top: 1px solid #211;
+        }
 
         /* --- MACHINE --- */
         .machine-container {
@@ -62,14 +70,9 @@
             box-shadow: 0 0 60px rgba(0,0,0,0.9); border-radius: 4px;
             transform-origin: center bottom;
         }
-        /* Aggressive Impact Shake */
         .machine-container.shake { animation: impact-shake 0.15s ease-out; }
         @keyframes impact-shake { 
-            0% { transform: translateY(0); } 
-            20% { transform: translateY(6px); } /* Deep impact */
-            50% { transform: translateY(-2px); } /* Recoil */
-            80% { transform: translateY(1px); } 
-            100% { transform: translateY(0); } 
+            0% { transform: translateY(0); } 20% { transform: translateY(6px); } 50% { transform: translateY(-2px); } 80% { transform: translateY(1px); } 100% { transform: translateY(0); } 
         }
 
         .reels-window {
@@ -92,70 +95,142 @@
             border: 1px solid #331; border-radius: 4px; box-shadow: inset 0 0 10px #000;
             text-shadow: 0 2px 5px #000;
         }
-        
         .tier-high .symbol-card { color: #b8860b; border-color: #b8860b; box-shadow: inset 0 0 15px rgba(184,134,11,0.2); }
         .scatter-tier .symbol-card { background: #000; border: 1px double #fff; animation: glitch 0.2s infinite; }
         @keyframes glitch { 0%,100%{transform:translate(0)} 20%{transform:translate(-2px,2px)} 80%{transform:translate(2px,-2px)} }
 
-        /* --- CONTROLS --- */
-        .control-grid { display: grid; grid-template-columns: 60px 1fr 60px; gap: 10px; align-items: center; }
-        .btn-bet {
-            height: 50px; background: #150505; border: 1px solid #331; color: #888;
-            font-size: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 8px;
+        /* --- CONTROLS REWORK --- */
+        .control-grid { 
+            display: grid; grid-template-columns: 70px 1fr 70px; gap: 15px; align-items: center; 
+            max-width: 420px; margin: 0 auto;
         }
-        .btn-bet:active { background: #300; color: #fff; transform: scale(0.95); }
+        
+        .bet-adjust-btn {
+            width: 65px; height: 65px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #333;
+            color: #888; border-radius: 16px;
+            font-size: 2rem; font-weight: bold; font-family: 'Courier Prime';
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 5px 5px 10px #050505, -5px -5px 10px #222;
+            transition: 0.1s; cursor: pointer;
+        }
+        .bet-adjust-btn:active { 
+            transform: scale(0.95); box-shadow: inset 2px 2px 5px #000; color: #fff;
+        }
+
+        .spin-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; top: -5px;
+        }
+        .bet-display-label {
+            font-size: 10px; color: #666; letter-spacing: 2px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;
+        }
+        .bet-display-val {
+            font-family: 'Cinzel'; font-weight: 900; font-size: 1.5rem; color: #e2e8f0;
+            text-shadow: 0 2px 4px #000; margin-bottom: 8px;
+        }
 
         .btn-spin-main {
-            height: 80px; width: 80px; margin: 0 auto;
-            background: radial-gradient(circle, #400, #100);
-            border: 2px solid #600; border-radius: 50%;
+            width: 90px; height: 90px;
+            background: radial-gradient(circle, #3a0000 0%, #150000 100%);
+            border: 3px solid #500; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 30px rgba(255,0,0,0.4); transition: transform 0.05s;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3), inset 0 2px 10px rgba(255,100,100,0.2);
+            transition: transform 0.1s; cursor: pointer;
         }
-        .btn-spin-main:active { transform: scale(0.9); background: #800; border-color: #f00; }
+        .btn-spin-main:active { transform: scale(0.95); background: #600; border-color: #f00; }
         .btn-spin-main.disabled { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
-        .spin-icon { width: 40px; height: 40px; fill: #cbbba0; }
+        .spin-icon { width: 45px; height: 45px; fill: #e5e5e5; filter: drop-shadow(0 2px 2px #000); }
 
-        .btn-buy {
-            background: linear-gradient(90deg, #100, #300, #100);
-            border: 1px solid #600; padding: 10px; border-radius: 6px;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 10px; position: relative; overflow: hidden;
-            box-shadow: 0 0 10px #300;
+        .btn-buy-compact {
+            width: 100%; max-width: 380px; margin: 0 auto 15px;
+            background: linear-gradient(90deg, #150505, #2a0505, #150505);
+            border: 1px solid #522; border-radius: 12px;
+            padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
-        .btn-buy:active { opacity: 0.8; transform: scale(0.98); }
-        .buy-shine { position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(255,0,0,0.4),transparent); transform:skewX(-20deg) translateX(-150%); animation: shine 2s infinite; }
+        .btn-buy-compact:active { opacity: 0.8; transform: translateY(1px); }
+        .buy-shine { position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(255,0,0,0.2),transparent); animation: shine 3s infinite; }
         @keyframes shine { 100% { transform:skewX(-20deg) translateX(150%); } }
+
+        /* --- WALLET UI --- */
+        .wallet-modal-bg {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 200;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .wallet-modal-bg.active { display: flex; animation: fade-in 0.2s; }
+        
+        .wallet-sheet {
+            width: 90%; max-width: 380px; background: #18181b; 
+            border-radius: 24px; padding: 24px; position: relative;
+            border: 1px solid #27272a;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            transform: scale(0.95); opacity: 0;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .wallet-modal-bg.active .wallet-sheet { transform: scale(1); opacity: 1; }
+        
+        .w-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .w-title { font-size: 20px; font-weight: 700; color: #fff; font-family: 'Inter', sans-serif; }
+        .w-close { font-size: 24px; color: #71717a; cursor: pointer; transition: color 0.2s; }
+        .w-close:hover { color: #fff; }
+
+        .w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        
+        .w-card { 
+            background: #27272a; border-radius: 20px; padding: 16px; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            height: 140px; border: 1px solid #3f3f46;
+        }
+        
+        .w-label { color: #a1a1aa; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; }
+        .w-val { color: #fff; font-size: 20px; font-weight: 800; font-family: 'Inter', sans-serif; margin-bottom: auto; margin-top: 4px; }
+        
+        .w-btn {
+            width: 100%; padding: 10px; border-radius: 14px; 
+            font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif;
+        }
+        .w-btn-purple { background: #7c3aed; color: #fff; border: 1px solid #6d28d9; }
+        .w-btn-purple:hover { background: #6d28d9; }
+        
+        .w-btn-gray { background: #3f3f46; color: #fff; border: 1px solid #52525b; }
+        .w-btn-gray:hover { background: #52525b; }
 
         /* --- WIN OVERLAY --- */
         .win-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px); pointer-events: auto;
         }
-        .win-overlay.active { display: flex; animation: slam-in 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .win-overlay.active { display: flex; animation: slam-in 0.2s forwards; }
         @keyframes slam-in { 0%{transform:scale(1.5);opacity:0} 100%{transform:scale(1);opacity:1} }
         
-        .win-title { color: #b8860b; font-family: 'Cinzel', serif; font-weight: 900; font-size: 16px; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 20px; text-shadow: 0 0 20px #f00; }
-        .win-value-container { position: relative; display: flex; align-items: center; gap: 15px; }
-        .win-star { font-size: 5rem; color: #FFD700; text-shadow: 0 0 30px #FFD700; animation: pulse-star 0.5s infinite; }
-        .win-amount { font-family: 'Nosifer', cursive; font-size: 6rem; color: #ff0000; text-shadow: 0 0 40px #f00, 4px 4px 0 #500; line-height: 1; }
-        .win-footer { margin-top: 40px; color: #666; font-size: 10px; letter-spacing: 3px; animation: pulse-text 1s infinite; font-family: 'Courier Prime', monospace; }
-        @keyframes pulse-star { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
-        @keyframes pulse-text { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
+        .harvest-title {
+            color: #b45309; font-family: 'Cinzel', serif; letter-spacing: 0.3em; 
+            font-size: 14px; margin-bottom: 20px; text-transform: uppercase;
+        }
+        .harvest-star { font-size: 4rem; color: #FFD700; text-shadow: 0 0 30px #FFD700; animation: pulse-star 0.5s infinite; }
+        .harvest-amount { 
+            font-family: 'Nosifer', cursive; font-size: 5rem; color: #ef4444; 
+            text-shadow: 0 0 30px #ef4444; margin-left: 10px;
+        }
+        
+        /* Sticky Bonus */
+        #bonus-stick { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* --- MODALS --- */
-        .modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; }
-        .modal-wrap.active { display: flex; animation: fadeIn 0.1s; }
-        .confirm-box { background: #080000; border: 2px solid #500; padding: 25px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 0 80px rgba(255,0,0,0.2); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Deposit Modal */
+        .modal-center { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 210; display: none; align-items: center; justify-content: center; }
+        .modal-center.active { display: flex; }
+        .confirm-box { background: #111; border: 1px solid #333; padding: 24px; border-radius: 12px; text-align: center; }
 
         /* Sound Toggle */
         .sound-btn { position: fixed; top: 10px; right: 10px; z-index: 50; opacity: 0.5; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 1px solid #333; background: #000; color: #666; font-size: 12px; transition: 0.2s; cursor: pointer; }
         .sound-btn.on { color: #0f0; border-color: #0f0; opacity: 1; box-shadow: 0 0 15px #0f0; text-shadow: 0 0 5px #0f0; }
 
-        /* Sticky Bonus */
-        #bonus-stick { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     </style>
 </head>
@@ -169,101 +244,153 @@
 
     <div class="app-layout">
         
-        <div class="header-area p-3 flex justify-between items-center">
-            <div>
-                <div class="text-[9px] text-[#b8860b] uppercase tracking-widest font-bold mb-1 opacity-70">Balance</div>
-                <div class="flex items-center gap-2" onclick="openDeposit()">
-                    <span class="text-xl text-[#FFD700] font-bold drop-shadow-md">★ <span id="balance">0</span></span>
-                    <div class="bg-[#211] w-5 h-5 rounded flex items-center justify-center border border-[#422] text-[#f55] text-xs font-bold interactive">+</div>
+        <!-- HEADER (Wallet Trigger) -->
+        <div class="header-area p-4 flex justify-between items-center bg-black/80" onclick="openWallet()">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 overflow-hidden flex items-center justify-center">
+                    <span class="text-xl">💀</span>
+                </div>
+                <div>
+                    <div class="text-[10px] text-gray-400 uppercase tracking-wide font-bold">Balance</div>
+                    <div class="text-lg text-white font-bold font-mono">★ <span id="balance">0</span> <span class="text-[10px] text-gray-500">▼</span></div>
                 </div>
             </div>
-            <div class="text-right">
-                <div class="text-[9px] text-[#555] uppercase tracking-widest font-bold mb-1 opacity-70">Bet</div>
-                <span class="text-xl text-[#cbbba0] font-bold" id="bet">1</span>
+            <button onclick="event.stopPropagation(); openDeposit()" class="bg-[#6d28d9] text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg shadow-purple-900/50 hover:bg-[#5b21b6] transition">
+                + DEPOSIT
+            </button>
+        </div>
+
+        <!-- TICKER -->
+        <div class="bg-[#050000] border-b border-[#221111] h-6 overflow-hidden flex items-center shrink-0">
+            <div class="whitespace-nowrap animate-[ticker_30s_linear_infinite] text-[10px] text-[#553333] font-mono pl-full">
+                BUILD 4.3 STABLE /// MATH FIXED (RTP ~95%) /// BUG FIXED ///
             </div>
         </div>
 
-        <div class="bg-[#050000] border-b border-[#221] h-6 overflow-hidden flex items-center shrink-0">
-            <div class="whitespace-nowrap animate-[ticker_20s_linear_infinite] text-[10px] text-[#666] font-mono pl-full" id="ticker">
-                DYNAMIC IMPACT /// HAPTIC FEEDBACK /// BUILD 2.7 ///
-            </div>
-        </div>
-
+        <!-- GAME AREA -->
         <div class="game-viewport">
-            <div id="status-text" class="absolute top-2 text-[10px] font-bold tracking-[0.3em] text-[#422] uppercase transition-all duration-300">
-                Awaiting Input
+            <div id="status-text" class="absolute top-2 text-[10px] font-bold tracking-[0.3em] text-[#553333] uppercase transition-all duration-300">
+                MORTAL REALM
             </div>
-            <div class="machine-container" id="machine-box">
+            <div class="machine-container" id="machine-container">
                 <div class="reels-window">
                     <div class="payline"></div>
                     <div class="reel-col"><div class="reel-strip" id="strip-0"></div></div>
                     <div class="reel-col"><div class="reel-strip" id="strip-1"></div></div>
                     <div class="reel-col"><div class="reel-strip" id="strip-2"></div></div>
                 </div>
-                <div class="bg-[#080000] border-t border-[#331] p-1 px-2 flex justify-between">
-                    <span class="text-[9px] text-[#444] font-bold">BUILD 2.7</span>
-                    <span class="text-[9px] text-[#800] font-bold animate-pulse">HAPTIC_READY</span>
-                </div>
             </div>
         </div>
 
+        <!-- CONTROLS -->
         <div class="controls-dock relative">
-            <div id="bonus-stick" class="absolute bottom-full left-0 right-0 bg-[#000] border-t border-[#b8860b] p-3 text-center transform translate-y-full opacity-0 pointer-events-none z-0">
-                <div class="text-[9px] text-[#b8860b] tracking-widest uppercase mb-1">Total Harvest</div>
-                <div class="text-3xl text-[#FFD700] font-bold font-[Nosifer] drop-shadow-[0_0_10px_#f00]">★ <span id="bonus-display">0</span></div>
+            <!-- Sticky Bonus Counter -->
+            <div id="bonus-counter" class="absolute bottom-full left-0 right-0 bg-black/95 border-t border-[#b8860b] p-3 text-center transform translate-y-full opacity-0 transition-all pointer-events-none z-10">
+                <div class="text-[9px] text-[#b8860b] tracking-widest uppercase">Total Harvest</div>
+                <div class="text-2xl text-[#FFD700] font-bold font-[Nosifer] drop-shadow-[0_0_10px_#f00]">★ <span id="bonus-total-display">0</span></div>
             </div>
 
-            <div onclick="initBuyBonus()" class="btn-buy">
+            <!-- Buy Bonus -->
+            <div onclick="initBuyBonus()" class="btn-buy-compact">
                 <div class="buy-shine"></div>
-                <div class="flex items-center gap-3 relative z-10">
-                    <div class="text-2xl text-[#800] animate-bounce">💀</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-2xl animate-pulse text-[#8a0303]">💀</div>
                     <div class="flex flex-col text-left">
-                        <span class="text-[#a00] font-bold text-xs tracking-widest">BUY SCATTERS</span>
-                        <span class="text-[9px] text-[#666] font-mono">COST: 69 STARS</span>
+                        <span class="text-[#cbbba0] font-bold text-xs tracking-widest">BUY BONUS</span>
+                        <span class="text-[9px] text-[#666]">COST: 69 STARS</span>
                     </div>
                 </div>
-                <div class="text-[#a00] font-bold text-lg relative z-10">?</div>
+                <div class="text-[#8a0303] font-bold text-lg">?</div>
             </div>
 
+            <!-- Spin Grid -->
             <div class="control-grid">
-                <div onclick="changeBet(-1)" class="btn-bet">-</div>
-                <div id="spin-btn" onclick="spin()" class="btn-spin-main">
-                    <svg class="spin-icon" viewBox="0 0 24 24"><path d="M12,2L15.09,8.26L22,9.27L17,14.14L18.18,21.02L12,17.77L5.82,21.02L7,14.14L2,9.27L8.91,8.26L12,2M12,15.4V6.08L10.2,9.75L6.16,10.33L9.09,13.19L8.39,17.2L12,15.4Z" /></svg>
+                <div onclick="changeBet(-1)" class="bet-adjust-btn">-</div>
+                <div class="spin-container">
+                    <div class="bet-display-label">OFFERING</div>
+                    <div class="bet-display-val">★ <span id="bet">1</span></div>
+                    <div id="spin-btn" onclick="spin()" class="btn-spin-main">
+                        <svg class="spin-icon" viewBox="0 0 24 24"><path d="M12,2L15.09,8.26L22,9.27L17,14.14L18.18,21.02L12,17.77L5.82,21.02L7,14.14L2,9.27L8.91,8.26L12,2M12,15.4V6.08L10.2,9.75L6.16,10.33L9.09,13.19L8.39,17.2L12,15.4Z" /></svg>
+                    </div>
                 </div>
-                <div onclick="changeBet(1)" class="btn-bet">+</div>
+                <div onclick="changeBet(1)" class="bet-adjust-btn">+</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- WALLET MODAL -->
+    <div id="wallet-modal" class="wallet-modal-bg">
+        <div class="wallet-sheet">
+            <div class="w-header">
+                <div class="w-title">The Stash</div>
+                <div class="w-close" onclick="closeWallet()">✕</div>
+            </div>
+
+            <div class="w-grid">
+                <!-- Total -->
+                <div class="w-card">
+                    <div>
+                        <div class="w-label">Total Balance</div>
+                        <div class="w-val">★ <span id="wallet-total">0</span></div>
+                    </div>
+                    <div class="w-btn w-btn-purple" onclick="openDeposit()">Deposit</div>
+                </div>
+                <!-- Withdraw -->
+                <div class="w-card">
+                    <div>
+                        <div class="w-label">Withdrawable</div>
+                        <div class="w-val text-white">★ <span id="wallet-real">0</span></div>
+                    </div>
+                    <div class="w-btn w-btn-gray" onclick="withdraw()">Purge</div>
+                </div>
+            </div>
+
+            <!-- Bonus Stat -->
+            <div class="bg-[#27272a] rounded-[20px] p-4 mb-4 border border-[#3f3f46]">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="w-label">Wager Status</div>
+                    <div class="text-xs text-gray-400" id="wager-text">0% Complete</div>
+                </div>
+                <div class="w-full bg-[#18181b] rounded-full h-2">
+                    <div id="wager-bar" class="bg-[#7c3aed] h-2 rounded-full" style="width: 0%"></div>
+                </div>
+                <div class="text-[9px] text-gray-500 mt-1">Bet 69 Stars to unlock withdrawals</div>
             </div>
         </div>
     </div>
 
-    <div id="win-overlay" class="win-overlay" onclick="closeWin()">
-        <div id="win-title" class="win-title">Stars Harvested</div>
-        <div class="win-value-container">
-            <div class="win-star">★</div>
-            <div id="win-amount" class="win-amount">0</div>
-        </div>
-        <div id="win-sub" class="win-footer">TOUCH TO CLAIM</div>
-    </div>
-
-    <div id="deposit-modal" class="modal-wrap">
+    <!-- DEPOSIT MODAL -->
+    <div id="deposit-modal" class="modal-center">
         <div class="confirm-box">
-            <div class="text-[#b8860b] text-xl mb-4 font-bold font-[Cinzel]">ACQUIRE STARS</div>
+            <div class="text-[#b8860b] text-xl mb-4 font-bold">ADD STARS</div>
             <div class="grid gap-2 mb-4">
-                <button onclick="addStars(69)" class="bg-[#150505] border border-[#331] p-3 text-[#FFD700] hover:border-[#b8860b]">★ 69 <span class="text-xs text-gray-600">($1.00)</span></button>
-                <button onclick="addStars(500)" class="bg-[#150505] border border-[#331] p-3 text-[#FFD700] hover:border-[#b8860b]">★ 500 <span class="text-xs text-gray-600">($7.50)</span></button>
-                <button onclick="addStars(1000)" class="bg-[#150505] border border-[#331] p-3 text-[#FFD700] hover:border-[#b8860b]">★ 1000 <span class="text-xs text-gray-600">($15.00)</span></button>
+                <button onclick="addStars(69)" class="bg-[#222] border border-[#444] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 69 <span class="text-xs text-gray-500">($1)</span></button>
+                <button onclick="addStars(500)" class="bg-[#222] border border-[#444] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 500 <span class="text-xs text-gray-500">($7.5)</span></button>
             </div>
             <button onclick="closeDeposit()" class="text-gray-500 text-xs uppercase p-2">Cancel</button>
         </div>
     </div>
 
-    <div id="buy-modal" class="modal-wrap">
-        <div class="confirm-box" style="border-color: #f00; box-shadow: 0 0 30px #500;">
-            <div class="text-5xl mb-4 text-[#a00] animate-pulse">💀</div>
-            <div class="text-[#b8860b] text-lg mb-2 font-bold">MYSTERY RITUAL</div>
-            <div class="text-gray-400 text-xs font-mono mb-6">SACRIFICE <span class="text-white font-bold">69 STARS</span><br>FOR RANDOM SPINS</div>
-            <button onclick="confirmBuyBonus()" class="w-full bg-[#500] border border-[#f55] text-white py-3 font-bold mb-3 shadow-[0_0_20px_#f00] hover:bg-[#700]">ACCEPT PACT</button>
-            <button onclick="closeBuyConfirm()" class="text-gray-500 text-xs uppercase">Retreat</button>
+    <!-- BUY CONFIRM -->
+    <div id="buy-confirm-modal" class="modal-center">
+        <div class="confirm-box" style="border-color: #8a0303;">
+            <div class="text-4xl mb-3 text-[#8a0303]">💀</div>
+            <div class="text-white text-lg font-bold mb-2">MYSTERY BONUS</div>
+            <div class="text-gray-400 text-xs mb-6">BUY RANDOM SPINS FOR 69 STARS?</div>
+            <button onclick="confirmBuyBonus()" class="w-full bg-[#8a0303] text-white py-3 rounded font-bold mb-2">PURCHASE</button>
+            <button onclick="closeBuyConfirm()" class="text-gray-500 text-xs uppercase">Cancel</button>
         </div>
+    </div>
+
+    <!-- WIN OVERLAY -->
+    <div id="win-overlay" class="win-overlay" onclick="closeWin()">
+        <div class="harvest-title" id="win-title">Stars Harvested</div>
+        <div class="flex items-center justify-center">
+            <div class="harvest-star">★</div>
+            <div id="win-amount" class="harvest-amount">0</div>
+        </div>
+        <div class="text-[#555] text-[10px] mt-10 uppercase tracking-widest animate-pulse" id="win-subtitle">Touch to Continue</div>
     </div>
 
     <script>
@@ -273,9 +400,8 @@
         // --- CLEAN AUDIO ---
         class CleanSynth {
             constructor() {
-                this.ctx = null;
-                this.masterGain = null;
-                this.enabled = false;
+                this.ctx = null; this.masterGain = null; this.enabled = false;
+                this.notes = { D2: 73.42, E2: 82.41, F2: 87.31, A2: 110.00, D3: 146.83, E3: 164.81, F3: 174.61, A3: 220.00, Cs4: 277.18, D4: 293.66, E4: 329.63, F4: 349.23, A4: 440.00 };
             }
             init() {
                 if(!this.ctx) {
@@ -298,177 +424,162 @@
                     btn.classList.remove('on');
                 }
             }
-            playOsc(freq, type, dur, vol, delay=0) {
-                if(!this.enabled || !this.ctx) return;
-                const t = this.ctx.currentTime + delay;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = type; osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0, t);
-                gain.gain.linearRampToValueAtTime(vol, t + 0.02);
-                gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-                osc.connect(gain); gain.connect(this.masterGain);
-                osc.start(t); osc.stop(t + dur + 0.1);
-            }
             sfx(type) {
                 if(!this.enabled || !this.ctx) return;
-                switch(type) {
-                    case 'spin': 
-                        const o = this.ctx.createOscillator(); const g = this.ctx.createGain();
-                        o.frequency.setValueAtTime(200, this.ctx.currentTime); o.frequency.linearRampToValueAtTime(600, this.ctx.currentTime+0.2);
-                        g.gain.setValueAtTime(0.1, this.ctx.currentTime); g.gain.linearRampToValueAtTime(0, this.ctx.currentTime+0.2);
-                        o.connect(g); g.connect(this.masterGain); o.start(); o.stop(this.ctx.currentTime+0.2); break;
-                    case 'win': this.playOsc(1046.5, 'triangle', 0.1, 0.3, 0); this.playOsc(1318.5, 'triangle', 0.2, 0.3, 0.1); break;
-                    case 'win_big': this.playOsc(523.25, 'square', 0.1, 0.3, 0); this.playOsc(659.25, 'square', 0.1, 0.3, 0.1); this.playOsc(783.99, 'square', 0.1, 0.3, 0.2); this.playOsc(1046.50, 'square', 0.4, 0.3, 0.3); break;
-                    case 'stop': this.playOsc(100, 'sine', 0.1, 0.5); break;
-                    case 'click': this.playOsc(2000, 'triangle', 0.02, 0.1); break;
-                    case 'gore': this.playOsc(150, 'sawtooth', 0.3, 0.2); this.playOsc(200, 'sawtooth', 0.3, 0.2); break;
+                const t = this.ctx.currentTime;
+                const o = this.ctx.createOscillator();
+                const g = this.ctx.createGain();
+                o.connect(g); g.connect(this.masterGain);
+
+                if(type==='spin') {
+                    o.type='triangle'; o.frequency.setValueAtTime(100, t); o.frequency.linearRampToValueAtTime(300, t+0.2);
+                    g.gain.setValueAtTime(0.1, t); g.gain.linearRampToValueAtTime(0, t+0.2);
+                    o.start(t); o.stop(t+0.2);
+                } else if (type==='stop') {
+                    o.type='square'; o.frequency.setValueAtTime(50, t); o.frequency.exponentialRampToValueAtTime(10, t+0.1);
+                    g.gain.setValueAtTime(0.3, t); g.gain.exponentialRampToValueAtTime(0.01, t+0.1);
+                    o.start(t); o.stop(t+0.1);
+                } else if (type==='win') {
+                    o.type='triangle'; o.frequency.setValueAtTime(523, t); 
+                    g.gain.setValueAtTime(0.2, t); g.gain.linearRampToValueAtTime(0, t+0.3);
+                    o.start(t); o.stop(t+0.3);
                 }
             }
         }
-
         const audio = new CleanSynth();
         function toggleAudio() { audio.toggle(); }
 
-        // --- GAME LOGIC ---
+        // --- LOGIC ---
+        // Adjusted multipliers for RTP < 100% (House Edge)
         const SYMBOLS = [
-            { id: 0, char: '🕯️', tier: 'low-tier',  val: 2 },
+            { id: 0, char: '🕯️', tier: 'low-tier',  val: 2 }, 
             { id: 1, char: '🗡️', tier: 'low-tier',  val: 3 },
-            { id: 2, char: '🕸️', tier: 'low-tier',  val: 4 },
+            { id: 2, char: '🕸️', tier: 'low-tier',  val: 4 }, 
             { id: 3, char: '⛓️', tier: 'low-tier',  val: 5 },
-            { id: 4, char: '⚰️', tier: 'mid-tier',  val: 10 },
-            { id: 5, char: '🩸', tier: 'mid-tier',  val: 15 },
-            { id: 6, char: '🐐', tier: 'high-tier', val: 50 },
-            { id: 7, char: '✡️', tier: 'wild-tier', val: 100 },
+            { id: 4, char: '⚰️', tier: 'mid-tier',  val: 8 }, 
+            { id: 5, char: '🩸', tier: 'mid-tier',  val: 12 },
+            { id: 6, char: '🐐', tier: 'high-tier', val: 25 }, 
+            { id: 7, char: '✡️', tier: 'wild-tier', val: 50 },
             { id: 8, char: '💀', tier: 'scatter-tier', val: 0 }
         ];
 
-        let state = {
-            balance: 0, bet: 1, spinning: false, bonusMode: false,
-            bonusSpins: 0, totalWin: 0, purchasingBonus: false, pendingSpins: 0
+        let state = { 
+            balance: 0, bet: 1, spinning: false, bonusMode: false, 
+            bonusSpins: 0, totalWin: 0, purchasingBonus: false, pendingSpins: 0,
+            wager: 0, wagerReq: 69 
         };
-
-        // SEAMLESS REEL STATE
-        let currentReelState = [
-            [SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]], 
-            [SYMBOLS[3], SYMBOLS[4], SYMBOLS[5]], 
-            [SYMBOLS[6], SYMBOLS[7], SYMBOLS[8]]
-        ];
-
+        
+        let currentReelState = [[SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]], [SYMBOLS[3], SYMBOLS[4], SYMBOLS[5]], [SYMBOLS[6], SYMBOLS[7], SYMBOLS[8]]];
         const strips = [0,1,2].map(i => document.getElementById(`strip-${i}`));
 
-        // --- BLOOD FX ---
-        const cvs = document.getElementById('blood-canvas');
-        const ctx = cvs.getContext('2d');
-        let particles = [];
-        let animId;
-
-        function resizeCvs() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCvs);
-        resizeCvs();
-
+        // Blood FX (Restored Drips)
+        const cvs = document.getElementById('blood-canvas'); const ctx = cvs.getContext('2d');
+        let particles = []; let animId;
+        function resizeCvs() { cvs.width=window.innerWidth; cvs.height=window.innerHeight; }
+        window.addEventListener('resize', resizeCvs); resizeCvs();
+        
         class Drop {
             constructor() {
-                this.x = cvs.width/2 + (Math.random()-0.5)*100;
-                this.y = cvs.height/2 + (Math.random()-0.5)*50;
-                let a = Math.random()*Math.PI*2, s = Math.random()*20+10;
-                this.vx = Math.cos(a)*s; this.vy = Math.sin(a)*s;
-                this.r = Math.random()*15+5; 
-                this.c = `rgba(${160+Math.random()*50},0,0,${Math.random()*0.5+0.5})`;
-                this.life = 1; this.stuck = false;
+                this.x = Math.random()*cvs.width; this.y = -20;
+                this.vx = 0; this.vy = Math.random()*5+2;
+                this.r = Math.random()*4+2; this.c=`rgba(160,0,0,${Math.random()*0.5+0.5})`;
+                this.life=1; this.stuck = false;
             }
             u() {
-                if(!this.stuck) {
-                    this.vx*=0.9; this.vy*=0.9; this.vy+=1.5; 
-                    this.x+=this.vx; this.y+=this.vy;
-                    if(Math.random()<0.15 && this.life>0.7) this.stuck=true;
-                } else { this.y+=Math.random()*2; this.life-=0.01; }
+                if(!this.stuck) { this.y+=this.vy; if(Math.random()<0.02) this.stuck=true; }
+                else { this.y+=0.5; this.life-=0.005; }
             }
             d() {
-                ctx.fillStyle = this.c; ctx.beginPath();
-                ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+                ctx.fillStyle=this.c; ctx.beginPath();
+                if(this.stuck) { ctx.ellipse(this.x, this.y, this.r, this.r*2, 0, 0, 6.28); }
+                else { ctx.arc(this.x, this.y, this.r, 0, 6.28); }
                 ctx.fill();
             }
         }
 
-        function triggerBlood() {
-            document.getElementById('vignette').style.boxShadow = "inset 0 0 100px #f00";
-            setTimeout(() => document.getElementById('vignette').style.boxShadow = "inset 0 0 50px #000", 100);
-            for(let i=0;i<80;i++) particles.push(new Drop());
-            if(!animId) animate();
-        }
-        function animate() {
-            ctx.clearRect(0,0,cvs.width,cvs.height);
-            particles = particles.filter(p=>{p.u();p.d();return p.life>0 && p.y<cvs.height+100});
-            if(particles.length) animId = requestAnimationFrame(animate); else animId = null;
+        function triggerBlood() { for(let i=0;i<60;i++) particles.push(new Drop()); if(!animId) animate(); }
+        function animate() { 
+            ctx.clearRect(0,0,cvs.width,cvs.height); 
+            particles=particles.filter(p=>{p.u();p.d();return p.life>0 && p.y<cvs.height}); 
+            if(particles.length) animId=requestAnimationFrame(animate); else animId=null; 
         }
 
-        // --- CORE ---
+        // Init
         function init() {
-            strips.forEach((s,i) => {
-                s.innerHTML="";
-                currentReelState[i].forEach(sym => s.innerHTML+=getHtml(sym));
-            });
-            adjustHeight();
-            window.addEventListener('resize', adjustHeight);
-            updateUI();
+            strips.forEach((s,i) => { s.innerHTML=""; currentReelState[i].forEach(sym => s.innerHTML+=getSymHtml(sym)); });
+            adjustSymbolHeights(); window.addEventListener('resize', adjustSymbolHeights); updateUI();
         }
-
-        function adjustHeight() {
+        function adjustSymbolHeights() {
             const h = document.querySelector('.reels-window').clientHeight / 3;
-            document.querySelectorAll('.symbol-box').forEach(e => e.style.height = `${h}px`);
+            document.querySelectorAll('.symbol-box').forEach(e => e.style.height=`${h}px`);
         }
+        function getSymHtml(s) { return `<div class="symbol-box"><div class="symbol-card ${s.tier}">${s.char}</div></div>`; }
+        function getRandomSym() { return SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)]; }
 
-        function getHtml(s) {
-            return `<div class="symbol-box"><div class="symbol-card ${s.tier}">${s.char}</div></div>`;
-        }
-        function getRand() { return SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)]; }
-
+        // UI & State
         function updateUI() {
             document.getElementById('balance').innerText = state.balance;
+            document.getElementById('wallet-total').innerText = state.balance;
+            document.getElementById('wallet-real').innerText = state.balance;
             document.getElementById('bet').innerText = state.bet;
+            
+            // Wager
+            const perc = Math.min(100, Math.floor((state.wager / state.wagerReq) * 100));
+            document.getElementById('wager-bar').style.width = `${perc}%`;
+            document.getElementById('wager-text').innerText = `${perc}% Complete (${state.wager}/${state.wagerReq})`;
+            
             const btn = document.getElementById('spin-btn');
             if(state.spinning) btn.classList.add('disabled'); else btn.classList.remove('disabled');
 
-            const bs = document.getElementById('bonus-stick');
+            const bc = document.getElementById('bonus-counter');
             const st = document.getElementById('status-text');
             if(state.bonusMode) {
-                bs.style.opacity='1'; bs.style.transform='translateY(0)';
-                document.getElementById('bonus-display').innerText = state.totalWin;
-                st.innerText = `RITUAL [${state.bonusSpins}]`; st.style.color='#f00';
+                bc.classList.add('active');
+                if(state.bonusMode) bc.style.transform = 'translateY(0)';
+                if(state.bonusMode) bc.style.opacity = '1';
+                
+                document.getElementById('bonus-total-display').innerText = state.totalWin;
+                st.innerText = `RITUAL (${state.bonusSpins})`; st.style.color='#f00';
             } else {
-                bs.style.opacity='0'; bs.style.transform='translateY(100%)';
-                st.innerText = "AWAITING INPUT"; st.style.color='#422';
+                bc.classList.remove('active');
+                bc.style.transform = 'translateY(100%)';
+                st.innerText = "BUILD 4.3"; st.style.color='#553333';
             }
         }
 
-        function changeBet(v) {
-            if(!state.spinning && !state.bonusMode && state.bet+v>=1) { state.bet+=v; updateUI(); audio.sfx('click'); }
-        }
-
-        // --- ACTIONS ---
-        function openDeposit() { document.getElementById('deposit-modal').classList.add('active'); audio.sfx('click'); }
+        function changeBet(v) { if(!state.spinning && !state.bonusMode && state.bet+v>=1) { state.bet+=v; updateUI(); } }
+        
+        // Modal Logic
+        function openWallet() { document.getElementById('wallet-modal').classList.add('active'); }
+        function closeWallet() { document.getElementById('wallet-modal').classList.remove('active'); }
+        function openDeposit() { closeWallet(); document.getElementById('deposit-modal').classList.add('active'); }
         function closeDeposit() { document.getElementById('deposit-modal').classList.remove('active'); }
-        function addStars(v) { state.balance+=v; updateUI(); closeDeposit(); audio.sfx('win_big'); triggerBlood(); }
-
-        function initBuyBonus() { document.getElementById('buy-modal').classList.add('active'); audio.sfx('click'); }
-        function closeBuyConfirm() { document.getElementById('buy-modal').classList.remove('active'); }
+        function addStars(v) { state.balance+=v; updateUI(); closeDeposit(); triggerBlood(); audio.sfx('win'); }
+        function initBuyBonus() { document.getElementById('buy-confirm-modal').classList.add('active'); }
+        function closeBuyConfirm() { document.getElementById('buy-confirm-modal').classList.remove('active'); }
         function confirmBuyBonus() {
             closeBuyConfirm();
             if(state.balance < 69) { tg.showAlert("Need 69 Stars"); return; }
-            state.balance -= 69;
-            updateUI();
-            const r = Math.random();
-            let spins = 10;
-            if(r<0.5) spins=5+Math.floor(Math.random()*4);
-            else if(r<0.85) spins=9+Math.floor(Math.random()*4);
-            else spins=15;
-            state.purchasingBonus = true;
-            state.pendingSpins = spins;
+            state.balance -= 69; updateUI();
+            let spins = Math.floor(Math.random()*15)+5; 
+            state.purchasingBonus = true; state.pendingSpins = spins;
             spin();
         }
 
-        // --- SPIN ENGINE (PHYSICS & HAPTICS) ---
+        function withdraw() {
+            if(state.balance < 100) { tg.showAlert("Minimum 100 Stars"); return; }
+            if(state.wager < state.wagerReq) { tg.showAlert(`Wager not met! Need ${state.wagerReq - state.wager} more.`); return; }
+            
+            const fee = Math.floor(state.balance * 0.15);
+            const payout = state.balance - fee;
+            if(confirm(`Withdraw ${state.balance}?\nFee 15%: -${fee}\nPayout: ${payout}`)) {
+                state.balance = 0; state.wager = 0;
+                updateUI(); closeWallet();
+                alert(`PURGED! ${payout} Stars sent to void.`);
+            }
+        }
+
+        // SPIN LOGIC
         async function spin() {
             if(state.spinning) return;
             document.getElementById('win-overlay').classList.remove('active');
@@ -476,185 +587,154 @@
             if(!state.purchasingBonus && !state.bonusMode) {
                 if(state.balance < state.bet) { openDeposit(); return; }
                 state.balance -= state.bet;
+                // Add wager
+                if(state.wager < state.wagerReq) state.wager += state.bet;
             }
 
             state.spinning = true;
             updateUI();
             audio.sfx('spin');
-            document.querySelector('.payline').style.opacity = '0';
-            document.getElementById('vignette').classList.remove('active');
-
-            // Outcome
-            let outcome = [];
-            const r = Math.random();
-
-            if(state.purchasingBonus) {
-                outcome = [SYMBOLS[8], SYMBOLS[8], SYMBOLS[8]];
-            } else if (state.bonusMode) {
-                if(r<0.4) outcome = [SYMBOLS[6],SYMBOLS[6],SYMBOLS[6]]; 
-                else if(r<0.6) outcome = [SYMBOLS[4],SYMBOLS[4],SYMBOLS[4]];
-                else outcome = [getRand(), getRand(), getRand()];
-            } else {
-                if(r<0.7) { 
-                    const s1=(Math.random()<0.1)?SYMBOLS[8]:getRand();
-                    const s2=(Math.random()<0.1)?SYMBOLS[8]:getRand();
-                    const s3=getRand();
-                    outcome=[s1,s2,s3];
-                    if(s1.id===s2.id && s2.id===s3.id) outcome[2]=(s1.id===0)?SYMBOLS[1]:SYMBOLS[0];
-                } else if(r<0.95) { 
-                    const s = SYMBOLS[Math.floor(Math.random()*6)];
-                    outcome=[s,s,s];
-                } else if(r<0.995) { 
-                    outcome=[SYMBOLS[8],SYMBOLS[8],getRand()];
-                } else { 
-                    outcome=[SYMBOLS[8],SYMBOLS[8],SYMBOLS[8]];
+            
+            try {
+                // FIXED MATH:
+                // 80% Loss
+                // 12% Small Win
+                // 5% Mid Win
+                // 2% High Win
+                // 0.5% Jackpot
+                // 0.5% Scatter
+                
+                let outcome = [];
+                const r = Math.random();
+                
+                if(state.purchasingBonus) {
+                    outcome = [SYMBOLS[8],SYMBOLS[8],SYMBOLS[8]];
+                } 
+                else if(state.bonusMode) {
+                    // Bonus: Higher win rate (~30%)
+                     if(r<0.3) outcome = (Math.random()<0.5) ? [SYMBOLS[4],SYMBOLS[4],SYMBOLS[4]] : [SYMBOLS[5],SYMBOLS[5],SYMBOLS[5]];
+                     else outcome = [getRandomSym(),getRandomSym(),getRandomSym()];
+                } 
+                else {
+                    // Base Game (Weighted)
+                    if (r < 0.80) { // Loss
+                         const s1 = (Math.random()<0.1) ? SYMBOLS[8] : getRandomSym();
+                         const s2 = (Math.random()<0.1) ? SYMBOLS[8] : getRandomSym();
+                         const s3 = getRandomSym();
+                         outcome = [s1, s2, s3];
+                         if(s1.id===s2.id && s2.id===s3.id) outcome[2] = (s1.id===0) ? SYMBOLS[1] : SYMBOLS[0];
+                    } else if (r < 0.92) { // Small
+                         const s = SYMBOLS[Math.floor(Math.random()*3)]; // 0,1,2
+                         outcome = [s,s,s];
+                    } else if (r < 0.97) { // Mid
+                         const s = SYMBOLS[3 + Math.floor(Math.random()*2)]; // 3,4
+                         outcome = [s,s,s];
+                    } else if (r < 0.99) { // High
+                         const s = SYMBOLS[5 + Math.floor(Math.random()*2)]; // 5,6
+                         outcome = [s,s,s];
+                    } else if (r < 0.995) { // Jackpot
+                         outcome = [SYMBOLS[7],SYMBOLS[7],SYMBOLS[7]];
+                    } else { // Scatter
+                         outcome = [SYMBOLS[8],SYMBOLS[8],SYMBOLS[8]];
+                    }
                 }
-            }
 
-            let nextReelState = [];
-            for(let i=0; i<3; i++) nextReelState.push([getRand(), outcome[i], getRand()]);
-
-            const h = document.querySelector('.reels-window').clientHeight / 3;
-            // OVERSHOOT LENGTH
-            const OVERSHOOT = 30; 
-
-            const promises = strips.map((strip, i) => {
-                return new Promise(resolve => {
-                    // TIGHTER DELAY FOR DYNAMICS
-                    const delay = i * 150; 
-                    
-                    setTimeout(() => {
-                        let dur = 1.8 + (i*0.4); // Faster base spin
-                        if(i===2 && outcome[0].id===8 && outcome[1].id===8) {
-                            document.getElementById('vignette').classList.add('active');
-                            dur = 4.0;
-                            audio.sfx('gore');
-                        }
-
-                        let html = "";
-                        // Seamless
-                        currentReelState[i].forEach(s => html += getHtml(s)); 
-                        for(let k=0; k<OVERSHOOT; k++) html += getHtml(getRand()); 
-                        nextReelState[i].forEach(s => html += getHtml(s)); 
-                        strip.innerHTML = html;
-
-                        strip.querySelectorAll('.symbol-box').forEach(e => e.style.height=`${h}px`);
-
-                        strip.style.transition = 'none';
-                        strip.style.transform = 'translateY(0)';
-                        void strip.offsetWidth;
-
-                        const moveY = (3 + OVERSHOOT) * h;
-                        // IMPACT BEZIER
-                        strip.style.transition = `transform ${dur}s var(--ease-slam)`;
-                        strip.style.transform = `translateY(-${moveY}px)`;
-
+                // Anim
+                let nextReelState = [];
+                for(let i=0;i<3;i++) nextReelState.push([getRandomSym(), outcome[i], getRandomSym()]);
+                const h = document.querySelector('.reels-window').clientHeight / 3;
+                
+                await Promise.all(strips.map((strip,i) => {
+                    return new Promise(resolve => {
+                        const delay = i*150;
                         setTimeout(() => {
-                            // Swap
-                            strip.style.transition = 'none';
-                            strip.innerHTML = "";
-                            nextReelState[i].forEach(s => strip.innerHTML += getHtml(s));
-                            strip.querySelectorAll('.symbol-box').forEach(e => e.style.height=`${h}px`);
-                            strip.style.transform = 'translateY(0)';
-                            
-                            // HEAVY IMPACT
-                            audio.sfx('stop');
-                            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
-                            
-                            document.getElementById('machine-box').classList.remove('shake');
-                            void document.getElementById('machine-box').offsetWidth;
-                            document.getElementById('machine-box').classList.add('shake');
-                            
-                            resolve();
-                        }, dur * 1000);
+                            let html = "";
+                            currentReelState[i].forEach(s=>html+=getSymHtml(s));
+                            for(let k=0;k<30;k++) html+=getSymHtml(getRandomSym());
+                            nextReelState[i].forEach(s=>html+=getSymHtml(s));
+                            strip.innerHTML = html;
+                            strip.querySelectorAll('.symbol-box').forEach(e=>e.style.height=`${h}px`);
+                            strip.style.transition='none'; strip.style.transform='translateY(0)';
+                            void strip.offsetWidth;
+                            strip.style.transition=`transform ${1.8+i*0.4}s cubic-bezier(0.25, 1, 0.25, 1.15)`;
+                            strip.style.transform=`translateY(-${33*h}px)`;
+                            setTimeout(()=>{
+                                strip.style.transition='none'; strip.innerHTML="";
+                                nextReelState[i].forEach(s=>strip.innerHTML+=getSymHtml(s));
+                                strip.querySelectorAll('.symbol-box').forEach(e=>e.style.height=`${h}px`);
+                                strip.style.transform='translateY(0)';
+                                audio.sfx('stop');
+                                resolve();
+                            }, (1.8+i*0.4)*1000);
+                        }, delay);
+                    });
+                }));
 
-                    }, delay);
-                });
-            });
+                currentReelState = nextReelState;
 
-            await Promise.all(promises);
-            document.getElementById('vignette').classList.remove('active');
-            currentReelState = nextReelState;
-
-            if(state.purchasingBonus) {
-                triggerBlood();
-                audio.sfx('win_big');
-                showWin(0, `FATE REVEALED`, `${state.pendingSpins} SPINS`);
-                setTimeout(() => {
-                    closeWin();
-                    state.purchasingBonus = false;
-                    state.bonusMode = true;
-                    state.bonusSpins = state.pendingSpins;
-                    state.totalWin = 0;
-                    state.spinning = false;
+                // Resolution
+                if(state.purchasingBonus) {
+                    triggerBlood();
+                    showWin(0, "FATE REVEALED");
+                    setTimeout(() => {
+                        closeWin();
+                        state.purchasingBonus = false; state.bonusMode = true; state.bonusSpins = state.pendingSpins; state.totalWin = 0;
+                        state.spinning = false; updateUI();
+                        setTimeout(spin, 1000);
+                    }, 2000);
+                } else {
+                    checkWin(outcome);
+                    state.spinning = false; 
                     updateUI();
-                    setTimeout(spin, 1000);
-                }, 3000);
-            } else {
-                checkWin(outcome);
+                    if(state.bonusMode) {
+                        state.bonusSpins--;
+                        if(state.bonusSpins>0) setTimeout(spin, 800); else endBonus();
+                    }
+                }
+
+            } catch(e) {
+                console.error(e);
                 state.spinning = false;
                 updateUI();
-                if(state.bonusMode) {
-                    state.bonusSpins--;
-                    if(state.bonusSpins > 0) setTimeout(spin, 800); else endBonus();
-                }
             }
         }
 
         function checkWin(line) {
             const s1=line[0], s2=line[1], s3=line[2];
-            
+            // Trigger
             if(s1.id===8 && s2.id===8 && s3.id===8) {
-                state.purchasingBonus = true; 
-                state.pendingSpins = 10; 
-                triggerBlood();
-                audio.sfx('win_big');
-                showWin(0, "FATE REVEALED", "10 SPINS");
-                setTimeout(() => {
-                    closeWin();
-                    state.purchasingBonus = false;
-                    state.bonusMode = true;
-                    state.bonusSpins = 10;
-                    state.totalWin = 0;
-                    state.spinning = false;
-                    updateUI();
-                    setTimeout(spin, 800);
-                }, 3000);
-                return;
+                state.pendingSpins = 10; state.purchasingBonus = true; 
+                return; 
             }
 
             let win = 0;
             if(s1.id===s2.id && s2.id===s3.id) win = state.bet * s1.val;
 
             if(win > 0) {
-                document.querySelector('.payline').style.opacity = '1';
+                document.querySelector('.payline').style.opacity = '1'; setTimeout(()=>document.querySelector('.payline').style.opacity='0', 500);
                 state.balance += win;
                 audio.sfx('win');
                 if(state.bonusMode) {
-                    state.totalWin += win;
-                    triggerBlood();
+                    state.totalWin += win; triggerBlood();
                 } else {
-                    triggerBlood();
-                    showWin(win, "STARS HARVESTED");
+                    triggerBlood(); showWin(win, "STARS HARVESTED");
                 }
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
         }
 
         function endBonus() {
             state.bonusMode = false;
-            audio.sfx('win_big');
-            showWin(state.totalWin, "RITUAL COMPLETE", "TOTAL HARVEST");
+            showWin(state.totalWin, "RITUAL COMPLETE");
+            updateUI(); // Important: Hides the sticky bar
         }
 
-        function showWin(amt, title1, title2) {
+        function showWin(amt, title) {
             const el = document.getElementById('win-overlay');
             el.classList.add('active');
-            document.getElementById('win-title').innerText = title1;
-            document.getElementById('win-amount').innerText = amt > 0 ? amt : (title2 || "");
-            const sub = document.getElementById('win-sub');
-            if(amt===0) { document.querySelector('.win-star').style.display='none'; sub.style.display='none'; } 
-            else { document.querySelector('.win-star').style.display='block'; sub.style.display='block'; }
+            document.getElementById('win-title').innerText = title;
+            document.getElementById('win-amount').innerText = amt > 0 ? amt : "";
+            const star = document.querySelector('.harvest-star');
+            if(amt===0) star.style.display='none'; else star.style.display='block';
         }
         function closeWin() { document.getElementById('win-overlay').classList.remove('active'); }
 
@@ -662,5 +742,3 @@
     </script>
 </body>
 </html>
-
-
