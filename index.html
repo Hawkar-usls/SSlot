@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CULT OF PAIN: DYNAMIC GORE</title>
+    <title>CULT OF PAIN: PAYLINE SPLASH</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Nosifer&family=Cinzel:wght@400;700;900&family=Courier+Prime&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -275,7 +275,7 @@
         <!-- TICKER -->
         <div class="bg-[#050000] border-b border-[#221111] h-6 overflow-hidden flex items-center shrink-0">
             <div class="whitespace-nowrap animate-[ticker_30s_linear_infinite] text-[10px] text-[#553333] font-mono pl-full">
-                BUILD 4.7 FINAL /// DYNAMIC GORE INTENSITY ///
+                BUILD 4.8 FINAL /// SPLASH FROM PAYLINE /// PHYSICS & GORE ///
             </div>
         </div>
 
@@ -377,8 +377,8 @@
         <div class="confirm-box">
             <div class="text-[#b8860b] text-xl mb-4 font-bold">ADD STARS</div>
             <div class="grid gap-2 mb-4">
-                <button onclick="addStars(69)" class="bg-[#222] border border-[#444] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 69 <span class="text-xs text-gray-500">($1)</span></button>
-                <button onclick="addStars(500)" class="bg-[#222] border border-[#444] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 500 <span class="text-xs text-gray-500">($7.5)</span></button>
+                <button onclick="addStars(69)" class="bg-[#222] border border-[#444] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 69 <span class="text-xs text-gray-600">($1)</span></button>
+                <button onclick="addStars(500)" class="bg-[#222] border border-[#444] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 500 <span class="text-xs text-gray-600">($7.5)</span></button>
             </div>
             <button onclick="closeDeposit()" class="text-gray-500 text-xs uppercase p-2">Cancel</button>
         </div>
@@ -484,7 +484,7 @@
         let currentReelState = [[SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]], [SYMBOLS[3], SYMBOLS[4], SYMBOLS[5]], [SYMBOLS[6], SYMBOLS[7], SYMBOLS[8]]];
         const strips = [0,1,2].map(i => document.getElementById(`strip-${i}`));
 
-        // Blood FX (Dynamic Density & Sticky Trails)
+        // Blood FX (PAYLINE SPLASH)
         const cvs = document.getElementById('blood-canvas'); const ctx = cvs.getContext('2d');
         let particles = []; let animId;
         function resizeCvs() { cvs.width=window.innerWidth; cvs.height=window.innerHeight; }
@@ -492,27 +492,40 @@
         
         class Drop {
             constructor(scale = 1) {
-                this.x = Math.random()*cvs.width; 
-                this.y = -20 - (Math.random()*100);
-                this.vx = 0; 
-                this.vy = (Math.random()*8+4) * scale; // Faster with higher intensity
-                this.r = (Math.random()*5+2) * scale; 
-                this.c=`rgba(160,0,0,${Math.random()*0.5+0.5})`;
-                this.life=1; 
-                this.stuck = false; 
+                // Spawn primarily along the payline (center height)
+                this.x = Math.random() * cvs.width;
+                this.y = cvs.height / 2 + (Math.random() - 0.5) * 40; 
+                
+                // Explosive velocity
+                this.vx = (Math.random() - 0.5) * 15 * scale;
+                this.vy = (Math.random() - 1.5) * 12 * scale; // Burst UP
+
+                this.r = (Math.random() * 4 + 2) * scale;
+                this.c = `rgba(${160+Math.random()*40},0,0,${Math.random()*0.5+0.5})`;
+                
+                this.life = 1;
+                this.stuck = false;
                 this.trail = [];
                 this.scale = scale;
+                this.gravity = 0.5;
             }
             u() {
                 if(!this.stuck) { 
-                    this.y+=this.vy; 
-                    if(this.y > cvs.height*0.2 && Math.random()<0.03) this.stuck=true; 
+                    this.vy += this.gravity;
+                    this.x += this.vx; 
+                    this.y += this.vy;
+                    
+                    this.vx *= 0.95;
+                    this.vy *= 0.95;
+
+                    // Hit screen
+                    if (this.life > 0.8 && Math.random() < 0.05) this.stuck = true; 
                 } else { 
-                    this.y+= (Math.random() * 0.8 * this.scale); 
-                    this.life-=0.003; 
-                    if(Math.random()<0.3) this.trail.push({x:this.x, y:this.y, r:this.r*0.7, l:this.life});
+                    this.y += (Math.random() * 1.5 * this.scale); 
+                    this.life -= 0.005;
+                    if(Math.random() < 0.3) this.trail.push({x:this.x, y:this.y, r:this.r*0.7, l:this.life});
                 }
-                if(this.y > cvs.height) this.life = 0;
+                if (this.y > cvs.height) this.life = 0;
             }
             d() {
                 ctx.fillStyle=this.c; 
@@ -521,7 +534,7 @@
                 else { ctx.arc(this.x, this.y, this.r, 0, 6.28); }
                 ctx.fill();
                 this.trail.forEach(t => {
-                    ctx.fillStyle = `rgba(160,0,0,${t.l * 0.5})`;
+                    ctx.fillStyle = `rgba(160,0,0,${t.l * 0.4})`;
                     ctx.beginPath();
                     ctx.arc(t.x, t.y, t.r, 0, 6.28);
                     ctx.fill();
@@ -530,12 +543,8 @@
         }
 
         function triggerBlood(intensity = 1) {
-            // Intensity: 0.5 (Low) to 5.0 (Jackpot)
-            // Count scales from 20 to 200
-            const count = Math.min(300, Math.floor(40 * intensity));
-            // Size scale from 0.8 to 2.0
+            const count = Math.min(300, Math.floor(60 * intensity));
             const sizeScale = Math.min(2, 0.8 + (intensity * 0.2));
-            
             for(let i=0; i<count; i++) particles.push(new Drop(sizeScale));
             if(!animId) animate();
         }
@@ -583,7 +592,7 @@
                 st.innerText = `RITUAL (${state.bonusSpins})`; st.style.color='#f00';
             } else {
                 bc.classList.remove('active');
-                st.innerText = "BUILD 4.7"; st.style.color='#553333';
+                st.innerText = "BUILD 4.8"; st.style.color='#553333';
             }
         }
 
