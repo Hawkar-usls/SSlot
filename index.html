@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CULT OF PAIN: STABLE MATH</title>
+    <title>CULT OF PAIN: FINAL STABLE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Nosifer&family=Cinzel:wght@400;700;900&family=Courier+Prime&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -220,6 +220,18 @@
         
         /* Sticky Bonus */
         #bonus-stick { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* Sticky Bonus Counter CSS Fix */
+        #bonus-counter {
+            transition: all 0.3s ease-out;
+            transform: translateY(20px);
+            opacity: 0;
+            visibility: hidden; /* Ensure it's hidden */
+        }
+        #bonus-counter.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
 
         /* Deposit Modal */
         .modal-center { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 210; display: none; align-items: center; justify-content: center; }
@@ -263,7 +275,7 @@
         <!-- TICKER -->
         <div class="bg-[#050000] border-b border-[#221111] h-6 overflow-hidden flex items-center shrink-0">
             <div class="whitespace-nowrap animate-[ticker_30s_linear_infinite] text-[10px] text-[#553333] font-mono pl-full">
-                BUILD 4.3 STABLE /// MATH FIXED (RTP ~95%) /// BUG FIXED ///
+                BUILD 4.4 FINAL /// WAGER SYSTEM 69* /// BLOOD DRIPS RESTORED ///
             </div>
         </div>
 
@@ -285,7 +297,7 @@
         <!-- CONTROLS -->
         <div class="controls-dock relative">
             <!-- Sticky Bonus Counter -->
-            <div id="bonus-counter" class="absolute bottom-full left-0 right-0 bg-black/95 border-t border-[#b8860b] p-3 text-center transform translate-y-full opacity-0 transition-all pointer-events-none z-10">
+            <div id="bonus-counter" class="absolute bottom-full left-0 right-0 bg-black/95 border-t border-[#b8860b] p-3 text-center transform translate-y-full opacity-0 z-10">
                 <div class="text-[9px] text-[#b8860b] tracking-widest uppercase">Total Harvest</div>
                 <div class="text-2xl text-[#FFD700] font-bold font-[Nosifer] drop-shadow-[0_0_10px_#f00]">★ <span id="bonus-total-display">0</span></div>
             </div>
@@ -472,7 +484,7 @@
         let currentReelState = [[SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]], [SYMBOLS[3], SYMBOLS[4], SYMBOLS[5]], [SYMBOLS[6], SYMBOLS[7], SYMBOLS[8]]];
         const strips = [0,1,2].map(i => document.getElementById(`strip-${i}`));
 
-        // Blood FX (Restored Drips)
+        // Blood FX (Restored & Tuned Sticky Drips)
         const cvs = document.getElementById('blood-canvas'); const ctx = cvs.getContext('2d');
         let particles = []; let animId;
         function resizeCvs() { cvs.width=window.innerWidth; cvs.height=window.innerHeight; }
@@ -480,27 +492,54 @@
         
         class Drop {
             constructor() {
-                this.x = Math.random()*cvs.width; this.y = -20;
-                this.vx = 0; this.vy = Math.random()*5+2;
-                this.r = Math.random()*4+2; this.c=`rgba(160,0,0,${Math.random()*0.5+0.5})`;
-                this.life=1; this.stuck = false;
+                // Randomize start pos
+                this.x = Math.random()*cvs.width; 
+                this.y = -20 - (Math.random()*100); // Stagger start
+                this.vx = 0; 
+                this.vy = Math.random()*8+4; // Fast fall
+                this.r = Math.random()*5+3; 
+                this.c = `rgba(${130+Math.random()*60},0,0,${Math.random()*0.4+0.6})`;
+                this.life = 1; 
+                this.stuck = false;
+                this.trail = [];
             }
             u() {
-                if(!this.stuck) { this.y+=this.vy; if(Math.random()<0.02) this.stuck=true; }
-                else { this.y+=0.5; this.life-=0.005; }
+                if(!this.stuck) { 
+                    this.y+=this.vy; 
+                    // High chance to stick if below middle
+                    if(this.y > cvs.height*0.2 && Math.random()<0.03) this.stuck=true; 
+                } else { 
+                    // Slow drip
+                    this.y+= (Math.random() * 0.8); 
+                    this.life-=0.003; 
+                    // Leave trail
+                    if(Math.random()<0.3) this.trail.push({x:this.x, y:this.y, r:this.r*0.8, l:this.life});
+                }
+                if(this.y > cvs.height) this.life = 0;
             }
             d() {
-                ctx.fillStyle=this.c; ctx.beginPath();
-                if(this.stuck) { ctx.ellipse(this.x, this.y, this.r, this.r*2, 0, 0, 6.28); }
+                ctx.fillStyle=this.c; 
+                
+                // Draw drop
+                ctx.beginPath();
+                if(this.stuck) { ctx.ellipse(this.x, this.y, this.r, this.r*1.8, 0, 0, 6.28); }
                 else { ctx.arc(this.x, this.y, this.r, 0, 6.28); }
                 ctx.fill();
+
+                // Draw trail
+                this.trail.forEach(t => {
+                    ctx.fillStyle = `rgba(140,0,0,${t.l * 0.5})`;
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, t.r, 0, 6.28);
+                    ctx.fill();
+                });
             }
         }
 
         function triggerBlood() { for(let i=0;i<60;i++) particles.push(new Drop()); if(!animId) animate(); }
         function animate() { 
             ctx.clearRect(0,0,cvs.width,cvs.height); 
-            particles=particles.filter(p=>{p.u();p.d();return p.life>0 && p.y<cvs.height}); 
+            particles=particles.filter(p=>{p.u();p.d();return p.life>0}); 
             if(particles.length) animId=requestAnimationFrame(animate); else animId=null; 
         }
 
@@ -535,15 +574,12 @@
             const st = document.getElementById('status-text');
             if(state.bonusMode) {
                 bc.classList.add('active');
-                if(state.bonusMode) bc.style.transform = 'translateY(0)';
-                if(state.bonusMode) bc.style.opacity = '1';
-                
                 document.getElementById('bonus-total-display').innerText = state.totalWin;
                 st.innerText = `RITUAL (${state.bonusSpins})`; st.style.color='#f00';
             } else {
+                // FIXED: Explicitly remove active class to hide sticky bar
                 bc.classList.remove('active');
-                bc.style.transform = 'translateY(100%)';
-                st.innerText = "BUILD 4.3"; st.style.color='#553333';
+                st.innerText = "BUILD 4.4"; st.style.color='#553333';
             }
         }
 
@@ -597,13 +633,7 @@
             
             try {
                 // FIXED MATH:
-                // 80% Loss
-                // 12% Small Win
-                // 5% Mid Win
-                // 2% High Win
-                // 0.5% Jackpot
-                // 0.5% Scatter
-                
+                // 80% Loss, 20% Win hit rate
                 let outcome = [];
                 const r = Math.random();
                 
@@ -616,7 +646,7 @@
                      else outcome = [getRandomSym(),getRandomSym(),getRandomSym()];
                 } 
                 else {
-                    // Base Game (Weighted)
+                    // Base Game
                     if (r < 0.80) { // Loss
                          const s1 = (Math.random()<0.1) ? SYMBOLS[8] : getRandomSym();
                          const s2 = (Math.random()<0.1) ? SYMBOLS[8] : getRandomSym();
