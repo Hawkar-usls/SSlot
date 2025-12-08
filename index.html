@@ -3,215 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CULT OF PAIN: PERFECT BUILD</title>
+    <title>CULT OF PAIN: DYNAMIC IMPACT</title>
     <!-- Telegram Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Nosifer&family=Cinzel:wght@400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Nosifer&family=Cinzel:wght@400;700;900&family=Courier+Prime&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Palette: Grim & Rust */
+            /* Palette */
             --c-bg: #050000;
             --c-blood: #8a0303;
-            --c-blood-dry: #420000;
-            --c-bone: #cbbba0;
-            --c-rust: #8b4513;
-            --c-gold-dark: #b8860b;
-            --c-star: #FFD700;
+            --c-gold: #FFD700;
             
-            /* Physics: Elastic Stop for heavy feel */
-            --ease-bounce: cubic-bezier(0.25, 1, 0.5, 1); 
-            /* Start slow, fast spin, heavy brake with overshoot: */
-            --ease-mechanical: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            /* PHYSICS: Aggressive Slam (High overshoot to 1.15) */
+            --ease-slam: cubic-bezier(0.25, 1, 0.25, 1.15); 
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html {
             height: 100%; margin: 0; padding: 0; overflow: hidden;
-            background-color: var(--c-bg);
-            color: var(--c-bone);
-            font-family: 'Cinzel', serif;
-            user-select: none;
-            -webkit-user-select: none;
+            background-color: var(--c-bg); color: #cbbba0;
+            font-family: 'Cinzel', serif; user-select: none;
         }
 
-        /* --- LAYOUT STRUCTURE (AURA ECOSYSTEM) --- */
-        .app-layout {
-            display: flex; flex-direction: column; height: 100%; width: 100%;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        .header-area { flex-shrink: 0; z-index: 20; }
-        
-        .game-viewport {
-            flex: 1; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
-            position: relative; overflow: hidden; min-height: 0;
-            padding: 10px;
-        }
-
-        .controls-dock {
-            flex-shrink: 0; z-index: 30;
-            background: linear-gradient(to top, #0a0505 90%, rgba(10,5,5,0));
-            padding: 10px 15px 15px 15px;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-
-        /* --- BACKGROUND ATMOSPHERE --- */
+        /* --- VISUALS --- */
         .flesh-wall {
             position: fixed; inset: -10%; width: 120%; height: 120%;
-            background: 
-                radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 80%),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-            z-index: 0;
-            animation: breathe 8s ease-in-out infinite alternate;
-            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 90%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+            z-index: 0; animation: breathe 8s ease-in-out infinite alternate;
         }
-        @keyframes breathe { 0% { transform: scale(1); filter: brightness(0.8); } 100% { transform: scale(1.05); filter: brightness(1.2); } }
+        @keyframes breathe { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
 
         .vignette {
-            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+            position: fixed; inset: 0; z-index: 2; pointer-events: none;
             background: radial-gradient(circle, transparent 40%, #000 120%);
-            transition: box-shadow 0.3s ease;
+            box-shadow: inset 0 0 50px #000; transition: box-shadow 0.2s;
         }
-        .vignette.tease-active { animation: pulse-danger 0.8s infinite; }
-        @keyframes pulse-danger { 0% { box-shadow: inset 0 0 50px #300000; } 50% { box-shadow: inset 0 0 150px var(--c-blood); } 100% { box-shadow: inset 0 0 50px #300000; } }
+        .vignette.active { animation: pulse-red 0.1s infinite; }
+        @keyframes pulse-red { 0%, 100% { box-shadow: inset 0 0 50px #300; background: rgba(255,0,0,0.1); } 50% { box-shadow: inset 0 0 150px #f00; background: rgba(255,0,0,0.2); } }
 
-        #blood-canvas { position: fixed; inset: 0; z-index: 99; pointer-events: none; width: 100%; height: 100%; }
+        #blood-canvas { position: fixed; inset: 0; z-index: 90; pointer-events: none; width: 100%; height: 100%; }
 
-        /* --- SLOT MACHINE (Responsive) --- */
+        /* --- LAYOUT --- */
+        .app-layout { display: flex; flex-direction: column; height: 100%; padding-bottom: env(safe-area-inset-bottom); }
+        .header-area { flex-shrink: 0; z-index: 20; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #311; }
+        .game-viewport { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; z-index: 10; }
+        .controls-dock { flex-shrink: 0; z-index: 30; background: linear-gradient(to top, #000 90%, transparent); padding: 15px; }
+
+        /* --- MACHINE --- */
         .machine-container {
-            position: relative; z-index: 10;
-            background: #110b0b;
-            border: 2px solid #2a1a1a;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            width: 100%; max-width: 380px;
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex; flex-direction: column;
+            width: 95%; max-width: 380px; position: relative;
+            background: #0a0505; border: 2px solid #331111;
+            box-shadow: 0 0 60px rgba(0,0,0,0.9); border-radius: 4px;
+            transform-origin: center bottom;
+        }
+        /* Aggressive Impact Shake */
+        .machine-container.shake { animation: impact-shake 0.15s ease-out; }
+        @keyframes impact-shake { 
+            0% { transform: translateY(0); } 
+            20% { transform: translateY(6px); } /* Deep impact */
+            50% { transform: translateY(-2px); } /* Recoil */
+            80% { transform: translateY(1px); } 
+            100% { transform: translateY(0); } 
         }
 
         .reels-window {
-            height: 35vh;
-            min-height: 220px; max-height: 360px;
-            background: #080202; overflow: hidden; position: relative;
+            height: 35vh; min-height: 220px; max-height: 360px;
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
-            border-bottom: 2px solid var(--c-rust);
+            background: #050000; border-bottom: 2px solid #522;
+            overflow: hidden; position: relative;
         }
-
         .payline {
-            position: absolute; top: 50%; left: 0; right: 0; height: 1px;
-            background: var(--c-blood); z-index: 20; opacity: 0; pointer-events: none;
-            box-shadow: 0 0 15px var(--c-blood); transition: opacity 0.2s;
+            position: absolute; top: 50%; left: 0; right: 0; height: 2px;
+            background: #f00; z-index: 20; opacity: 0; box-shadow: 0 0 20px #f00; transition: opacity 0.05s;
         }
+        .reel-col { position: relative; height: 100%; border-right: 1px solid #221; background: rgba(20,0,0,0.2); }
+        .reel-strip { width: 100%; will-change: transform; transform: translateZ(0); }
 
-        .reel-col { position: relative; height: 100%; border-right: 1px solid #221111; background: rgba(0,0,0,0.3); }
-        .reel-col:last-child { border-right: none; }
-        
-        .reel-strip { 
-            width: 100%; 
-            /* No transition by default to allow JS to snap */
-            will-change: transform; 
-        }
-
-        /* Symbols fill 1/3 of the reel window height exactly */
-        .symbol-box { 
-            height: calc(35vh / 3); /* Fallback */
-            height: calc(100% / 3); /* If parent is reel window height? No, strip is taller. */
-            /* We handle height via JS or percentages relative to viewport in CSS? 
-               Easier: Let's make the strip container simply flow, and each item is 33.33% of the reel-window height.
-               Since the strip is inside reel-col (height 100% of window), 
-               we can't use % height for items easily if strip is very tall.
-               
-               We will use Flexbox and force items to be exactly 1/3 of reel-col height.
-            */
-            display: flex; align-items: center; justify-content: center; padding: 4px;
-            box-sizing: border-box;
-        }
-
+        .symbol-box { display: flex; align-items: center; justify-content: center; padding: 4px; }
         .symbol-card {
-            width: 100%; height: 100%;
-            background: linear-gradient(135deg, #1c1414 0%, #0f0808 100%);
-            border: 1px solid #3d2a2a; display: flex; align-items: center; justify-content: center;
-            font-size: 3rem; position: relative; border-radius: 6px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; background: linear-gradient(135deg, #181010, #080000);
+            border: 1px solid #331; border-radius: 4px; box-shadow: inset 0 0 10px #000;
+            text-shadow: 0 2px 5px #000;
         }
+        
+        .tier-high .symbol-card { color: #b8860b; border-color: #b8860b; box-shadow: inset 0 0 15px rgba(184,134,11,0.2); }
+        .scatter-tier .symbol-card { background: #000; border: 1px double #fff; animation: glitch 0.2s infinite; }
+        @keyframes glitch { 0%,100%{transform:translate(0)} 20%{transform:translate(-2px,2px)} 80%{transform:translate(2px,-2px)} }
 
         /* --- CONTROLS --- */
-        .control-grid {
-            display: grid; 
-            grid-template-columns: 60px 1fr 60px; 
-            gap: 15px; align-items: center;
-            width: 100%; max-width: 400px; margin: 0 auto;
-        }
-
+        .control-grid { display: grid; grid-template-columns: 60px 1fr 60px; gap: 10px; align-items: center; }
         .btn-bet {
-            width: 50px; height: 50px;
-            background: #1a0505; border: 1px solid #3a1a1a;
-            color: var(--c-bone); border-radius: 12px;
-            font-size: 1.5rem; font-weight: bold;
-            display: flex; align-items: center; justify-content: center;
-            transition: 0.1s;
+            height: 50px; background: #150505; border: 1px solid #331; color: #888;
+            font-size: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 8px;
         }
-        .btn-bet:active { background: #300; transform: scale(0.95); }
+        .btn-bet:active { background: #300; color: #fff; transform: scale(0.95); }
 
         .btn-spin-main {
-            width: 80px; height: 80px; margin: 0 auto;
-            background: radial-gradient(circle, #3a0000 0%, #1a0000 100%);
-            border: 3px solid #500; border-radius: 50%;
+            height: 80px; width: 80px; margin: 0 auto;
+            background: radial-gradient(circle, #400, #100);
+            border: 2px solid #600; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-            position: relative; transition: transform 0.1s;
+            box-shadow: 0 0 30px rgba(255,0,0,0.4); transition: transform 0.05s;
         }
-        .btn-spin-main:active { transform: scale(0.95); background: #500; }
-        .btn-spin-main.disabled { filter: grayscale(1); opacity: 0.5; }
-        
+        .btn-spin-main:active { transform: scale(0.9); background: #800; border-color: #f00; }
+        .btn-spin-main.disabled { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
         .spin-icon { width: 40px; height: 40px; fill: #cbbba0; }
 
-        /* Buy Feature Button */
-        .btn-buy-compact {
-            width: 100%; max-width: 380px; margin: 0 auto;
-            background: linear-gradient(90deg, #1a0000, #2a0000, #1a0000);
-            border: 1px solid #8a0303; border-radius: 8px;
-            padding: 8px; display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; position: relative; overflow: hidden;
+        .btn-buy {
+            background: linear-gradient(90deg, #100, #300, #100);
+            border: 1px solid #600; padding: 10px; border-radius: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; position: relative; overflow: hidden;
+            box-shadow: 0 0 10px #300;
         }
-        .btn-buy-compact:active { opacity: 0.8; }
-        .buy-shine {
-            position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,0,0,0.2), transparent);
-            animation: shine 3s infinite;
-        }
-        @keyframes shine { 100% { left: 100%; } }
+        .btn-buy:active { opacity: 0.8; transform: scale(0.98); }
+        .buy-shine { position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(255,0,0,0.4),transparent); transform:skewX(-20deg) translateX(-150%); animation: shine 2s infinite; }
+        @keyframes shine { 100% { transform:skewX(-20deg) translateX(150%); } }
 
-        /* Sticky Bonus Counter */
-        .bonus-counter {
-            position: absolute; bottom: 100%; left: 0; right: 0;
-            background: rgba(0,0,0,0.9); border-top: 1px solid #b8860b;
-            padding: 8px; text-align: center;
-            transform: translateY(20px); opacity: 0; pointer-events: none;
-            transition: all 0.3s ease;
-        }
-        .bonus-counter.active { transform: translateY(0); opacity: 1; }
-
-        /* Modals */
-        .modal-base {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200;
+        /* --- WIN OVERLAY --- */
+        .win-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
         }
-        .modal-base.active { display: flex; animation: fadeIn 0.2s; }
+        .win-overlay.active { display: flex; animation: slam-in 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes slam-in { 0%{transform:scale(1.5);opacity:0} 100%{transform:scale(1);opacity:1} }
+        
+        .win-title { color: #b8860b; font-family: 'Cinzel', serif; font-weight: 900; font-size: 16px; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 20px; text-shadow: 0 0 20px #f00; }
+        .win-value-container { position: relative; display: flex; align-items: center; gap: 15px; }
+        .win-star { font-size: 5rem; color: #FFD700; text-shadow: 0 0 30px #FFD700; animation: pulse-star 0.5s infinite; }
+        .win-amount { font-family: 'Nosifer', cursive; font-size: 6rem; color: #ff0000; text-shadow: 0 0 40px #f00, 4px 4px 0 #500; line-height: 1; }
+        .win-footer { margin-top: 40px; color: #666; font-size: 10px; letter-spacing: 3px; animation: pulse-text 1s infinite; font-family: 'Courier Prime', monospace; }
+        @keyframes pulse-star { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+        @keyframes pulse-text { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
+
+        /* --- MODALS --- */
+        .modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; }
+        .modal-wrap.active { display: flex; animation: fadeIn 0.1s; }
+        .confirm-box { background: #080000; border: 2px solid #500; padding: 25px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 0 80px rgba(255,0,0,0.2); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .confirm-box {
-            background: #0d0505; border: 1px solid #8a0303; border-radius: 16px;
-            padding: 24px; text-align: center; max-width: 300px; width: 90%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-        }
+        /* Sound Toggle */
+        .sound-btn { position: fixed; top: 10px; right: 10px; z-index: 50; opacity: 0.5; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 1px solid #333; background: #000; color: #666; font-size: 12px; transition: 0.2s; cursor: pointer; }
+        .sound-btn.on { color: #0f0; border-color: #0f0; opacity: 1; box-shadow: 0 0 15px #0f0; text-shadow: 0 0 5px #0f0; }
+
+        /* Sticky Bonus */
+        #bonus-stick { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
     </style>
 </head>
@@ -221,115 +165,104 @@
     <div class="vignette" id="vignette"></div>
     <canvas id="blood-canvas"></canvas>
 
+    <div id="sound-toggle" class="sound-btn" onclick="toggleAudio()">♪</div>
+
     <div class="app-layout">
         
-        <!-- HEADER -->
-        <div class="header-area bg-black/60 backdrop-blur-md border-b border-[#331111] p-3 flex justify-between items-center">
+        <div class="header-area p-3 flex justify-between items-center">
             <div>
-                <div class="text-[10px] text-[#b8860b] uppercase tracking-widest font-bold opacity-70">Balance</div>
+                <div class="text-[9px] text-[#b8860b] uppercase tracking-widest font-bold mb-1 opacity-70">Balance</div>
                 <div class="flex items-center gap-2" onclick="openDeposit()">
-                    <span class="text-xl text-[#FFD700] font-bold">★ <span id="balance">0</span></span>
-                    <div class="bg-[#222] w-5 h-5 rounded-full flex items-center justify-center border border-[#444] text-[#b8860b] text-xs">+</div>
+                    <span class="text-xl text-[#FFD700] font-bold drop-shadow-md">★ <span id="balance">0</span></span>
+                    <div class="bg-[#211] w-5 h-5 rounded flex items-center justify-center border border-[#422] text-[#f55] text-xs font-bold interactive">+</div>
                 </div>
             </div>
             <div class="text-right">
-                <div class="text-[10px] text-[#555] uppercase tracking-widest font-bold">Bet</div>
-                <span class="text-xl text-[#cbbba0]" id="bet">1</span>
+                <div class="text-[9px] text-[#555] uppercase tracking-widest font-bold mb-1 opacity-70">Bet</div>
+                <span class="text-xl text-[#cbbba0] font-bold" id="bet">1</span>
             </div>
         </div>
 
-        <!-- TICKER -->
-        <div class="bg-black/80 border-b border-[#220000] h-6 overflow-hidden flex items-center shrink-0">
-            <div class="whitespace-nowrap animate-[ticker_40s_linear_infinite] text-[10px] text-[#666] font-mono pl-full" id="ticker">
-                SACRIFICE YOUR STARS /// BUILD 1.0 /// THE VOID IS HUNGRY
+        <div class="bg-[#050000] border-b border-[#221] h-6 overflow-hidden flex items-center shrink-0">
+            <div class="whitespace-nowrap animate-[ticker_20s_linear_infinite] text-[10px] text-[#666] font-mono pl-full" id="ticker">
+                DYNAMIC IMPACT /// HAPTIC FEEDBACK /// BUILD 2.7 ///
             </div>
         </div>
 
-        <!-- GAME VIEWPORT -->
         <div class="game-viewport">
-            
-            <div id="game-status" class="absolute top-4 text-[10px] font-bold tracking-[0.3em] text-[#553333] transition-colors duration-300">
-                MORTAL REALM
+            <div id="status-text" class="absolute top-2 text-[10px] font-bold tracking-[0.3em] text-[#422] uppercase transition-all duration-300">
+                Awaiting Input
             </div>
-
-            <div class="machine-container" id="machine-container">
+            <div class="machine-container" id="machine-box">
                 <div class="reels-window">
                     <div class="payline"></div>
                     <div class="reel-col"><div class="reel-strip" id="strip-0"></div></div>
                     <div class="reel-col"><div class="reel-strip" id="strip-1"></div></div>
                     <div class="reel-col"><div class="reel-strip" id="strip-2"></div></div>
                 </div>
+                <div class="bg-[#080000] border-t border-[#331] p-1 px-2 flex justify-between">
+                    <span class="text-[9px] text-[#444] font-bold">BUILD 2.7</span>
+                    <span class="text-[9px] text-[#800] font-bold animate-pulse">HAPTIC_READY</span>
+                </div>
             </div>
-
         </div>
 
-        <!-- CONTROLS DOCK -->
         <div class="controls-dock relative">
-            
-            <div id="bonus-counter" class="absolute bottom-full left-0 right-0 bg-black/90 border-t border-[#b8860b] p-2 text-center transform translate-y-4 opacity-0 transition-all pointer-events-none">
-                <div class="text-[9px] text-[#b8860b] tracking-widest uppercase">Total Harvest</div>
-                <div class="text-xl text-[#FFD700] font-bold">★ <span id="bonus-total-display">0</span></div>
+            <div id="bonus-stick" class="absolute bottom-full left-0 right-0 bg-[#000] border-t border-[#b8860b] p-3 text-center transform translate-y-full opacity-0 pointer-events-none z-0">
+                <div class="text-[9px] text-[#b8860b] tracking-widest uppercase mb-1">Total Harvest</div>
+                <div class="text-3xl text-[#FFD700] font-bold font-[Nosifer] drop-shadow-[0_0_10px_#f00]">★ <span id="bonus-display">0</span></div>
             </div>
 
-            <!-- Buy Button -->
-            <div onclick="initBuyBonus()" class="btn-buy-compact">
+            <div onclick="initBuyBonus()" class="btn-buy">
                 <div class="buy-shine"></div>
-                <div class="flex items-center gap-3">
-                    <div class="text-2xl">💀</div>
+                <div class="flex items-center gap-3 relative z-10">
+                    <div class="text-2xl text-[#800] animate-bounce">💀</div>
                     <div class="flex flex-col text-left">
-                        <span class="text-[#8a0303] font-bold text-sm tracking-wide">BUY BONUS</span>
-                        <span class="text-[9px] text-[#666]">COST: 69 STARS</span>
+                        <span class="text-[#a00] font-bold text-xs tracking-widest">BUY SCATTERS</span>
+                        <span class="text-[9px] text-[#666] font-mono">COST: 69 STARS</span>
                     </div>
                 </div>
-                <div class="text-[#8a0303] font-bold text-lg">?</div>
+                <div class="text-[#a00] font-bold text-lg relative z-10">?</div>
             </div>
 
-            <!-- Main Controls -->
             <div class="control-grid">
                 <div onclick="changeBet(-1)" class="btn-bet">-</div>
-                
                 <div id="spin-btn" onclick="spin()" class="btn-spin-main">
                     <svg class="spin-icon" viewBox="0 0 24 24"><path d="M12,2L15.09,8.26L22,9.27L17,14.14L18.18,21.02L12,17.77L5.82,21.02L7,14.14L2,9.27L8.91,8.26L12,2M12,15.4V6.08L10.2,9.75L6.16,10.33L9.09,13.19L8.39,17.2L12,15.4Z" /></svg>
                 </div>
-
                 <div onclick="changeBet(1)" class="btn-bet">+</div>
             </div>
         </div>
-
     </div>
 
-    <!-- WIN OVERLAY -->
-    <div id="win-overlay" class="fixed inset-0 bg-black/90 z-[100] hidden flex-col items-center justify-center backdrop-blur-md opacity-0 transition-opacity duration-500" onclick="closeWin()">
-        <div id="win-title" class="text-[#8b4513] font-[Cinzel] tracking-[0.5em] text-xs mb-4 uppercase">Stars Harvested</div>
-        <div class="flex items-center gap-2 scale-110">
-            <span class="text-[#FFD700] text-6xl">★</span>
-            <div id="win-amount" class="text-6xl font-[Nosifer] text-[#8a0303] drop-shadow-[0_0_15px_#8a0303]">50</div>
+    <div id="win-overlay" class="win-overlay" onclick="closeWin()">
+        <div id="win-title" class="win-title">Stars Harvested</div>
+        <div class="win-value-container">
+            <div class="win-star">★</div>
+            <div id="win-amount" class="win-amount">0</div>
         </div>
-        <div id="win-subtitle" class="text-[#555] text-[10px] mt-10 uppercase tracking-widest animate-pulse">Touch to Claim</div>
+        <div id="win-sub" class="win-footer">TOUCH TO CLAIM</div>
     </div>
 
-    <!-- MODALS -->
-    <div id="deposit-modal" class="modal-base">
+    <div id="deposit-modal" class="modal-wrap">
         <div class="confirm-box">
-            <div class="text-[#b8860b] text-xl mb-4 font-bold">GET STARS</div>
-            <div class="grid gap-2">
-                <button onclick="addStars(69)" class="bg-[#1a0f0f] border border-[#333] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 69 <span class="text-[10px] text-gray-500">($1.00)</span></button>
-                <button onclick="addStars(500)" class="bg-[#1a0f0f] border border-[#333] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 500 <span class="text-[10px] text-gray-500">($7.50)</span></button>
-                <button onclick="addStars(1000)" class="bg-[#1a0f0f] border border-[#333] p-3 rounded text-[#FFD700] hover:border-[#b8860b]">★ 1000 <span class="text-[10px] text-gray-500">($15.00)</span></button>
+            <div class="text-[#b8860b] text-xl mb-4 font-bold font-[Cinzel]">ACQUIRE STARS</div>
+            <div class="grid gap-2 mb-4">
+                <button onclick="addStars(69)" class="bg-[#150505] border border-[#331] p-3 text-[#FFD700] hover:border-[#b8860b]">★ 69 <span class="text-xs text-gray-600">($1.00)</span></button>
+                <button onclick="addStars(500)" class="bg-[#150505] border border-[#331] p-3 text-[#FFD700] hover:border-[#b8860b]">★ 500 <span class="text-xs text-gray-600">($7.50)</span></button>
+                <button onclick="addStars(1000)" class="bg-[#150505] border border-[#331] p-3 text-[#FFD700] hover:border-[#b8860b]">★ 1000 <span class="text-xs text-gray-600">($15.00)</span></button>
             </div>
-            <button onclick="closeDeposit()" class="mt-4 text-gray-500 text-xs uppercase p-2">Cancel</button>
+            <button onclick="closeDeposit()" class="text-gray-500 text-xs uppercase p-2">Cancel</button>
         </div>
     </div>
 
-    <div id="buy-confirm-modal" class="modal-base">
-        <div class="confirm-box">
-            <div class="text-5xl mb-4 text-[#8a0303] animate-pulse">?</div>
-            <div class="text-[#b8860b] text-lg mb-1 font-bold">MYSTERY RITUAL</div>
-            <div class="text-gray-400 text-xs font-mono mb-6 leading-relaxed">
-                SACRIFICE <span class="text-white">69 STARS</span><br>TO SUMMON RANDOM SPINS
-            </div>
-            <button onclick="confirmBuyBonus()" class="w-full bg-[#3a0000] border border-[#8a0303] text-white py-3 rounded-lg font-bold mb-2 shadow-[0_0_15px_#3a0000]">ACCEPT PACT</button>
-            <button onclick="closeBuyConfirm()" class="w-full py-2 text-gray-500 text-xs uppercase">Retreat</button>
+    <div id="buy-modal" class="modal-wrap">
+        <div class="confirm-box" style="border-color: #f00; box-shadow: 0 0 30px #500;">
+            <div class="text-5xl mb-4 text-[#a00] animate-pulse">💀</div>
+            <div class="text-[#b8860b] text-lg mb-2 font-bold">MYSTERY RITUAL</div>
+            <div class="text-gray-400 text-xs font-mono mb-6">SACRIFICE <span class="text-white font-bold">69 STARS</span><br>FOR RANDOM SPINS</div>
+            <button onclick="confirmBuyBonus()" class="w-full bg-[#500] border border-[#f55] text-white py-3 font-bold mb-3 shadow-[0_0_20px_#f00] hover:bg-[#700]">ACCEPT PACT</button>
+            <button onclick="closeBuyConfirm()" class="text-gray-500 text-xs uppercase">Retreat</button>
         </div>
     </div>
 
@@ -337,6 +270,67 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // --- CLEAN AUDIO ---
+        class CleanSynth {
+            constructor() {
+                this.ctx = null;
+                this.masterGain = null;
+                this.enabled = false;
+            }
+            init() {
+                if(!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    this.masterGain = this.ctx.createGain();
+                    this.masterGain.connect(this.ctx.destination);
+                    this.masterGain.gain.value = 0; 
+                }
+                if(this.ctx.state === 'suspended') this.ctx.resume();
+            }
+            toggle() {
+                this.enabled = !this.enabled;
+                const btn = document.getElementById('sound-toggle');
+                if (this.enabled) {
+                    this.init();
+                    this.masterGain.gain.setValueAtTime(1, this.ctx.currentTime);
+                    btn.classList.add('on');
+                } else {
+                    if(this.masterGain) this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
+                    btn.classList.remove('on');
+                }
+            }
+            playOsc(freq, type, dur, vol, delay=0) {
+                if(!this.enabled || !this.ctx) return;
+                const t = this.ctx.currentTime + delay;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type; osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+                osc.connect(gain); gain.connect(this.masterGain);
+                osc.start(t); osc.stop(t + dur + 0.1);
+            }
+            sfx(type) {
+                if(!this.enabled || !this.ctx) return;
+                switch(type) {
+                    case 'spin': 
+                        const o = this.ctx.createOscillator(); const g = this.ctx.createGain();
+                        o.frequency.setValueAtTime(200, this.ctx.currentTime); o.frequency.linearRampToValueAtTime(600, this.ctx.currentTime+0.2);
+                        g.gain.setValueAtTime(0.1, this.ctx.currentTime); g.gain.linearRampToValueAtTime(0, this.ctx.currentTime+0.2);
+                        o.connect(g); g.connect(this.masterGain); o.start(); o.stop(this.ctx.currentTime+0.2); break;
+                    case 'win': this.playOsc(1046.5, 'triangle', 0.1, 0.3, 0); this.playOsc(1318.5, 'triangle', 0.2, 0.3, 0.1); break;
+                    case 'win_big': this.playOsc(523.25, 'square', 0.1, 0.3, 0); this.playOsc(659.25, 'square', 0.1, 0.3, 0.1); this.playOsc(783.99, 'square', 0.1, 0.3, 0.2); this.playOsc(1046.50, 'square', 0.4, 0.3, 0.3); break;
+                    case 'stop': this.playOsc(100, 'sine', 0.1, 0.5); break;
+                    case 'click': this.playOsc(2000, 'triangle', 0.02, 0.1); break;
+                    case 'gore': this.playOsc(150, 'sawtooth', 0.3, 0.2); this.playOsc(200, 'sawtooth', 0.3, 0.2); break;
+                }
+            }
+        }
+
+        const audio = new CleanSynth();
+        function toggleAudio() { audio.toggle(); }
+
+        // --- GAME LOGIC ---
         const SYMBOLS = [
             { id: 0, char: '🕯️', tier: 'low-tier',  val: 2 },
             { id: 1, char: '🗡️', tier: 'low-tier',  val: 3 },
@@ -351,99 +345,84 @@
 
         let state = {
             balance: 0, bet: 1, spinning: false, bonusMode: false,
-            bonusSpins: 0, totalWin: 0, purchasingBonus: false, pendingBonusSpins: 0
+            bonusSpins: 0, totalWin: 0, purchasingBonus: false, pendingSpins: 0
         };
 
-        // We store current visible symbols for each reel to ensure continuity
-        // Initialize with randoms
+        // SEAMLESS REEL STATE
         let currentReelState = [
-            [SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]], // Reel 0
-            [SYMBOLS[3], SYMBOLS[4], SYMBOLS[5]], // Reel 1
-            [SYMBOLS[6], SYMBOLS[7], SYMBOLS[8]]  // Reel 2
+            [SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]], 
+            [SYMBOLS[3], SYMBOLS[4], SYMBOLS[5]], 
+            [SYMBOLS[6], SYMBOLS[7], SYMBOLS[8]]
         ];
 
         const strips = [0,1,2].map(i => document.getElementById(`strip-${i}`));
 
-        // --- BLOOD ENGINE ---
-        const canvas = document.getElementById('blood-canvas');
-        const ctx = canvas.getContext('2d');
+        // --- BLOOD FX ---
+        const cvs = document.getElementById('blood-canvas');
+        const ctx = cvs.getContext('2d');
         let particles = [];
         let animId;
 
-        function resizeCvs() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        function resizeCvs() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; }
         window.addEventListener('resize', resizeCvs);
         resizeCvs();
 
         class Drop {
             constructor() {
-                this.x = canvas.width/2 + (Math.random()-0.5)*50;
-                this.y = canvas.height/2;
-                let a = Math.random()*Math.PI*2, s = Math.random()*15+5;
+                this.x = cvs.width/2 + (Math.random()-0.5)*100;
+                this.y = cvs.height/2 + (Math.random()-0.5)*50;
+                let a = Math.random()*Math.PI*2, s = Math.random()*20+10;
                 this.vx = Math.cos(a)*s; this.vy = Math.sin(a)*s;
-                this.r = Math.random()*6+2;
-                this.c = `rgba(${130+Math.random()*50},0,0,${Math.random()*0.5+0.5})`;
+                this.r = Math.random()*15+5; 
+                this.c = `rgba(${160+Math.random()*50},0,0,${Math.random()*0.5+0.5})`;
                 this.life = 1; this.stuck = false;
             }
             u() {
                 if(!this.stuck) {
-                    this.vx*=0.98; this.vy*=0.98; this.vy+=0.5; this.x+=this.vx; this.y+=this.vy;
-                    if(Math.random()<0.05 && this.life>0.8) this.stuck=true;
-                } else { this.y+=Math.random()*0.5; this.life-=0.005; }
+                    this.vx*=0.9; this.vy*=0.9; this.vy+=1.5; 
+                    this.x+=this.vx; this.y+=this.vy;
+                    if(Math.random()<0.15 && this.life>0.7) this.stuck=true;
+                } else { this.y+=Math.random()*2; this.life-=0.01; }
             }
             d() {
                 ctx.fillStyle = this.c; ctx.beginPath();
-                if(this.stuck) ctx.ellipse(this.x, this.y, this.r, this.r*1.5, 0, 0, Math.PI*2);
-                else ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
                 ctx.fill();
             }
         }
 
         function triggerBlood() {
-            for(let i=0;i<40;i++) particles.push(new Drop());
+            document.getElementById('vignette').style.boxShadow = "inset 0 0 100px #f00";
+            setTimeout(() => document.getElementById('vignette').style.boxShadow = "inset 0 0 50px #000", 100);
+            for(let i=0;i<80;i++) particles.push(new Drop());
             if(!animId) animate();
         }
         function animate() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            particles = particles.filter(p => { p.u(); p.d(); return p.life>0 && p.y<canvas.height; });
+            ctx.clearRect(0,0,cvs.width,cvs.height);
+            particles = particles.filter(p=>{p.u();p.d();return p.life>0 && p.y<cvs.height+100});
             if(particles.length) animId = requestAnimationFrame(animate); else animId = null;
         }
 
         // --- CORE ---
         function init() {
-            strips.forEach((s, i) => {
-                // Initialize with specific height for symbol boxes
-                s.innerHTML = "";
-                // Fill with current state (3 symbols)
-                // Note: The strip will just be these 3 for now.
-                currentReelState[i].forEach(sym => {
-                    s.innerHTML += getSymHtml(sym);
-                });
+            strips.forEach((s,i) => {
+                s.innerHTML="";
+                currentReelState[i].forEach(sym => s.innerHTML+=getHtml(sym));
             });
-            
-            // Set explicit height on symbol-box to match 1/3 of container
-            // This is done via CSS (height: 33.33% of reel height? No, reel strip is variable).
-            // We use JS to force symbol height to be exactly 1/3 of the CONTAINER height.
-            adjustSymbolHeights();
-            window.addEventListener('resize', adjustSymbolHeights);
+            adjustHeight();
+            window.addEventListener('resize', adjustHeight);
             updateUI();
         }
 
-        function adjustSymbolHeights() {
-            const containerHeight = document.querySelector('.reels-window').clientHeight;
-            const itemHeight = containerHeight / 3;
-            // Set CSS var for use in spin logic if needed, or just rely on CSS
-            // Actually, best to set inline height on generated boxes to be sure.
-            document.querySelectorAll('.symbol-box').forEach(el => {
-                el.style.height = `${itemHeight}px`;
-            });
+        function adjustHeight() {
+            const h = document.querySelector('.reels-window').clientHeight / 3;
+            document.querySelectorAll('.symbol-box').forEach(e => e.style.height = `${h}px`);
         }
 
-        function getSymHtml(s, heightPx) {
-            // If we know height, set it. Otherwise rely on CSS (which we will update dynamically).
-            // We will update all .symbol-box heights after generation in spin().
+        function getHtml(s) {
             return `<div class="symbol-box"><div class="symbol-card ${s.tier}">${s.char}</div></div>`;
         }
-        function getRandomSym() { return SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)]; }
+        function getRand() { return SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)]; }
 
         function updateUI() {
             document.getElementById('balance').innerText = state.balance;
@@ -451,57 +430,48 @@
             const btn = document.getElementById('spin-btn');
             if(state.spinning) btn.classList.add('disabled'); else btn.classList.remove('disabled');
 
-            const bc = document.getElementById('bonus-counter');
-            const st = document.getElementById('game-status');
-            
+            const bs = document.getElementById('bonus-stick');
+            const st = document.getElementById('status-text');
             if(state.bonusMode) {
-                bc.classList.add('active');
-                document.getElementById('bonus-total-display').innerText = state.totalWin;
-                st.innerText = `RITUAL (${state.bonusSpins})`;
-                st.style.color = '#ff0000';
+                bs.style.opacity='1'; bs.style.transform='translateY(0)';
+                document.getElementById('bonus-display').innerText = state.totalWin;
+                st.innerText = `RITUAL [${state.bonusSpins}]`; st.style.color='#f00';
             } else {
-                bc.classList.remove('active');
-                st.innerText = "BUILD 1.0";
-                st.style.color = '#553333';
+                bs.style.opacity='0'; bs.style.transform='translateY(100%)';
+                st.innerText = "AWAITING INPUT"; st.style.color='#422';
             }
         }
 
         function changeBet(v) {
-            if(state.spinning || state.bonusMode) return;
-            if(state.bet+v >= 1) { state.bet += v; updateUI(); }
+            if(!state.spinning && !state.bonusMode && state.bet+v>=1) { state.bet+=v; updateUI(); audio.sfx('click'); }
         }
 
         // --- ACTIONS ---
-        function openDeposit() { document.getElementById('deposit-modal').classList.add('active'); }
+        function openDeposit() { document.getElementById('deposit-modal').classList.add('active'); audio.sfx('click'); }
         function closeDeposit() { document.getElementById('deposit-modal').classList.remove('active'); }
-        function addStars(v) { state.balance += v; updateUI(); closeDeposit(); triggerBlood(); }
+        function addStars(v) { state.balance+=v; updateUI(); closeDeposit(); audio.sfx('win_big'); triggerBlood(); }
 
-        function initBuyBonus() { document.getElementById('buy-confirm-modal').classList.add('active'); }
-        function closeBuyConfirm() { document.getElementById('buy-confirm-modal').classList.remove('active'); }
-        
+        function initBuyBonus() { document.getElementById('buy-modal').classList.add('active'); audio.sfx('click'); }
+        function closeBuyConfirm() { document.getElementById('buy-modal').classList.remove('active'); }
         function confirmBuyBonus() {
             closeBuyConfirm();
             if(state.balance < 69) { tg.showAlert("Need 69 Stars"); return; }
             state.balance -= 69;
             updateUI();
-
             const r = Math.random();
             let spins = 10;
-            if(r < 0.5) spins = Math.floor(Math.random()*4)+5;
-            else if(r < 0.85) spins = Math.floor(Math.random()*4)+9;
-            else if(r < 0.95) spins = Math.floor(Math.random()*3)+13;
-            else spins = 20;
-
+            if(r<0.5) spins=5+Math.floor(Math.random()*4);
+            else if(r<0.85) spins=9+Math.floor(Math.random()*4);
+            else spins=15;
             state.purchasingBonus = true;
-            state.pendingBonusSpins = spins;
+            state.pendingSpins = spins;
             spin();
         }
 
+        // --- SPIN ENGINE (PHYSICS & HAPTICS) ---
         async function spin() {
             if(state.spinning) return;
-            
-            const wo = document.getElementById('win-overlay');
-            wo.classList.remove('active'); setTimeout(()=>wo.style.display='none', 500);
+            document.getElementById('win-overlay').classList.remove('active');
 
             if(!state.purchasingBonus && !state.bonusMode) {
                 if(state.balance < state.bet) { openDeposit(); return; }
@@ -510,157 +480,118 @@
 
             state.spinning = true;
             updateUI();
+            audio.sfx('spin');
             document.querySelector('.payline').style.opacity = '0';
-            document.getElementById('vignette').classList.remove('tease-active');
+            document.getElementById('vignette').classList.remove('active');
 
-            // Outcome Logic
-            let outcome = []; // Array of Symbols (objects) for the middle row of the outcome
-            // Actually, since we need 3 symbols for the outcome view, let's generate full columns.
-            // But usually slot math decides the center line.
-            // Let's decide center line, then randomize top/bottom.
-            
+            // Outcome
+            let outcome = [];
             const r = Math.random();
-            let centerLine = [];
 
             if(state.purchasingBonus) {
-                centerLine = [SYMBOLS[8], SYMBOLS[8], SYMBOLS[8]];
+                outcome = [SYMBOLS[8], SYMBOLS[8], SYMBOLS[8]];
             } else if (state.bonusMode) {
-                if(r<0.4) centerLine = [SYMBOLS[6], SYMBOLS[6], SYMBOLS[6]];
-                else if(r<0.6) centerLine = [SYMBOLS[4], SYMBOLS[4], SYMBOLS[4]];
-                else centerLine = [getRandomSym(), getRandomSym(), getRandomSym()];
+                if(r<0.4) outcome = [SYMBOLS[6],SYMBOLS[6],SYMBOLS[6]]; 
+                else if(r<0.6) outcome = [SYMBOLS[4],SYMBOLS[4],SYMBOLS[4]];
+                else outcome = [getRand(), getRand(), getRand()];
             } else {
-                if(r<0.7) { // Loss
-                    const s1 = (Math.random()<0.1) ? SYMBOLS[8] : getRandomSym();
-                    const s2 = (Math.random()<0.1) ? SYMBOLS[8] : getRandomSym();
-                    const s3 = getRandomSym();
-                    centerLine = [s1, s2, s3];
-                    if(s1.id===s2.id && s2.id===s3.id) centerLine[2] = (s1.id===0) ? SYMBOLS[1] : SYMBOLS[0];
-                } else if(r<0.95) { // Low-Mid
+                if(r<0.7) { 
+                    const s1=(Math.random()<0.1)?SYMBOLS[8]:getRand();
+                    const s2=(Math.random()<0.1)?SYMBOLS[8]:getRand();
+                    const s3=getRand();
+                    outcome=[s1,s2,s3];
+                    if(s1.id===s2.id && s2.id===s3.id) outcome[2]=(s1.id===0)?SYMBOLS[1]:SYMBOLS[0];
+                } else if(r<0.95) { 
                     const s = SYMBOLS[Math.floor(Math.random()*6)];
-                    centerLine = [s, s, s];
-                } else if(r<0.995) { // Tease
-                    centerLine = [SYMBOLS[8], SYMBOLS[8], getRandomSym()];
-                } else { // Bonus
-                    centerLine = [SYMBOLS[8], SYMBOLS[8], SYMBOLS[8]];
+                    outcome=[s,s,s];
+                } else if(r<0.995) { 
+                    outcome=[SYMBOLS[8],SYMBOLS[8],getRand()];
+                } else { 
+                    outcome=[SYMBOLS[8],SYMBOLS[8],SYMBOLS[8]];
                 }
             }
 
-            // Prepare outcome state (full 3 rows)
             let nextReelState = [];
-            for(let i=0; i<3; i++) {
-                nextReelState.push([
-                    getRandomSym(), // Top
-                    centerLine[i],  // Center (Winner)
-                    getRandomSym()  // Bottom
-                ]);
-            }
+            for(let i=0; i<3; i++) nextReelState.push([getRand(), outcome[i], getRand()]);
 
-            // Animation
-            const containerHeight = document.querySelector('.reels-window').clientHeight;
-            const itemHeight = containerHeight / 3;
-            const SPIN_OVERSHOOT = 30; // Extra symbols to scroll past
+            const h = document.querySelector('.reels-window').clientHeight / 3;
+            // OVERSHOOT LENGTH
+            const OVERSHOOT = 30; 
 
             const promises = strips.map((strip, i) => {
                 return new Promise(resolve => {
-                    const delay = i * 200;
+                    // TIGHTER DELAY FOR DYNAMICS
+                    const delay = i * 150; 
                     
                     setTimeout(() => {
-                        // 1. Build the seamless strip
-                        // Start with current visible symbols (so it matches exactly what's on screen)
-                        // Note: currentReelState[i] has 3 symbols.
-                        let html = "";
-                        
-                        // Add current state (3 items)
-                        currentReelState[i].forEach(s => html += getSymHtml(s));
-                        
-                        // Add filler (Spinning blur)
-                        for(let k=0; k<SPIN_OVERSHOOT; k++) html += getSymHtml(getRandomSym());
-                        
-                        // Add Outcome (3 items)
-                        nextReelState[i].forEach(s => html += getSymHtml(s));
-                        
-                        strip.innerHTML = html;
-                        
-                        // Force height update on new items
-                        const allBoxes = strip.querySelectorAll('.symbol-box');
-                        allBoxes.forEach(b => b.style.height = `${itemHeight}px`);
-
-                        // Reset transform to 0 (shows top 3 items, which are the old state)
-                        strip.style.transition = 'none';
-                        strip.style.transform = 'translateY(0)';
-                        
-                        // Force Reflow
-                        void strip.offsetWidth;
-
-                        // Check for Tease (if first 2 reels are scatters)
-                        let duration = 2.0 + (i * 0.5); // Seconds
-                        let ease = "cubic-bezier(0.45, 0.05, 0.55, 0.95)"; // Fast spin
-                        
-                        // If it's reel 2 and we have 2 scatters already
-                        if (i === 2 && centerLine[0].id === 8 && centerLine[1].id === 8) {
-                            document.getElementById('vignette').classList.add('tease-active');
-                            duration = 4.0; // Slow motion
-                            ease = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+                        let dur = 1.8 + (i*0.4); // Faster base spin
+                        if(i===2 && outcome[0].id===8 && outcome[1].id===8) {
+                            document.getElementById('vignette').classList.add('active');
+                            dur = 4.0;
+                            audio.sfx('gore');
                         }
 
-                        // Calculate target Y
-                        // We want to stop such that the LAST 3 items are visible.
-                        // The strip has: 3 (start) + 30 (fill) + 3 (end) = 36 items.
-                        // Container shows 3 items.
-                        // We want to translate up by 33 items height.
-                        const totalItems = 3 + SPIN_OVERSHOOT + 3;
-                        const targetIndex = totalItems - 3; // Index of the first outcome symbol
-                        const moveY = targetIndex * itemHeight;
+                        let html = "";
+                        // Seamless
+                        currentReelState[i].forEach(s => html += getHtml(s)); 
+                        for(let k=0; k<OVERSHOOT; k++) html += getHtml(getRand()); 
+                        nextReelState[i].forEach(s => html += getHtml(s)); 
+                        strip.innerHTML = html;
 
-                        // Go!
-                        // We use a custom ease for the "Heavy Stop" (overshoot)
-                        // CSS cubic-bezier can do overshoot if y > 1. 
-                        // e.g. cubic-bezier(0.175, 0.885, 0.32, 1.275)
-                        strip.style.transition = `transform ${duration}s ${i===2 && duration > 3 ? 'ease-out' : 'cubic-bezier(0.15, 0.9, 0.3, 1.1)'}`; 
+                        strip.querySelectorAll('.symbol-box').forEach(e => e.style.height=`${h}px`);
+
+                        strip.style.transition = 'none';
+                        strip.style.transform = 'translateY(0)';
+                        void strip.offsetWidth;
+
+                        const moveY = (3 + OVERSHOOT) * h;
+                        // IMPACT BEZIER
+                        strip.style.transition = `transform ${dur}s var(--ease-slam)`;
                         strip.style.transform = `translateY(-${moveY}px)`;
 
-                        // On Finish
                         setTimeout(() => {
-                            // Instant Swap to clean DOM
-                            // We replace the massive strip with just the 3 outcome symbols
+                            // Swap
                             strip.style.transition = 'none';
                             strip.innerHTML = "";
-                            nextReelState[i].forEach(s => strip.innerHTML += getSymHtml(s));
-                            
-                            // Re-apply heights
-                            strip.querySelectorAll('.symbol-box').forEach(b => b.style.height = `${itemHeight}px`);
-                            
+                            nextReelState[i].forEach(s => strip.innerHTML += getHtml(s));
+                            strip.querySelectorAll('.symbol-box').forEach(e => e.style.height=`${h}px`);
                             strip.style.transform = 'translateY(0)';
                             
+                            // HEAVY IMPACT
+                            audio.sfx('stop');
                             if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+                            
+                            document.getElementById('machine-box').classList.remove('shake');
+                            void document.getElementById('machine-box').offsetWidth;
+                            document.getElementById('machine-box').classList.add('shake');
+                            
                             resolve();
-                        }, duration * 1000);
+                        }, dur * 1000);
 
                     }, delay);
                 });
             });
 
             await Promise.all(promises);
-            document.getElementById('vignette').classList.remove('tease-active');
-            
-            // Update state
+            document.getElementById('vignette').classList.remove('active');
             currentReelState = nextReelState;
 
             if(state.purchasingBonus) {
                 triggerBlood();
-                showWin(0, `GRANTED ${state.pendingBonusSpins} SPINS`);
+                audio.sfx('win_big');
+                showWin(0, `FATE REVEALED`, `${state.pendingSpins} SPINS`);
                 setTimeout(() => {
                     closeWin();
                     state.purchasingBonus = false;
                     state.bonusMode = true;
-                    state.bonusSpins = state.pendingBonusSpins;
+                    state.bonusSpins = state.pendingSpins;
                     state.totalWin = 0;
                     state.spinning = false;
                     updateUI();
-                    setTimeout(spin, 800);
-                }, 2500);
+                    setTimeout(spin, 1000);
+                }, 3000);
             } else {
-                checkWin(centerLine);
+                checkWin(outcome);
                 state.spinning = false;
                 updateUI();
                 if(state.bonusMode) {
@@ -674,12 +605,11 @@
             const s1=line[0], s2=line[1], s3=line[2];
             
             if(s1.id===8 && s2.id===8 && s3.id===8) {
-                // Trigger Bonus via play
-                state.purchasingBonus = false; 
-                state.pendingBonusSpins = 10;
-                state.purchasingBonus = true; // reuse reveal logic
+                state.purchasingBonus = true; 
+                state.pendingSpins = 10; 
                 triggerBlood();
-                showWin(0, "GRANTED 10 SPINS");
+                audio.sfx('win_big');
+                showWin(0, "FATE REVEALED", "10 SPINS");
                 setTimeout(() => {
                     closeWin();
                     state.purchasingBonus = false;
@@ -689,7 +619,7 @@
                     state.spinning = false;
                     updateUI();
                     setTimeout(spin, 800);
-                }, 2500);
+                }, 3000);
                 return;
             }
 
@@ -699,12 +629,13 @@
             if(win > 0) {
                 document.querySelector('.payline').style.opacity = '1';
                 state.balance += win;
+                audio.sfx('win');
                 if(state.bonusMode) {
                     state.totalWin += win;
                     triggerBlood();
                 } else {
                     triggerBlood();
-                    showWin(win, "Stars Harvested");
+                    showWin(win, "STARS HARVESTED");
                 }
                 if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
@@ -712,30 +643,24 @@
 
         function endBonus() {
             state.bonusMode = false;
-            showWin(state.totalWin, "RITUAL COMPLETE");
+            audio.sfx('win_big');
+            showWin(state.totalWin, "RITUAL COMPLETE", "TOTAL HARVEST");
         }
 
-        function showWin(amt, title) {
+        function showWin(amt, title1, title2) {
             const el = document.getElementById('win-overlay');
-            el.style.display = 'flex';
-            void el.offsetWidth;
             el.classList.add('active');
-            
-            document.getElementById('win-amount').innerText = amt > 0 ? Math.floor(amt) : "";
-            if(title) document.getElementById('win-title').innerText = title;
-            
-            const sub = document.getElementById('win-subtitle');
-            if(amt===0 && title.includes("GRANTED")) sub.style.display = 'none';
-            else sub.style.display = 'block';
+            document.getElementById('win-title').innerText = title1;
+            document.getElementById('win-amount').innerText = amt > 0 ? amt : (title2 || "");
+            const sub = document.getElementById('win-sub');
+            if(amt===0) { document.querySelector('.win-star').style.display='none'; sub.style.display='none'; } 
+            else { document.querySelector('.win-star').style.display='block'; sub.style.display='block'; }
         }
-
-        function closeWin() {
-            const el = document.getElementById('win-overlay');
-            el.classList.remove('active');
-            setTimeout(() => { if(!el.classList.contains('active')) el.style.display = 'none'; }, 500);
-        }
+        function closeWin() { document.getElementById('win-overlay').classList.remove('active'); }
 
         init();
     </script>
 </body>
 </html>
+
+
