@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CULT OF PAIN: BUILD 1.0</title>
+    <!-- Telegram Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Nosifer&family=Cinzel:wght@400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Palette: Grim & Rust */
+            --c-bg: #050000;
+            --c-blood: #8a0303;
+            --c-blood-dry: #420000;
+            --c-bone: #cbbba0;
+            --c-rust: #8b4513;
+            --c-gold-dark: #b8860b;
+            --c-star: #FFD700; /* Telegram Star Color */
+            
+            --reel-height: 360px;
+            --sym-height: 120px;
+            --ease-heavy: cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--c-bg);
+            color: var(--c-bone);
+            font-family: 'Cinzel', serif;
+            overflow: hidden;
+            touch-action: none;
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* --- BACKGROUND ATMOSPHERE --- */
+        .flesh-wall {
+            position: fixed; inset: -10%; width: 120%; height: 120%;
+            background: 
+                radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 80%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+            z-index: 0;
+            animation: breathe 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1); filter: brightness(0.8); }
+            100% { transform: scale(1.05); filter: brightness(1.2) hue-rotate(-5deg); }
+        }
+
+        .vignette {
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+            background: radial-gradient(circle, transparent 30%, #000 100%);
+            box-shadow: inset 0 0 100px #000;
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* TEASE EFFECT (Red Pulse) */
+        .vignette.tease-active {
+            animation: pulse-danger 0.8s infinite;
+        }
+        @keyframes pulse-danger {
+            0% { box-shadow: inset 0 0 50px #300000; }
+            50% { box-shadow: inset 0 0 150px var(--c-blood); }
+            100% { box-shadow: inset 0 0 50px #300000; }
+        }
+
+        /* --- BLOOD CANVAS --- */
+        #blood-canvas {
+            position: fixed; inset: 0; z-index: 9999; 
+            pointer-events: none; width: 100%; height: 100%;
+        }
+
+        /* --- SLOT MACHINE FRAME (Iron Maiden Style) --- */
+        .machine-container {
+            position: relative; z-index: 10;
+            background: #110b0b;
+            border: 4px solid #2a1a1a;
+            box-shadow: 
+                0 0 0 2px #000, 
+                inset 0 0 50px #000,
+                0 20px 60px rgba(0,0,0,0.9);
+            width: 100%; max-width: 400px;
+            margin: 0 auto;
+            border-image: linear-gradient(to bottom, #420000, #1a0505) 1;
+        }
+
+        .reels-window {
+            height: var(--reel-height);
+            background: #080202;
+            overflow: hidden;
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px; 
+            border-bottom: 2px solid var(--c-rust);
+        }
+
+        .payline {
+            position: absolute; top: 50%; left: 0; right: 0; height: 1px;
+            background: var(--c-blood);
+            z-index: 20; opacity: 0; pointer-events: none;
+            box-shadow: 0 0 15px var(--c-blood);
+            transition: opacity 0.2s;
+        }
+
+        /* --- REELS & SYMBOLS --- */
+        .reel-col {
+            position: relative; height: 100%;
+            border-right: 2px solid #221111;
+            background: rgba(0,0,0,0.3);
+        }
+        .reel-col:last-child { border-right: none; }
+
+        .reel-strip {
+            width: 100%; will-change: transform; transform: translateZ(0); 
+        }
+
+        .symbol-box {
+            height: var(--sym-height); padding: 4px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .symbol-card {
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1c1414 0%, #0f0808 100%);
+            border: 1px solid #3d2a2a;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+            border-radius: 4px;
+        }
+
+        /* Rarity Styles */
+        .low-tier .symbol-card { color: #5c4d4d; filter: grayscale(0.8); }
+        .mid-tier .symbol-card { color: var(--c-bone); border: 1px solid var(--c-rust); text-shadow: 0 0 5px #000; }
+        .high-tier .symbol-card { 
+            color: var(--c-gold-dark); 
+            border: 1px solid var(--c-gold-dark);
+            background: radial-gradient(circle, rgba(184, 134, 11, 0.1) 0%, #0f0808 100%);
+            animation: flicker 3s infinite;
+        }
+        .wild-tier .symbol-card {
+            color: var(--c-blood);
+            border: 1px solid var(--c-blood);
+            background: #1a0000;
+            box-shadow: inset 0 0 10px var(--c-blood);
+            font-size: 3rem;
+        }
+        .scatter-tier .symbol-card {
+            font-size: 3rem;
+            background: #000;
+            border: 1px double #fff;
+            animation: shake-mild 2s infinite;
+        }
+
+        @keyframes flicker { 0% { opacity: 0.9; } 50% { opacity: 1; text-shadow: 0 0 10px var(--c-gold-dark); } 100% { opacity: 0.9; } }
+        @keyframes shake-mild { 0% { transform: rotate(0deg); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
+
+        .blur-motion { filter: blur(0px); transition: filter 0.1s; }
+        .blur-motion.active { filter: blur(4px) brightness(0.7); }
+
+        /* --- CONTROLS --- */
+        .control-panel {
+            margin-top: 15px;
+            background: linear-gradient(to bottom, #1a0f0f, #0a0505);
+            border-top: 2px solid var(--c-rust);
+            padding: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.5);
+            border-radius: 4px;
+        }
+
+        .btn-spin {
+            width: 80px; height: 80px;
+            background: #1a0000;
+            border: 2px solid #3a0000;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; position: relative;
+            box-shadow: 0 0 10px rgba(66, 0, 0, 0.5);
+            transition: 0.1s;
+        }
+        .btn-spin:active { transform: scale(0.95); border-color: var(--c-blood); background: #300; }
+        .btn-spin.disabled { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
+        .btn-spin svg { fill: var(--c-bone); width: 40px; height: 40px; }
+
+        /* --- TICKER --- */
+        .ticker-bar {
+            background: #000; border-bottom: 1px solid var(--c-blood-dry);
+            height: 24px; overflow: hidden; white-space: nowrap;
+            display: flex; align-items: center;
+            font-family: 'Courier Prime', monospace; letter-spacing: 1px;
+        }
+        .ticker-content { display: inline-block; padding-left: 100%; animation: ticker 40s linear infinite; font-size: 11px; color: #555; }
+        @keyframes ticker { 100% { transform: translateX(-100%); } }
+
+        /* --- BONUS BUY --- */
+        .buy-feature {
+            margin: 10px 0;
+            background: #2a0000;
+            border: 1px dashed var(--c-blood);
+            color: var(--c-blood);
+            font-family: 'Metal Mania', cursive; font-size: 1.2rem;
+            padding: 8px 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: 0.2s;
+            border-radius: 4px;
+        }
+        .buy-feature:hover { background: var(--c-blood); color: #000; border-style: solid; }
+
+        /* --- MODALS & OVERLAYS --- */
+        
+        .win-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .win-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .big-win-text {
+            font-family: 'Nosifer', cursive; font-size: 4rem; 
+            color: var(--c-blood);
+            text-shadow: 0 0 20px var(--c-blood);
+            text-align: center;
+        }
+
+        /* Sticky Bonus Counter */
+        .bonus-counter {
+            position: absolute; bottom: 100%; left: 0; right: 0;
+            background: rgba(0,0,0,0.9); border-top: 2px solid #b8860b; border-bottom: 2px solid #b8860b;
+            padding: 8px; text-align: center;
+            transform: translateY(100%); transition: transform 0.3s ease;
+            z-index: 5; pointer-events: none; opacity: 0;
+        }
+        .bonus-counter.active {
+            transform: translateY(0); opacity: 1;
+        }
+
+        /* Deposit Modal & Buy Confirm Modal */
+        .modal-base {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .modal-base.active { display: flex; animation: fadeIn 0.2s; }
+
+        .star-pack {
+            background: #1a0f0f; border: 1px solid #b8860b; color: #FFD700;
+            padding: 15px; width: 220px; text-align: center; margin: 10px;
+            cursor: pointer; border-radius: 8px; font-family: 'Cinzel';
+        }
+        .star-pack:hover { background: #3a2f0f; box-shadow: 0 0 15px #b8860b; }
+
+        .confirm-box {
+            background: #050000; border: 2px solid #8a0303; 
+            padding: 20px; text-align: center; max-width: 300px;
+            box-shadow: 0 0 30px #8a0303;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="flesh-wall"></div>
+    <div class="vignette" id="vignette"></div>
+    <canvas id="blood-canvas"></canvas>
+
+    <div class="relative h-full flex flex-col justify-between z-10 p-4 max-w-md mx-auto" style="min-height: 100vh;">
+        
+        <!-- HEADER -->
+        <div class="flex justify-between items-end border-b border-[#331111] pb-2 mb-2 bg-black/40 p-2 rounded-t-lg">
+            <div>
+                <div class="text-[10px] text-[#b8860b] uppercase tracking-widest font-bold font-[Cinzel]">STARS BALANCE</div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xl font-[Cinzel] text-[#FFD700] font-bold drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]">★ <span id="balance">0</span></span>
+                    <button onclick="openDeposit()" class="bg-[#222] border border-[#b8860b] text-[#b8860b] text-xs px-2 py-0.5 rounded hover:bg-[#b8860b] hover:text-black transition">+</button>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-[10px] text-[#553333] uppercase tracking-widest font-bold font-[Cinzel]">BET (STARS)</div>
+                <span class="text-xl font-[Cinzel] text-[#cbbba0]" id="bet">1</span>
+            </div>
+        </div>
+
+        <!-- TICKER -->
+        <div class="ticker-bar mb-4 opacity-70 border border-[#220000]">
+            <div class="ticker-content" id="ticker"></div>
+        </div>
+
+        <!-- MAIN MACHINE -->
+        <div class="flex-1 flex flex-col justify-center">
+            
+            <div class="machine-container">
+                <div class="reels-window">
+                    <div class="payline"></div>
+                    <div class="reel-col"><div class="reel-strip blur-motion" id="strip-0"></div></div>
+                    <div class="reel-col"><div class="reel-strip blur-motion" id="strip-1"></div></div>
+                    <div class="reel-col"><div class="reel-strip blur-motion" id="strip-2"></div></div>
+                </div>
+                
+                <div class="bg-[#050000] border-t border-[#331111] p-1 flex justify-between px-2">
+                    <span id="status" class="text-[10px] text-[#553333] font-bold uppercase tracking-widest">BUILD 1.0</span>
+                </div>
+            </div>
+
+            <!-- BUY FEATURE BUTTON -->
+            <div onclick="initBuyBonus()" class="buy-feature group relative overflow-hidden">
+                <div class="flex flex-col leading-none z-10">
+                    <span class="text-[10px] uppercase text-[#664444] group-hover:text-black font-bold">COST: 69 STARS (≈$1)</span>
+                    <span class="group-hover:text-black">SACRIFICE FOR SPINS</span>
+                </div>
+                <div class="font-[Nosifer] text-2xl z-10 text-[#8a0303] group-hover:text-black">?</div>
+            </div>
+
+        </div>
+
+        <!-- CONTROLS & STICKY BONUS COUNTER -->
+        <div class="relative">
+            <!-- Sticky Total Win Counter (Only in Bonus) -->
+            <div id="bonus-counter" class="bonus-counter">
+                <div class="text-[10px] text-[#b8860b] font-[Cinzel] tracking-widest uppercase">Total Harvest</div>
+                <div class="text-2xl text-[#FFD700] font-[Nosifer] drop-shadow-[0_0_5px_#FFD700]">
+                    ★ <span id="bonus-total-display">0</span>
+                </div>
+            </div>
+
+            <div class="control-panel relative z-20">
+                <div class="flex flex-col gap-1">
+                    <button onclick="changeBet(-1)" class="w-12 h-10 border border-[#3a1a1a] bg-[#0f0505] text-[#8b4513] hover:text-[#cbbba0] font-bold text-xl rounded shadow-inner active:bg-[#1a0505]">-</button>
+                    <button onclick="changeBet(1)" class="w-12 h-10 border border-[#3a1a1a] bg-[#0f0505] text-[#8b4513] hover:text-[#cbbba0] font-bold text-xl rounded shadow-inner active:bg-[#1a0505]">+</button>
+                </div>
+
+                <div id="spin-btn" onclick="spin()" class="btn-spin">
+                    <svg viewBox="0 0 24 24"><path d="M12,2L15.09,8.26L22,9.27L17,14.14L18.18,21.02L12,17.77L5.82,21.02L7,14.14L2,9.27L8.91,8.26L12,2M12,15.4V6.08L10.2,9.75L6.16,10.33L9.09,13.19L8.39,17.2L12,15.4Z" /></svg>
+                </div>
+
+                <div class="flex flex-col gap-1 opacity-30">
+                    <div class="w-12 h-10 border border-[#3a1a1a] bg-[#0f0505] flex items-center justify-center rounded">
+                        <span class="text-[10px] font-bold text-[#442222]">AUTO</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- WIN SCREEN -->
+    <div id="win-overlay" class="win-overlay" onclick="closeWin()">
+        <div id="win-title" class="text-[#8b4513] font-[Cinzel] tracking-[0.5em] text-xs mb-4 uppercase">Stars Harvested</div>
+        <div class="flex items-center gap-2">
+            <span class="text-[#FFD700] text-6xl">★</span>
+            <div id="win-amount" class="big-win-text">50</div>
+        </div>
+        <div id="win-subtitle" class="text-[#555] text-[10px] mt-8 uppercase tracking-widest animate-pulse">Touch to Claim</div>
+    </div>
+
+    <!-- DEPOSIT MODAL -->
+    <div id="deposit-modal" class="modal-base">
+        <div class="text-[#b8860b] font-[Cinzel] text-2xl mb-6">ACQUIRE STARS</div>
+        
+        <div class="star-pack" onclick="addStars(69)">
+            <div class="text-3xl">★ 69</div>
+            <div class="text-xs text-gray-500 mt-1">SIMULATION ($1.00)</div>
+        </div>
+        <div class="star-pack" onclick="addStars(500)">
+            <div class="text-3xl">★ 500</div>
+            <div class="text-xs text-gray-500 mt-1">SIMULATION ($7.50)</div>
+        </div>
+        <div class="star-pack" onclick="addStars(1000)">
+            <div class="text-3xl">★ 1000</div>
+            <div class="text-xs text-gray-500 mt-1">SIMULATION ($15.00)</div>
+        </div>
+        
+        <button onclick="closeDeposit()" class="mt-8 text-red-800 text-sm hover:text-red-500 font-bold uppercase">Cancel</button>
+    </div>
+
+    <!-- BUY CONFIRM MODAL -->
+    <div id="buy-confirm-modal" class="modal-base">
+        <div class="confirm-box">
+            <div class="text-4xl mb-4 text-[#8a0303] animate-pulse">?</div>
+            <div class="text-[#b8860b] font-[Cinzel] text-xl mb-2">MYSTERY RITUAL</div>
+            <div class="text-gray-400 text-xs font-mono mb-6">
+                SACRIFICE 69 STARS<br>FOR RANDOM SPINS
+            </div>
+            
+            <button onclick="confirmBuyBonus()" class="w-full bg-[#3a0000] border border-[#8a0303] text-[#ffaaaa] py-3 font-bold mb-3 hover:bg-[#500000]">
+                ACCEPT PACT
+            </button>
+            <button onclick="closeBuyConfirm()" class="text-gray-500 text-xs uppercase hover:text-white">
+                Retreat
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // --- MATH & ECONOMY (RTP ~92%) ---
+        const SYMBOLS = [
+            { id: 0, char: '🕯️', tier: 'low-tier',  val: 2 },   // Candle
+            { id: 1, char: '🗡️', tier: 'low-tier',  val: 3 },   // Dagger
+            { id: 2, char: '🕸️', tier: 'low-tier',  val: 4 },   // Web
+            { id: 3, char: '⛓️', tier: 'low-tier',  val: 5 },   // Chains
+            { id: 4, char: '⚰️', tier: 'mid-tier',  val: 10 },  // Coffin
+            { id: 5, char: '🩸', tier: 'mid-tier',  val: 15 },  // Blood
+            { id: 6, char: '🐐', tier: 'high-tier', val: 50 },  // Goat
+            { id: 7, char: '✡️', tier: 'wild-tier', val: 100 }, // Wild
+            { id: 8, char: '💀', tier: 'scatter-tier', val: 0 } // Scatter (Bonus)
+        ];
+
+        const CFG = {
+            symHeight: 120,
+            spinDuration: 1000, 
+            stripLength: 20
+        };
+
+        let state = {
+            balance: 0, 
+            bet: 1,
+            spinning: false,
+            bonusMode: false,
+            bonusSpins: 0,
+            totalWin: 0,
+            purchasingBonus: false,
+            pendingBonusSpins: 0
+        };
+
+        const strips = [
+            document.getElementById('strip-0'),
+            document.getElementById('strip-1'),
+            document.getElementById('strip-2')
+        ];
+
+        // --- BLOOD ENGINE (RESTORED) ---
+        const canvas = document.getElementById('blood-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationFrameId;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class BloodDrop {
+            constructor() {
+                this.x = canvas.width / 2 + (Math.random() - 0.5) * 50;
+                this.y = canvas.height / 2;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 15 + 5;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.radius = Math.random() * 8 + 2;
+                this.color = `rgba(${130 + Math.random()*50}, 0, 0, ${Math.random()*0.5 + 0.5})`;
+                this.gravity = 0.5;
+                this.friction = 0.98;
+                this.life = 1.0;
+                this.stuck = false;
+            }
+            update() {
+                if (!this.stuck) {
+                    this.vx *= this.friction; this.vy *= this.friction; this.vy += this.gravity;
+                    this.x += this.vx; this.y += this.vy;
+                    if (Math.random() < 0.05 && this.life > 0.8) this.stuck = true;
+                } else {
+                    this.y += (Math.random() * 0.5); this.life -= 0.005;
+                }
+                if(this.y > canvas.height) this.life = 0;
+            }
+            draw() {
+                ctx.fillStyle = this.color; ctx.beginPath();
+                if (this.stuck) ctx.ellipse(this.x, this.y, this.radius, this.radius * 1.5, 0, 0, Math.PI * 2);
+                else ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function triggerBlood() {
+            for(let i=0; i<50; i++) particles.push(new BloodDrop());
+            if(!animationFrameId) animateBlood();
+        }
+
+        function animateBlood() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                p.update(); p.draw();
+                if (p.life <= 0) particles.splice(index, 1);
+            });
+            if(particles.length > 0) animationFrameId = requestAnimationFrame(animateBlood);
+            else animationFrameId = null;
+        }
+
+        // --- GAME LOGIC ---
+
+        function init() {
+            initTicker();
+            strips.forEach(strip => {
+                let h = '';
+                for(let i=0; i<4; i++) h += getSymHtml(getRandomSymbol());
+                strip.innerHTML = h;
+            });
+            updateUI();
+        }
+
+        function initTicker() {
+            const el = document.getElementById('ticker');
+            const msgs = ["BUILD 1.0 RELEASED", "SACRIFICE YOUR STARS", "THE VOID IS HUNGRY", "DO NOT FEAR THE UNKNOWN"];
+            let h = "";
+            for(let i=0; i<20; i++) {
+                const m = msgs[Math.floor(Math.random()*msgs.length)];
+                h += `<span style="margin:0 40px">★ ${m} ★</span>`;
+            }
+            el.innerHTML = h;
+        }
+
+        function getSymHtml(sym) {
+            return `<div class="symbol-box"><div class="symbol-card ${sym.tier}">${sym.char}</div></div>`;
+        }
+
+        function getRandomSymbol() {
+            return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        }
+
+        function updateUI() {
+            document.getElementById('balance').innerText = state.balance;
+            document.getElementById('bet').innerText = state.bet;
+            
+            const btn = document.getElementById('spin-btn');
+            if (state.spinning) btn.classList.add('disabled');
+            else btn.classList.remove('disabled');
+
+            const bonusCounter = document.getElementById('bonus-counter');
+            if (state.bonusMode) {
+                bonusCounter.classList.add('active');
+                document.getElementById('bonus-total-display').innerText = state.totalWin;
+                document.getElementById('status').innerText = `RITUAL (${state.bonusSpins})`;
+                document.getElementById('status').style.color = '#ff0000';
+            } else {
+                bonusCounter.classList.remove('active');
+                document.getElementById('status').innerText = "BUILD 1.0";
+                document.getElementById('status').style.color = '#553333';
+            }
+        }
+
+        function changeBet(v) {
+            if(state.spinning || state.bonusMode) return;
+            const newBet = state.bet + v;
+            if(newBet >= 1) state.bet = newBet;
+            updateUI();
+        }
+
+        // --- DEPOSIT & BUY LOGIC ---
+        function openDeposit() {
+            document.getElementById('deposit-modal').classList.add('active');
+        }
+        function closeDeposit() {
+            document.getElementById('deposit-modal').classList.remove('active');
+        }
+        function addStars(amount) {
+            state.balance += amount;
+            updateUI();
+            closeDeposit();
+            tg.showAlert(`Received ${amount} Stars`);
+            triggerBlood(); 
+        }
+
+        // Buy Bonus Flow
+        function initBuyBonus() {
+            document.getElementById('buy-confirm-modal').classList.add('active');
+        }
+        function closeBuyConfirm() {
+            document.getElementById('buy-confirm-modal').classList.remove('active');
+        }
+        
+        function confirmBuyBonus() {
+            closeBuyConfirm();
+            if(state.balance < 69) { tg.showAlert("Need 69 Stars"); return; }
+            
+            // 1. Immediate Deduction
+            state.balance -= 69;
+            updateUI();
+            
+            // 2. Calc Spins
+            const r = Math.random();
+            let spins = 10;
+            if(r < 0.50) spins = Math.floor(Math.random() * 4) + 5; 
+            else if(r < 0.85) spins = Math.floor(Math.random() * 4) + 9;
+            else if(r < 0.95) spins = Math.floor(Math.random() * 3) + 13;
+            else spins = 20;
+
+            // 3. Set State for Visual Spin
+            state.purchasingBonus = true;
+            state.pendingBonusSpins = spins;
+            
+            // 4. Trigger Visual Spin
+            spin();
+        }
+
+        // --- SPIN LOGIC ---
+        async function spin() {
+            if(state.spinning) return;
+            
+            document.getElementById('win-overlay').classList.remove('active');
+
+            // Skip deduction if purchasing bonus (already deducted)
+            if(!state.purchasingBonus && !state.bonusMode) {
+                if(state.balance < state.bet) { openDeposit(); return; }
+                state.balance -= state.bet;
+            }
+
+            state.spinning = true;
+            updateUI();
+            document.querySelector('.payline').style.opacity = '0';
+            document.getElementById('vignette').classList.remove('tease-active');
+
+            // Outcome Generation
+            let outcome = [];
+            const r = Math.random();
+
+            if (state.purchasingBonus) {
+                // Force Scatters if buying
+                outcome = [SYMBOLS[8], SYMBOLS[8], SYMBOLS[8]];
+            } else if (state.bonusMode) {
+                // Bonus Logic
+                if(r < 0.4) {
+                    const s = SYMBOLS[6]; outcome = [s, s, s];
+                } else if (r < 0.6) {
+                    const s = SYMBOLS[4]; outcome = [s, s, s];
+                } else {
+                     outcome = [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()];
+                }
+            } else {
+                // Base Game Logic
+                if (r < 0.70) {
+                    const s1 = (Math.random() < 0.1) ? SYMBOLS[8] : getRandomSymbol();
+                    const s2 = (Math.random() < 0.1) ? SYMBOLS[8] : getRandomSymbol();
+                    const s3 = getRandomSymbol();
+                    outcome = [s1, s2, s3];
+                    if(s1.id === s2.id && s2.id === s3.id) outcome[2] = (s1.id === 0) ? SYMBOLS[1] : SYMBOLS[0];
+                } else if (r < 0.85) {
+                    const s = SYMBOLS[Math.floor(Math.random() * 4)]; outcome = [s, s, s];
+                } else if (r < 0.95) {
+                    const s = SYMBOLS[4 + Math.floor(Math.random() * 2)]; outcome = [s, s, s];
+                } else if (r < 0.98) {
+                    const s = SYMBOLS[6 + Math.floor(Math.random() * 2)]; outcome = [s, s, s];
+                } else if (r < 0.995) {
+                    outcome = [SYMBOLS[8], SYMBOLS[8], getRandomSymbol()];
+                } else {
+                    const s = SYMBOLS[8]; outcome = [s, s, s];
+                }
+            }
+
+            // Anim
+            const promises = strips.map((strip, i) => {
+                return new Promise(resolve => {
+                    const delay = i * 200; 
+                    setTimeout(() => {
+                        // Tease check
+                        if(i === 2 && outcome[0].id === 8 && outcome[1].id === 8) {
+                            document.getElementById('vignette').classList.add('tease-active');
+                            strip.style.transitionDuration = '2.5s'; 
+                        }
+
+                        strip.classList.add('blur-motion', 'active');
+                        
+                        const noiseLen = CFG.stripLength + (i * 10);
+                        let html = '';
+                        for(let k=0; k<noiseLen; k++) html += getSymHtml(getRandomSymbol());
+                        
+                        const top = getRandomSymbol();
+                        const target = outcome[i];
+                        const bot = getRandomSymbol();
+                        
+                        html += getSymHtml(top) + getSymHtml(target) + getSymHtml(bot);
+                        strip.innerHTML += html;
+                        
+                        const total = strip.children.length;
+                        const dist = (total - 3) * CFG.symHeight;
+                        
+                        let dur = (CFG.spinDuration + (i * 200)) / 1000;
+                        if(i === 2 && outcome[0].id === 8 && outcome[1].id === 8) dur = 2.5;
+
+                        void strip.offsetWidth; // Reflow
+
+                        strip.style.transition = `transform ${dur}s var(--ease-heavy)`;
+                        strip.style.transform = `translateY(-${dist}px)`;
+
+                        setTimeout(() => {
+                            strip.classList.remove('active');
+                            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+                            strip.style.transition = 'none';
+                            strip.style.transform = 'translateY(0)';
+                            strip.innerHTML = getSymHtml(top) + getSymHtml(target) + getSymHtml(bot) + getSymHtml(getRandomSymbol());
+                            resolve();
+                        }, dur * 1000);
+
+                    }, delay);
+                });
+            });
+
+            await Promise.all(promises);
+            document.getElementById('vignette').classList.remove('tease-active');
+
+            // Handle Completion
+            if (state.purchasingBonus) {
+                // Reveal Phase
+                triggerBlood();
+                showBigWin(0, `GRANTED ${state.pendingBonusSpins} SPINS`);
+                
+                setTimeout(() => {
+                    closeWin();
+                    state.purchasingBonus = false;
+                    state.bonusMode = true;
+                    state.bonusSpins = state.pendingBonusSpins;
+                    state.totalWin = 0;
+                    state.spinning = false; // Reset spin lock
+                    updateUI();
+                    setTimeout(spin, 1000); // Start bonus loop
+                }, 2500);
+            } else {
+                checkWin(outcome);
+                state.spinning = false;
+                updateUI(); 
+
+                if(state.bonusMode) {
+                    state.bonusSpins--;
+                    if(state.bonusSpins > 0) setTimeout(spin, 800);
+                    else endBonus();
+                }
+            }
+        }
+
+        function checkWin(outcome) {
+            let win = 0;
+            const s1 = outcome[0];
+            const s2 = outcome[1];
+            const s3 = outcome[2];
+
+            if(s1.id===8 && s2.id===8 && s3.id===8) {
+                triggerBonus(10); // Standard trigger gives 10
+                return;
+            }
+
+            if (s1.id === s2.id && s2.id === s3.id) {
+                const sym = s1;
+                win = state.bet * sym.val;
+            }
+
+            if(win > 0) {
+                document.querySelector('.payline').style.opacity = '1';
+                state.balance += win;
+                
+                if(state.bonusMode) {
+                    state.totalWin += win;
+                    triggerBlood();
+                } else {
+                    triggerBlood();
+                    showBigWin(win, "Stars Harvested");
+                }
+                
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function triggerBonus(spins) {
+            state.bonusMode = true;
+            state.bonusSpins = spins;
+            state.totalWin = 0;
+            tg.showAlert("RITUAL STARTED");
+            updateUI();
+            setTimeout(spin, 1500);
+        }
+
+        function endBonus() {
+            state.bonusMode = false;
+            showBigWin(state.totalWin, "RITUAL COMPLETE");
+        }
+
+        function showBigWin(amt, titleText) {
+            const el = document.getElementById('win-overlay');
+            if (amt > 0) document.getElementById('win-amount').innerText = Math.floor(amt);
+            else document.getElementById('win-amount').innerText = ""; // For text only
+            
+            if(titleText) document.getElementById('win-title').innerText = titleText;
+            
+            // Hide "Touch to Claim" if it's the reveal message
+            if (amt === 0 && titleText.includes("GRANTED")) {
+                document.getElementById('win-subtitle').style.display = 'none';
+            } else {
+                document.getElementById('win-subtitle').style.display = 'block';
+            }
+
+            el.classList.add('active');
+        }
+        
+        function closeWin() {
+            document.getElementById('win-overlay').classList.remove('active');
+        }
+
+        init();
+    </script>
+</body>
+</html>
