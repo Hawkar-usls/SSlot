@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CULT OF PAIN: RELEASE</title>
+    <title>CULT OF PAIN: REAL TICKER</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Marcellus&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
@@ -34,6 +34,7 @@
             position: fixed; inset: 0; width: 100%; height: 100%; 
             z-index: 9999; 
             pointer-events: none; 
+            /* Sharp, high contrast blood style */
             filter: contrast(1.3) saturate(1.4) drop-shadow(0 2px 3px rgba(0,0,0,0.6)); 
         }
 
@@ -43,7 +44,9 @@
         .header-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--glass); border-bottom: 1px solid rgba(197, 160, 89, 0.1); }
         .currency-badge { display: flex; align-items: center; gap: 10px; }
         .currency-icon { width: 36px; height: 36px; border-radius: 50%; background: #1a0a0a; border: 1px solid var(--c-gold); display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 0 10px rgba(197, 160, 89, 0.2); }
-        .ticker-tape { background: #050000; border-bottom: 1px solid #311; height: 20px; display: flex; align-items: center; overflow: hidden; font-family: 'Courier Prime', monospace; font-size: 8px; color: #522; letter-spacing: 2px; }
+        
+        /* TICKER STYLES */
+        .ticker-tape { background: #050000; border-bottom: 1px solid #311; height: 20px; display: flex; align-items: center; overflow: hidden; font-family: 'Courier Prime', monospace; font-size: 8px; color: #722; letter-spacing: 2px; }
 
         .game-viewport { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 10px; }
         .machine-frame { position: relative; width: 100%; max-width: 380px; padding: 5px; border-radius: 8px; background: linear-gradient(145deg, #150505, #000); border: 2px solid #3a1a1a; box-shadow: 0 10px 50px rgba(0,0,0,0.8); transition: all 0.3s ease-out; }
@@ -115,7 +118,7 @@
         #bonus-counter.active { transform: translateY(0); opacity: 1; visibility: visible; }
         .bonus-label { font-size: 9px; color: #865c28; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2px; }
         
-        /* READABLE FONT FOR HARVEST */
+        /* COURIER PRIME FOR HARVEST NUMBERS */
         .bonus-val { 
             font-family: 'Courier Prime', monospace; font-weight: bold;
             font-size: 2rem; color: #eebb66; 
@@ -149,9 +152,10 @@
             <button onclick="event.stopPropagation(); vibe('light'); openModal('deposit')" class="text-[10px] font-bold text-[#a66] border border-[#a66] px-3 py-1 rounded bg-[#211] uppercase tracking-wider">+ Deposit</button>
         </div>
 
+        <!-- TICKER TAPE -->
         <div class="ticker-tape">
-             <div class="whitespace-nowrap animate-[ticker_30s_linear_infinite] pl-full">
-                /// RELEASE BUILD /// RITUAL BALANCED /// HIGH ROLLER ACTIVE ///
+             <div id="ticker-text" class="whitespace-nowrap animate-[ticker_30s_linear_infinite] pl-full">
+                /// CULT OF PAIN /// CRIMSON RITUAL ×5 + WILDS /// ЖДЁМ ПЕРВЫЙ БОЛЬШОЙ ЗАНОС ///
             </div>
         </div>
 
@@ -366,7 +370,6 @@
                 this.fadeDelay = 120; 
                 
                 if(type === 'splat') {
-                    // SPLAT: SMALLER SIZE
                     this.x = x || (cvs.width/2 + (Math.random()-0.5) * 150);
                     this.y = y || (cvs.height/2 + (Math.random()-0.5) * 100);
                     this.vx = (Math.random()-0.5) * 30 * scale; 
@@ -376,7 +379,6 @@
                     this.gravity = 0.5; 
                     this.stuck = false;
                 } else {
-                    // RAIN
                     this.x = Math.random() * cvs.width;
                     this.vx = (Math.random() - 0.5) * 1; 
                     
@@ -605,7 +607,9 @@
                 let outcomeReels = [];
                 const r = Math.random();
                 const pool = DB.getPool();
-                let loseChance = 0.92; if(pool > 5000) loseChance = 0.85;
+                
+                // WIN CHANCE UP TO 15%
+                let loseChance = 0.85; 
 
                 for(let i=0; i<3; i++) outcomeReels.push([getRandSym(), getRandSym(), getRandSym()]); 
 
@@ -614,22 +618,33 @@
                 } else if (state.bonusMode) {
                     let tierChance = 0.60;
                     if(state.ritualTier===1) tierChance=0.40; 
-                    if(state.ritualTier===2) tierChance=0.25; // Tier 2 Boost (75% hit)
-                    if(state.ritualTier===3) tierChance=0.10; // Tier 3 Massive Boost (90% hit)
+                    if(state.ritualTier===2) tierChance=0.25; 
+                    
+                    // TIER 3: GUARANTEED 1-2 WILDS
+                    if(state.ritualTier === 3) {
+                         const wildCount = Math.random() < 0.5 ? 1 : 2;
+                         for(let w=0; w<wildCount; w++){
+                            const c = Math.floor(Math.random()*3);
+                            const rr = Math.floor(Math.random()*3);
+                            outcomeReels[c][rr] = SYMBOLS[7];
+                         }
+                         tierChance = 0.10; 
+                    }
                     
                     if(r > tierChance) { 
-                        // TIER 3 MECHANIC: FORCED WILD IN CENTER
-                        if(state.ritualTier === 3 && Math.random() < 0.3) {
-                             outcomeReels[1][1] = SYMBOLS[7]; // Wild
-                        }
-                        
                         const s = SYMBOLS[Math.floor(Math.random()*6)];
                         outcomeReels[0][1] = s; outcomeReels[1][1] = s; outcomeReels[2][1] = s;
                         let m = (state.ritualTier===2)?2:(state.ritualTier===3?5:1);
                         if((s.val * state.base * m) > pool) outcomeReels[2][1] = getRandSym();
                     }
                 } else {
-                    if(r > loseChance) {
+                    // NATURAL BONUS 1/120
+                    if (Math.random() < 0.0083) {
+                         outcomeReels[0][1] = SYMBOLS[8]; 
+                         outcomeReels[1][1] = SYMBOLS[8]; 
+                         outcomeReels[2][1] = SYMBOLS[8]; 
+                    } 
+                    else if(r > loseChance) {
                         const s = SYMBOLS[Math.floor(Math.random()*5)];
                         outcomeReels[0][1] = s; outcomeReels[1][1] = s; outcomeReels[2][1] = s;
                         if((s.val * state.base) > pool) outcomeReels[2][1] = getRandSym();
@@ -708,24 +723,50 @@
             } catch(e){ console.error(e); state.spinning=false; updateUI(); }
         }
 
+        // === REAL TICKER LOGIC ===
+        const REAL_BIG_WINS = []; 
+        function recordBigWin(amount, multiplier) {
+            if (multiplier < 50) return;
+            REAL_BIG_WINS.unshift({ amount, mult: multiplier, timestamp: Date.now() });
+            if (REAL_BIG_WINS.length > 12) REAL_BIG_WINS.pop();
+            updateRealTicker();
+        }
+
+        function updateRealTicker() {
+            const el = document.getElementById('ticker-text');
+            if(!el) return;
+
+            if (REAL_BIG_WINS.length === 0) {
+                el.innerText = "/// CULT OF PAIN /// CRIMSON RITUAL ×5 + WILDS /// ЖДЕМ ПЕРВЫЙ ЗАНОС ///";
+                return;
+            }
+
+            const last = REAL_BIG_WINS[0];
+            const diff = Math.floor((Date.now() - last.timestamp) / 60000);
+            let timeStr = "ТОЛЬКО ЧТО";
+            if(diff === 1) timeStr = "1 МИН НАЗАД";
+            if(diff > 1) timeStr = `${diff} МИН НАЗАД`;
+
+            const recent = REAL_BIG_WINS.slice(1, 6).map(w => `[×${w.mult}]`).join(" ");
+
+            el.innerText = `/// ПОСЛЕДНИЙ ЗАНОС: ×${last.mult} — ${last.amount}★ (${timeStr}) /// ИСТОРИЯ: ${recent} /// RITUAL ACTIVE ///`;
+        }
+        setInterval(updateRealTicker, 8000);
+
         function checkAllWins(reels){
             let totalRoundWin = 0; let winningNodes = []; let isWin = false;
 
             if(reels[0][1].id===8 && reels[1][1].id===8 && reels[2][1].id===8){
                 isWin = true; vibe('success');
                 if(state.bonusMode) {
-                    let extra = Math.floor(Math.random() * 3) + 2; 
+                    let extra = Math.floor(Math.random() * 3) + 4; 
                     state.bonusSpins += extra;
                     blood(50, 'splat'); showWin(`+${extra}`, "RETRIGGER", true);
                     setTimeout(() => { closeWin(); state.spinning=false; updateUI(); }, 1500);
                 } else {
-                    // NATURAL TRIGGER LOGIC
                     state.pendingSpins=10; 
                     state.purchasingBonus=true; 
-                    
-                    // Determine Tier based on Bet
-                    state.ritualTier = (state.bet >= 50) ? 2 : 1;
-                    
+                    state.ritualTier = (state.bet >= 50) ? 2 : 1; 
                     blood(100, 'splat'); shakeScreen(); flashScreen();
                     setWeather('heavy'); showWin(10, "SPINS GRANTED", true);
                     setTimeout(()=>{
@@ -747,6 +788,11 @@
                     if(inR1 && inR2) {
                         let symVal = SYMBOLS.find(s=>s.id===id).val;
                         let payout = symVal * state.base;
+                        if(state.bonusMode) {
+                             if(state.ritualTier === 2) payout *= 2;
+                             if(state.ritualTier === 3) payout *= 5;
+                        }
+                        
                         totalRoundWin += payout;
                         r0.forEach((s, idx) => { if(s.id===id||s.id===7) winningNodes.push({c:0, r:idx}); });
                         r1.forEach((s, idx) => { if(s.id===id||s.id===7) winningNodes.push({c:1, r:idx}); });
@@ -760,7 +806,10 @@
                     const s1 = reels[0][rowIdx]; const s2 = reels[1][rowIdx]; const s3 = reels[2][rowIdx];
                     if(s1.id === s2.id && s2.id === s3.id) {
                         let lineWin = state.base * s1.val;
-                        if(state.bonusMode) { if(state.ritualTier === 2) lineWin *= 2; if(state.ritualTier === 3) lineWin *= 5; }
+                        if(state.bonusMode) { 
+                             if(state.ritualTier === 2) lineWin *= 2; 
+                             if(state.ritualTier === 3) lineWin *= 5; 
+                        }
                         if(lineWin > 0) {
                             totalRoundWin += lineWin;
                             winningNodes.push({c:0, r:rowIdx}, {c:1, r:rowIdx}, {c:2, r:rowIdx});
@@ -775,6 +824,9 @@
                     state.balance += totalRoundWin; shakeScreen(); vibe('success');
                     let ratio = totalRoundWin / (state.base * (state.playMode===27?5:state.playMode));
                     if(ratio > 5) flashScreen();
+                    
+                    // RECORD BIG WIN
+                    if(ratio >= 50) recordBigWin(totalRoundWin, Math.floor(ratio));
                     
                     let bloodAmount = ratio * 10; 
 
