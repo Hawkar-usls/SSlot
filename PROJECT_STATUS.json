@@ -1,0 +1,12 @@
+{
+  "schema_id": "hawkar.project-status.v1",
+  "project": "SSlot",
+  "repository": "https://github.com/Hawkar-usls/SSlot",
+  "portfolio_class": "legacy_application",
+  "last_reviewed": "2026-08-09",
+  "flagship_research": false,
+  "scientific_result_claimed": false,
+  "profit_or_payout_guarantee": false,
+  "predictive_advantage_claimed": false,
+  "deployment_requires_current_legal_security_platform_review": true
+}
