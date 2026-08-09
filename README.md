@@ -3,24 +3,33 @@
 # SSlot
 ### Legacy application / game prototype
 
-`historical` · `non-research` · `no outcome guarantees`
+![Status](https://img.shields.io/badge/status-legacy-8c959f)
+![Class](https://img.shields.io/badge/class-application%20prototype-6e7681)
 
 </div>
 
-This repository is retained as a legacy application/game prototype. It is not part of the account's evidence-bearing research portfolio.
+## Status
+
+**Legacy.** This repository is preserved as a historical application/game prototype. It is not a current research project or deployment recommendation.
 
 ## Boundary
 
 ```text
-PROJECT_CLASS = LEGACY_APPLICATION
+MATURITY = LEGACY
 FLAGSHIP_RESEARCH = FALSE
 SCIENTIFIC_RESULT = NOT_CLAIMED
 PROFIT_OR_PAYOUT_GUARANTEE = FALSE
 PREDICTIVE_ADVANTAGE = NOT_CLAIMED
+PRODUCTION_READINESS = NOT_ESTABLISHED
 ```
 
-Machine-readable status: [`PROJECT_STATUS.json`](PROJECT_STATUS.json)
+Any payment, wager, or platform-specific behavior in historical code would require a fresh legal, security, and platform-policy review before real deployment.
 
-Any payment, wager or platform-specific behavior present in historical code requires its own current legal, security and platform-policy review before deployment. Repository presence is not a deployment recommendation.
+## Review
 
-See the [public portfolio index](https://github.com/Hawkar-usls/Janus/blob/main/portfolio-index.json) for current work.
+- Machine-readable project status: [`PROJECT_STATUS.json`](PROJECT_STATUS.json)
+- Portfolio maturity/visibility: [`portfolio-visibility.json`](https://github.com/Hawkar-usls/Janus/blob/main/portfolio-visibility.json)
+
+**Portfolio recommendation:** archive this repository in GitHub if it is no longer needed for active development; keep it unpinned either way.
+
+Presentation follows the account's [public repository standard](https://github.com/Hawkar-usls/Janus/blob/main/docs/PUBLIC_REPOSITORY_PRESENTATION_STANDARD.md). No affiliation with MIT is implied by the presentation style.
