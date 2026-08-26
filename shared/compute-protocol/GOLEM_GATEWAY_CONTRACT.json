@@ -1,6 +1,8 @@
 {
   "schema": "janus.playgrid.golem-gateway-contract.v1",
-  "protocol_version": "0.2.0",
+  "protocol_version": "0.3.0",
+  "routing_fabric_version": "0.1.0",
+  "route_class": "MARKETPLACE",
   "browser_secret_policy": "NO_YAGNA_APP_KEY_OR_WALLET_SECRET_IN_BROWSER",
   "create_job": {
     "method": "POST",
@@ -24,6 +26,11 @@
     "treasury_ledger": "COMPUTE_TREASURY",
     "split": "PUBLIC_AND_PREDECLARED",
     "automatic_wagering_conversion": false
+  },
+  "routing": {
+    "provider_manifest": "providers/golem.marketplace.json",
+    "selection_basis": "CONSENT_DEVICE_POLICY_AND_PROVIDER_CAPACITY",
+    "game_event_weighting": "FORBIDDEN"
   },
   "game_authority": "NONE"
 }
