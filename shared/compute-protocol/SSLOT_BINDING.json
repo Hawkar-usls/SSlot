@@ -1,66 +1,32 @@
 {
-  "schema": "janus.compute-protocol.consumer-binding.v3",
+  "schema": "janus.compute-protocol.consumer-binding.v4",
   "protocol_id": "janus.welfare.compute-protocol",
-  "protocol_version": "0.2.0",
+  "protocol_version": "0.3.0",
   "routing_fabric_version": "0.1.0",
   "consumer": "Hawkar-usls/SSlot",
   "role": "TEMPORARY_CANONICAL_HOST_AND_AMORPHOUS_COMPUTE_ROUTER_SURFACE",
   "default_route_class": "MARKETPLACE",
   "allowed_route_classes": ["SCIENCE", "PUBLIC_GOOD", "MARKETPLACE", "TREASURY", "DATACENTER", "OPERATOR", "CUSTOM"],
-  "allowed_task_types": ["SCIENCE_WORK_UNIT", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"],
-  "allowed_sinks": ["IMPACT_LEDGER", "PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY", "CONTRACT_DEFINED_AUDITED_SINK"],
+  "allowed_task_types": ["SCIENCE_WORK_UNIT", "GENERAL_COMPUTE_JOB", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"],
+  "allowed_sinks": ["IMPACT_LEDGER", "GENERAL_COMPUTE_LEDGER", "PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY", "CONTRACT_DEFINED_AUDITED_SINK"],
   "provider_selection_authority": "SIGNED_SERVER_ROUTING_PLAN",
   "compute_only_mode_required": true,
   "game_surface_access": "READ_ONLY_STATUS_AND_USER_CONSENT_CONTROLS",
-  "forbidden_authority": [
-    "RNG",
-    "RTP",
-    "WIN_PROBABILITY",
-    "PAYOUT_MULTIPLIER",
-    "FREE_SPIN_ENTITLEMENT",
-    "BET_SIZE",
-    "PERSONAL_JACKPOT_WEIGHT",
-    "LOSS_REBATE",
-    "ROUTE_WEIGHT_FROM_GAME_EVENT"
-  ],
+  "forbidden_authority": ["RNG", "RTP", "WIN_PROBABILITY", "PAYOUT_MULTIPLIER", "FREE_SPIN_ENTITLEMENT", "BET_SIZE", "PERSONAL_JACKPOT_WEIGHT", "LOSS_REBATE", "ROUTE_WEIGHT_FROM_GAME_EVENT"],
   "value_policy": {
     "verified_compute_may_pay_player_separately": true,
-    "player_compute_earnings_ledger": "PLAYER_COMPUTE_EARNINGS_LEDGER",
     "verified_compute_may_fund_aggregate_treasury": true,
-    "treasury_ledger": "COMPUTE_TREASURY",
     "verified_science_may_enter_impact_ledger": true,
-    "split_formula_must_be_public_and_predeclared": true,
+    "verified_general_compute_may_enter_general_or_contract_sink": true,
     "automatic_conversion_to_gambling_balance": false,
-    "personal_compute_to_personal_odds": false,
-    "personal_compute_to_personal_rtp": false,
-    "personal_compute_to_personal_jackpot_weight": false,
     "treasury_cannot_rewrite_game_math": true
   },
-  "consent_requirements": {
-    "explicit_opt_in": true,
-    "revocable_immediately": true,
-    "default_mode": "off",
-    "default_gpu": false,
-    "allow_on_battery_default": false,
-    "cpu_policy_target_percent_max": 30
-  },
-  "routing_policy": {
-    "basis": "CONSENT_DEVICE_POLICY_AND_PROVIDER_CAPACITY",
-    "spin_frequency_as_scheduler_input": false,
-    "game_outcome_as_scheduler_input": false,
-    "weighted_multi_provider_plans_allowed": true,
-    "fallback_only_to_preapproved_provider": true,
-    "fail_closed": true
-  },
-  "browser_boundary": {
-    "control_plane_only": true,
-    "provider_secrets_in_browser": false,
-    "wallet_private_material_in_browser": false,
-    "production_gateway_required": true
-  },
+  "consent_requirements": {"explicit_opt_in": true, "revocable_immediately": true, "default_mode": "off", "default_gpu": false, "allow_on_battery_default": false, "cpu_policy_target_percent_max": 30},
+  "routing_policy": {"basis": "CONSENT_DEVICE_POLICY_AND_PROVIDER_CAPACITY", "spin_frequency_as_scheduler_input": false, "game_outcome_as_scheduler_input": false, "weighted_multi_provider_plans_allowed": true, "fallback_only_to_preapproved_provider": true, "fail_closed": true},
+  "browser_boundary": {"control_plane_only": true, "provider_secrets_in_browser": false, "wallet_private_material_in_browser": false, "production_gateway_required": true},
   "proof_policy": {
     "unverified_receipt_has_value": false,
-    "production_proof_kinds": ["SCIENCE_UPSTREAM_RECEIPT", "ECONOMIC_UPSTREAM_RECEIPT", "GOLEM_PAYMENT_RECEIPT", "POOL_SHARE_ACCEPTANCE"],
+    "production_proof_kinds": ["SCIENCE_UPSTREAM_RECEIPT", "GENERAL_UPSTREAM_RECEIPT", "ECONOMIC_UPSTREAM_RECEIPT", "GOLEM_PAYMENT_RECEIPT", "POOL_SHARE_ACCEPTANCE"],
     "mock_proofs_allowed_in_production": false
   }
 }
