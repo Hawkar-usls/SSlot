@@ -1,151 +1,145 @@
-# SSlot Compute-Gateway Partnership Brief
+# PLAYGRID / GRIDJACK — Partnership Brief
 
-> Working title. Public evaluation prototype; not a production gambling service.
+> Public evaluation prototype. Not a production gambling, payment, or Golem mainnet service.
 
-## The proposal
+## One-line proposal
 
-SSlot explores a new infrastructure primitive for interactive gaming: a **compute gateway that is separable from the game RNG and payout mathematics**.
+**Add an opt-in, independently verifiable compute economy beside conventional game logic without letting compute alter RNG, RTP, payouts, stakes, bonuses, or personal jackpot odds.**
 
-A regulated game can remain a conventional regulated game. Separately, an eligible game/session event can create a signed compute request or compute-credit receipt that is routed to an approved workload provider, data center, operator-owned cluster, or public-interest compute project.
+## Architecture
 
 ```text
 PLAYER / TELEGRAM WEBAPP
           |
-          v
-    GAME EVENT LAYER
-          |-----------------------> REGULATED RNG / PAYOUT
+          +-----------------------> GAME / RNG / PAYOUT
           |
-          +-----------------------> COMPUTE GATEWAY
-                                      |
-                                      +--> approved workload
-                                      +--> data-center / cloud resource
-                                      +--> proof / receipt / audit log
+          +--> EXPLICIT CONSENT + DEVICE POLICY
+                         |
+                         v
+                  PLAYGRID GATEWAY
+                         |
+                  approved provider
+                         |
+              verified work / receipt
+                         |
+             +-----------+-----------+
+             |                       |
+ PLAYER COMPUTE EARNINGS       COMPUTE TREASURY
 ```
 
-**Invariant:** compute completion, compute speed, device power, or workload result must never select or alter RNG outcome, odds, payout, bonus eligibility, or return-to-player mathematics.
+The compute scheduler is driven by **consent, resource caps, thermal/battery policy and available workload — not by spin count, stake size, losses or session intensity**. The game can display compute status but does not create more compute merely because the player wagers more.
 
-## Why this is different
-
-Most gaming infrastructure monetizes only entertainment transactions. The proposed gateway gives an operator a second, independently auditable systems layer capable of transforming already-existing digital activity into useful compute demand or a measurable compute contribution.
-
-The architecture can support several lanes without changing the core game:
-
-1. **Commercial compute lane** — operator/partner purchases or routes approved batch compute through a data-center partner.
-2. **Public-good lane** — a capped compute credit is assigned to an approved scientific/public-interest workload.
-3. **Shared-value lane** — independently accounted compute economics can support a separately regulated promotional/jackpot mechanism, where lawful.
-4. **Operator-owned lane** — non-sensitive internal workloads can be routed to operator-controlled infrastructure.
-
-The public browser prototype demonstrates the interaction shell and Telegram WebApp compatibility. A production integration would replace the local simulation with authenticated server APIs, signed receipts, auditable accounting, approved RNG/payment systems, and jurisdiction-specific controls.
-
-## Server-side first
-
-The preferred production design is **server-side compute routing**, not hidden client mining. Telegram/WebView/mobile clients are poor candidates for uncontrolled sustained compute and should not be treated as free hardware.
-
-If optional client-device computation is ever offered, it must be explicit opt-in, clearly resource-disclosed, capped, pausable, immediately stoppable, and independently reviewed for platform-policy, security, battery/thermal, privacy, and regulatory compliance.
-
-## Data-center value
-
-For a data-center/cloud partner, the gateway can provide:
-
-- aggregated, measurable demand originating from a large interactive platform;
-- workload scheduling with explicit capacity and cost ceilings;
-- auditable task IDs, output hashes, timestamps, and provider attestations;
-- load shaping by geography/time/resource class;
-- a new B2B acquisition channel through gaming operators and aggregators;
-- optional public-interest/CSR workloads with independently reportable compute contribution.
-
-This is not a claim that all workloads are economical on every infrastructure class. CPU/GPU workload fit, latency, egress, energy, verification, and pricing must be benchmarked per partner.
-
-## Operator / aggregator value
-
-Potential operator value is not limited to another slot skin:
-
-- a reusable infrastructure capability across many titles;
-- a differentiated product story that does not require changing certified RNG logic;
-- verifiable impact/compute reporting;
-- optional B2B revenue-share or sponsorship models around compute capacity;
-- compatibility with aggregation architecture rather than one isolated game;
-- a natural route to scientific/public-good campaigns without claiming that gambling itself is socially beneficial.
-
-## Responsible-gaming boundary
-
-The JANUS Addictive Engagement Index (J-AEI) currently models **Gambling disorder at 82.2/100 (EXTREME; model interval 74–90)**. This is a synthetic evidence-anchored model output, **not prevalence and not a probability that a player will become addicted**.
-
-Source: `Hawkar-usls/janus-meta-registry/data/AI-LOVER-ADDICTIVE-ENGAGEMENT-INDEX-2026-08-24-v1.0.json`.
-
-That high-risk classification is a reason to make the compute layer safer, not a reason to extract more engagement. The production gate should therefore enforce:
-
-- no compute contribution proportional to player losses;
-- no contribution multiplier based on stake size;
-- no “play longer to help more” reinforcement mechanic;
-- hard per-session/per-time contribution caps;
-- no change to RNG or payout based on compute contribution;
-- responsible-gaming limits remain authoritative over any compute campaign;
-- transparent reporting that distinguishes wagering, promotional value, and compute value.
-
-## Initial scale model
-
-A first-pass compute-economics model should be based on **eligible events**, not on addiction prevalence:
+## Golem fit
 
 ```text
-annual_compute_budget
-  = eligible_events_per_day
-  × compute_credit_per_event
-  × 365
+PLAYGRID Gateway
+      ↓
+Yagna / Golem Provider
+      ↓
+real Requestor workload
+      ↓
+Agreement / Activity / Invoice / Payment
+      ↓
+GOLEM_PAYMENT_RECEIPT
+      ↓
+player compute earnings + shared treasury
 ```
 
-Illustrative planning scenarios for **1,000,000 eligible events/day**:
+The browser is the control/status plane. Yagna credentials stay server-side or in an approved companion process.
 
-| Compute credit per eligible event | Daily compute budget | Annual compute budget |
-|---:|---:|---:|
-| $0.0001 | $100 | $36,500 |
-| $0.001 | $1,000 | $365,000 |
-| $0.01 | $10,000 | $3,650,000 |
+Golem is attractive because economic value can come from **real requested computation**, rather than requiring the shared-value lane to be only cryptocurrency mining.
 
-These are configuration examples, **not forecasts of revenue, profit, player losses, or jackpot size**. Real figures require operator event volumes, workload benchmarks, cloud/data-center pricing, regulation, fraud assumptions, and accounting design.
+## Player proposition
 
-For optional client compute, an energy planning identity is:
+The user is told clearly before activation:
+
+- compute is OFF by default;
+- what resource limit is requested;
+- it can be stopped immediately;
+- compute does not improve gambling odds;
+- verified compute value is accounted separately from wagers;
+- a public predeclared formula may split verified compute value between the player and a shared treasury.
+
+Player compute earnings must not automatically become gambling balance, free spins or a wagering incentive.
+
+## Operator / aggregator proposition
+
+One integration boundary can support multiple approved compute providers while certified game math stays untouched. This can provide:
+
+- a reusable platform capability across many games;
+- a new shared-value/economic lane;
+- independently auditable compute receipts;
+- a player benefit that is earned from compute rather than from losing money;
+- optional public-good/scientific campaigns through the paired DIVINE_REALM lane.
+
+## Risk context
+
+JANUS' internal `JANUS_ADDICTIVE_ENGAGEMENT_INDEX` models **Gambling disorder = 82.2/100, EXTREME, model interval 74–90, evidence confidence MODERATE_HIGH**. This is a synthetic evidence-anchored model output — **not prevalence and not a probability that an individual player becomes addicted**.
+
+Canonical artifact:
+`Hawkar-usls/janus-meta-registry/data/AI-LOVER-ADDICTIVE-ENGAGEMENT-INDEX-2026-08-24-v1.0.json`
+
+That risk classification is why PLAYGRID forbids:
 
 ```text
-monthly_energy_kWh
-  = opted_in_devices
-  × average_compute_watts
-  × active_hours_per_day
-  × days
-  × duty_cycle
-  / 1000
+losses -> more compute reward
+stake size -> more compute reward
+more spins -> better compute rate
+compute -> better RNG/RTP/jackpot odds
 ```
 
-Example: 100,000 opted-in devices × 10 W × 0.25 h/day × 30 days × 50% duty cycle = **3.75 MWh/month**. This is only a capacity illustration; actual Telegram/mobile/browser feasibility must be benchmarked and may make client compute inappropriate.
+## Economics model
 
-## Proof-of-compute receipt
+The clean first model is based on **verified compute**, not gambling events:
 
-A minimal auditable receipt can include:
+```text
+verified_compute_value
+  = opted_in_compute_hours
+  × accepted_resource_units_per_hour
+  × verified_market_value_per_unit
+```
 
-- `event_receipt_id`
-- `workload_id`
-- `provider_id`
-- `resource_class`
-- `requested_units`
-- `started_at`
-- `completed_at`
-- `input_commitment_hash`
-- `output_hash`
-- `provider_attestation`
-- `compute_credit`
-- `game_rng_receipt_id` as a **reference only**, never as a source of randomness
+Then:
+
+```text
+verified_compute_value
+  -> PLAYER_COMPUTE_EARNINGS_LEDGER
+  +  COMPUTE_TREASURY
+```
+
+The split is a policy variable and must be public before compute begins. Any percentages shown in the public demo are illustrative, not forecasts or promised commercial rates.
+
+## Minimal receipt
+
+For a Golem-backed lane, the verification envelope can reference:
+
+- `task_id`
+- `consent_id`
+- `provider_market = golem`
+- `agreement_id`
+- `activity_id`
+- `invoice_id`
+- `payment_status / transaction_reference`
+- `gross_compute_value`
+- `settlement_asset`
+- `verification_status`
+- `game_effect = NONE`
 
 ## Pilot
 
-A clean pilot needs only four parties/modules:
+The smallest useful pilot is:
 
 ```text
-DEMO GAME
-   + OPERATOR / AGGREGATOR SANDBOX
-   + COMPUTE PROVIDER
-   + AUDIT / RECEIPT STORE
+PUBLIC SLOT DEMO
+ + PLAYGRID GATEWAY
+ + GOLEM TESTNET / YAGNA
+ + VERIFIED TEST RECEIPT STORE
 ```
 
-Success is measured by separation, auditability, workload economics, latency overhead, abuse resistance, and responsible-gaming compliance — not by increased time-on-device.
+Success criteria: explicit consent, real provider/requestor path, authoritative receipt reconciliation, immediate stop, acceptable resource/energy behavior, and zero authority over game mathematics.
+
+Public demo: [`playgrid.html`](playgrid.html)
+
+Golem model: [`.janus/PLAYGRID_GOLEM_MODEL.json`](.janus/PLAYGRID_GOLEM_MODEL.json)
 
 See also: [`LICENSE.md`](LICENSE.md) and [`IP_NOTICE.md`](IP_NOTICE.md).
