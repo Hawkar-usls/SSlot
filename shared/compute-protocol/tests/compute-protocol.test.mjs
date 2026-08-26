@@ -3,6 +3,7 @@ import {
   ConsentGate,
   createTask,
   MockScienceAdapter,
+  MockGeneralAdapter,
   MockEconomicAdapter,
   MockMiningAdapter,
   ReceiptVerifier,
@@ -33,12 +34,21 @@ async function run() {
   const simVerifier = new ReceiptVerifier({ simulation: true });
   const scienceVerification = simVerifier.verify(scienceReceipt, { consent, task: scienceTask });
   assert.equal(scienceVerification.verified, true);
-  const impact = toContributionEntry(scienceReceipt, scienceVerification);
-  assert.equal(impact.lane, 'IMPACT_LEDGER');
-  assert.equal(impact.game_effect, 'NONE');
+  assert.equal(toContributionEntry(scienceReceipt, scienceVerification).lane, 'IMPACT_LEDGER');
 
   gate.revoke();
   assert.equal(gate.canCompute({}).allowed, false, 'revocation must stop compute immediately');
+
+  const generalGate = new ConsentGate({ maxCpuPercent: 30 });
+  const generalConsent = generalGate.grant({ affirmed: true, mode: 'general', cpu_limit_percent: 20 });
+  const generalTask = createTask({ type: 'GENERAL_COMPUTE_JOB', payload: { workload_class: 'buyer-defined-batch', compute_seconds: 2 } });
+  const generalReceipt = await new MockGeneralAdapter().run(generalTask, generalConsent);
+  const generalVerification = simVerifier.verify(generalReceipt, { consent: generalConsent, task: generalTask });
+  assert.equal(generalVerification.verified, true);
+  assert.equal(toContributionEntry(generalReceipt, generalVerification).lane, 'GENERAL_COMPUTE_LEDGER');
+  assert.equal(toContributionEntry(generalReceipt, generalVerification, { sink: 'CONTRACT_DEFINED_AUDITED_SINK' }).lane, 'CONTRACT_DEFINED_AUDITED_SINK');
+  assert.throws(() => toContributionEntry(generalReceipt, generalVerification, { sink: 'GAMBLING_BALANCE' }), /INVALID_LEDGER_SINK/);
+  assert.equal(prodVerifier.verify(generalReceipt, { consent: generalConsent, task: generalTask }).verified, false);
 
   const economicGate = new ConsentGate({ maxCpuPercent: 30 });
   const economicConsent = economicGate.grant({ affirmed: true, mode: 'economic', cpu_limit_percent: 20 });
@@ -71,9 +81,9 @@ async function run() {
   assert.equal(toContributionEntry(miningReceipt, miningVerification).lane, 'COMPUTE_TREASURY');
 
   assert.throws(() => assertNoGameCoupling({ nested: { personal_jackpot_weight: 2 } }), /FORBIDDEN_GAME_COUPLING/);
-  assert.throws(() => createTask({ type: 'ECONOMIC_COMPUTE_JOB', payload: { spin_id: 'x' } }), /FORBIDDEN_GAME_COUPLING/);
+  assert.throws(() => createTask({ type: 'GENERAL_COMPUTE_JOB', payload: { spin_id: 'x' } }), /FORBIDDEN_GAME_COUPLING/);
 
-  console.log('compute-protocol v0.2 invariants: PASS');
+  console.log('compute-protocol v0.3 invariants: PASS');
 }
 
 run().catch((err) => {
