@@ -1,24 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://janus.local/schemas/compute-protocol-v0.2.json",
-  "title": "JANUS Welfare-First Compute Protocol v0.2",
+  "$id": "https://janus.local/schemas/compute-protocol-v0.3.json",
+  "title": "JANUS Welfare-First Compute Protocol v0.3",
   "$defs": {
     "consent": {
       "type": "object",
       "additionalProperties": false,
       "required": ["protocol_id", "protocol_version", "consent_id", "subject_id", "mode", "cpu_limit_percent", "gpu_enabled", "allow_on_battery", "granted_at", "active"],
       "properties": {
-        "protocol_id": { "const": "janus.welfare.compute-protocol" },
-        "protocol_version": { "const": "0.2.0" },
-        "consent_id": { "type": "string", "minLength": 1 },
-        "subject_id": { "type": "string", "minLength": 1 },
-        "mode": { "enum": ["off", "science", "economic", "mining", "automatic"] },
-        "cpu_limit_percent": { "type": "integer", "minimum": 1, "maximum": 30 },
-        "gpu_enabled": { "type": "boolean" },
-        "allow_on_battery": { "type": "boolean" },
-        "granted_at": { "type": "string", "format": "date-time" },
-        "revoked_at": { "type": ["string", "null"], "format": "date-time" },
-        "active": { "type": "boolean" }
+        "protocol_id": {"const": "janus.welfare.compute-protocol"},
+        "protocol_version": {"const": "0.3.0"},
+        "consent_id": {"type": "string", "minLength": 1},
+        "subject_id": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["off", "science", "general", "economic", "mining", "automatic"]},
+        "cpu_limit_percent": {"type": "integer", "minimum": 1, "maximum": 30},
+        "gpu_enabled": {"type": "boolean"},
+        "allow_on_battery": {"type": "boolean"},
+        "granted_at": {"type": "string", "format": "date-time"},
+        "revoked_at": {"type": ["string", "null"], "format": "date-time"},
+        "active": {"type": "boolean"}
       }
     },
     "task": {
@@ -26,31 +26,31 @@
       "additionalProperties": false,
       "required": ["protocol_id", "protocol_version", "task_id", "type", "payload", "priority", "created_at"],
       "properties": {
-        "protocol_id": { "const": "janus.welfare.compute-protocol" },
-        "protocol_version": { "const": "0.2.0" },
-        "task_id": { "type": "string", "minLength": 1 },
-        "type": { "enum": ["SCIENCE_WORK_UNIT", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"] },
-        "payload": { "type": "object" },
-        "deadline": { "type": ["string", "null"], "format": "date-time" },
-        "priority": { "enum": ["low", "normal"] },
-        "created_at": { "type": "string", "format": "date-time" }
+        "protocol_id": {"const": "janus.welfare.compute-protocol"},
+        "protocol_version": {"const": "0.3.0"},
+        "task_id": {"type": "string", "minLength": 1},
+        "type": {"enum": ["SCIENCE_WORK_UNIT", "GENERAL_COMPUTE_JOB", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"]},
+        "payload": {"type": "object"},
+        "deadline": {"type": ["string", "null"], "format": "date-time"},
+        "priority": {"enum": ["low", "normal"]},
+        "created_at": {"type": "string", "format": "date-time"}
       }
     },
     "proof": {
       "type": "object",
       "required": ["kind"],
       "properties": {
-        "kind": {
-          "enum": [
-            "MOCK_SCIENCE_RECEIPT",
-            "MOCK_ECONOMIC_COMPUTE_RECEIPT",
-            "MOCK_POOL_SHARE",
-            "SCIENCE_UPSTREAM_RECEIPT",
-            "ECONOMIC_UPSTREAM_RECEIPT",
-            "GOLEM_PAYMENT_RECEIPT",
-            "POOL_SHARE_ACCEPTANCE"
-          ]
-        }
+        "kind": {"enum": [
+          "MOCK_SCIENCE_RECEIPT",
+          "MOCK_GENERAL_COMPUTE_RECEIPT",
+          "MOCK_ECONOMIC_COMPUTE_RECEIPT",
+          "MOCK_POOL_SHARE",
+          "SCIENCE_UPSTREAM_RECEIPT",
+          "GENERAL_UPSTREAM_RECEIPT",
+          "ECONOMIC_UPSTREAM_RECEIPT",
+          "GOLEM_PAYMENT_RECEIPT",
+          "POOL_SHARE_ACCEPTANCE"
+        ]}
       }
     },
     "receipt": {
@@ -58,18 +58,18 @@
       "additionalProperties": false,
       "required": ["protocol_id", "protocol_version", "receipt_id", "task_id", "task_type", "subject_id", "consent_id", "adapter_id", "work", "proof", "issued_at", "verification_status"],
       "properties": {
-        "protocol_id": { "const": "janus.welfare.compute-protocol" },
-        "protocol_version": { "const": "0.2.0" },
-        "receipt_id": { "type": "string", "minLength": 1 },
-        "task_id": { "type": "string", "minLength": 1 },
-        "task_type": { "enum": ["SCIENCE_WORK_UNIT", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"] },
-        "subject_id": { "type": "string", "minLength": 1 },
-        "consent_id": { "type": "string", "minLength": 1 },
-        "adapter_id": { "type": "string", "minLength": 1 },
-        "work": { "type": "object" },
-        "proof": { "$ref": "#/$defs/proof" },
-        "issued_at": { "type": "string", "format": "date-time" },
-        "verification_status": { "const": "UNVERIFIED" }
+        "protocol_id": {"const": "janus.welfare.compute-protocol"},
+        "protocol_version": {"const": "0.3.0"},
+        "receipt_id": {"type": "string", "minLength": 1},
+        "task_id": {"type": "string", "minLength": 1},
+        "task_type": {"enum": ["SCIENCE_WORK_UNIT", "GENERAL_COMPUTE_JOB", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"]},
+        "subject_id": {"type": "string", "minLength": 1},
+        "consent_id": {"type": "string", "minLength": 1},
+        "adapter_id": {"type": "string", "minLength": 1},
+        "work": {"type": "object"},
+        "proof": {"$ref": "#/$defs/proof"},
+        "issued_at": {"type": "string", "format": "date-time"},
+        "verification_status": {"const": "UNVERIFIED"}
       }
     },
     "contribution": {
@@ -77,16 +77,16 @@
       "additionalProperties": false,
       "required": ["protocol_id", "protocol_version", "contribution_id", "receipt_id", "lane", "subject_id", "adapter_id", "work", "recorded_at", "game_effect"],
       "properties": {
-        "protocol_id": { "const": "janus.welfare.compute-protocol" },
-        "protocol_version": { "const": "0.2.0" },
-        "contribution_id": { "type": "string", "minLength": 1 },
-        "receipt_id": { "type": "string", "minLength": 1 },
-        "lane": { "enum": ["IMPACT_LEDGER", "COMPUTE_TREASURY"] },
-        "subject_id": { "type": "string", "minLength": 1 },
-        "adapter_id": { "type": "string", "minLength": 1 },
-        "work": { "type": "object" },
-        "recorded_at": { "type": "string", "format": "date-time" },
-        "game_effect": { "const": "NONE" }
+        "protocol_id": {"const": "janus.welfare.compute-protocol"},
+        "protocol_version": {"const": "0.3.0"},
+        "contribution_id": {"type": "string", "minLength": 1},
+        "receipt_id": {"type": "string", "minLength": 1},
+        "lane": {"enum": ["IMPACT_LEDGER", "GENERAL_COMPUTE_LEDGER", "PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY", "CONTRACT_DEFINED_AUDITED_SINK"]},
+        "subject_id": {"type": "string", "minLength": 1},
+        "adapter_id": {"type": "string", "minLength": 1},
+        "work": {"type": "object"},
+        "recorded_at": {"type": "string", "format": "date-time"},
+        "game_effect": {"const": "NONE"}
       }
     }
   }
