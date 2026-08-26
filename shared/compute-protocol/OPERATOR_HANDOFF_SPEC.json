@@ -1,5 +1,6 @@
 {
-  "schema": "janus.playgrid.operator-handoff.v1",
+  "schema": "janus.playgrid.operator-handoff.v2",
+  "protocol_version": "0.3.0",
   "routing_fabric_version": "0.1.0",
   "purpose": "Allow a licensed buyer to redirect consented compute to approved providers without changing slot/game mathematics.",
   "buyer_replaceable": [
@@ -12,6 +13,7 @@
     "research_beneficiary",
     "compute_treasury_destination",
     "player_compute_earnings_policy",
+    "general_compute_sink_policy",
     "ledger_endpoint",
     "regional_policy",
     "branding"
@@ -36,13 +38,18 @@
     "COMPUTE_CANNOT_CHANGE_PERSONAL_JACKPOT_WEIGHT",
     "PLAYER_COMPUTE_EARNINGS_NOT_AUTOMATIC_GAMBLING_BALANCE",
     "BROWSER_SECRETS_FORBIDDEN",
-    "UNVERIFIED_RECEIPTS_HAVE_ZERO_LEDGER_VALUE"
+    "UNVERIFIED_RECEIPTS_HAVE_ZERO_LEDGER_VALUE",
+    "ROUTE_WEIGHT_FROM_GAME_EVENT_FORBIDDEN"
   ],
+  "task_types": ["SCIENCE_WORK_UNIT", "GENERAL_COMPUTE_JOB", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"],
   "route_classes": ["SCIENCE", "PUBLIC_GOOD", "MARKETPLACE", "TREASURY", "DATACENTER", "OPERATOR", "CUSTOM"],
   "reference_providers": [
     "providers/science.requestor.json",
+    "providers/public-good.generic.json",
     "providers/golem.marketplace.json",
+    "providers/treasury.generic.json",
     "providers/datacenter.generic.json",
+    "providers/operator.approved.json",
     "providers/custom.operator.json"
   ],
   "production_admission_gate": [
