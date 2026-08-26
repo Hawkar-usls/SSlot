@@ -1,16 +1,29 @@
 {
-  "schema": "playgrid.public-operator-handoff.v1",
-  "concept": "ONE_CONSENTED_COMPUTE_SOURCE_MANY_REPLACEABLE_DESTINATIONS",
-  "default_surface_route": "MARKETPLACE",
-  "route_classes": ["SCIENCE", "PUBLIC_GOOD", "MARKETPLACE", "TREASURY", "DATACENTER", "OPERATOR", "CUSTOM"],
-  "buyer_changes": {
-    "provider_manifest": "provider identity + capabilities + expected receipt",
-    "gateway_alias": "server-side mapping to buyer/provider endpoint",
-    "routing_plan": "single route or weighted approved routes",
-    "verification_keys": "authoritative receipt validation",
-    "sink_policy": "impact / player compute earnings / treasury / contract-defined audited sink",
-    "branding": "presentation only"
+  "schema": "janus.helios.specialized-child-handoff.v1",
+  "ecosystem": "JANUS_HELIOS_ECOSYSTEM",
+  "universal_parent": "Hawkar-usls/Janus-HELIOS",
+  "child": "Hawkar-usls/SSlot",
+  "child_role": "SPECIALIZED_SHARED_MINING_POOL_JACKPOT_SLOT",
+  "universal_route_switching_here": false,
+  "fixed_route_class": "TREASURY",
+  "task_types": ["POW_SHARE", "ECONOMIC_COMPUTE_JOB"],
+  "default_sink": "COMPUTE_TREASURY",
+  "buyer_may_change_within_child_role": {
+    "approved_pool_or_economic_provider": true,
+    "gateway_alias": true,
+    "verification_keys": true,
+    "treasury_destination": true,
+    "aggregate_jackpot_accounting_policy": true,
+    "branding": true,
+    "regional_policy": true
   },
+  "buyer_must_use_helios_for": [
+    "SCIENCE_ROUTE",
+    "DATACENTER_ROUTE",
+    "OPERATOR_GENERAL_COMPUTE_ROUTE",
+    "CUSTOM_ROUTE",
+    "MULTI_ROUTE_OR_WEIGHTED_ROUTING"
+  ],
   "buyer_does_not_change_through_compute_config": [
     "RNG",
     "RTP",
@@ -21,10 +34,10 @@
     "SELF_EXCLUSION",
     "RISK_LIMITS"
   ],
-  "client_boundary": "CONTROL_AND_VISUALIZATION_ONLY",
+  "aggregate_compute_revenue_may_fund_jackpot_reserve": true,
+  "personal_compute_may_change_personal_jackpot_weight": false,
   "browser_secrets": "FORBIDDEN",
   "scheduling_basis": "CONSENT_DEVICE_POLICY_AND_PROVIDER_CAPACITY",
   "spin_frequency_as_compute_driver": false,
-  "public_demo": "playgrid.html",
-  "engineering_source": "welfare-first-v0.1/shared/compute-protocol"
+  "public_demo": "playgrid.html"
 }
