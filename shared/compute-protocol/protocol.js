@@ -1,13 +1,20 @@
-/* Welfare-First Compute Protocol v0.2
+/* Welfare-First Compute Protocol v0.3
  * Dependency-free reference implementation for browser/Node prototypes.
  * Compute is strictly independent from RNG, RTP, wager outcomes and personal game rewards.
  */
 
 export const PROTOCOL_ID = 'janus.welfare.compute-protocol';
-export const PROTOCOL_VERSION = '0.2.0';
+export const PROTOCOL_VERSION = '0.3.0';
 
-export const COMPUTE_MODES = Object.freeze(['off', 'science', 'economic', 'mining', 'automatic']);
-export const TASK_TYPES = Object.freeze(['SCIENCE_WORK_UNIT', 'ECONOMIC_COMPUTE_JOB', 'POW_SHARE']);
+export const COMPUTE_MODES = Object.freeze(['off', 'science', 'general', 'economic', 'mining', 'automatic']);
+export const TASK_TYPES = Object.freeze(['SCIENCE_WORK_UNIT', 'GENERAL_COMPUTE_JOB', 'ECONOMIC_COMPUTE_JOB', 'POW_SHARE']);
+export const LEDGER_SINKS = Object.freeze([
+  'IMPACT_LEDGER',
+  'GENERAL_COMPUTE_LEDGER',
+  'PLAYER_COMPUTE_EARNINGS_LEDGER',
+  'COMPUTE_TREASURY',
+  'CONTRACT_DEFINED_AUDITED_SINK'
+]);
 
 const FORBIDDEN_COUPLING_KEYS = new Set([
   'spin_id', 'wager_id', 'bet', 'rtp', 'odds', 'win_probability',
@@ -38,7 +45,7 @@ export function assertNoGameCoupling(value, path = 'root') {
 }
 
 export class ConsentGate {
-  constructor({ storage = null, storageKey = 'janus.compute.consent.v0.2', maxCpuPercent = 30 } = {}) {
+  constructor({ storage = null, storageKey = 'janus.compute.consent.v0.3', maxCpuPercent = 30 } = {}) {
     this.storage = storage;
     this.storageKey = storageKey;
     this.maxCpuPercent = clampInt(maxCpuPercent, 1, 100);
@@ -103,7 +110,12 @@ export function createTask({ type, payload = {}, deadline = null, priority = 'lo
   if (!TASK_TYPES.includes(type)) throw new Error('UNSUPPORTED_TASK_TYPE');
   assertPlainObject(payload, 'TASK_PAYLOAD');
   assertNoGameCoupling(payload, 'task.payload');
-  const prefix = type === 'SCIENCE_WORK_UNIT' ? 'tsk_sci' : type === 'ECONOMIC_COMPUTE_JOB' ? 'tsk_econ' : 'tsk_pow';
+  const prefix = {
+    SCIENCE_WORK_UNIT: 'tsk_sci',
+    GENERAL_COMPUTE_JOB: 'tsk_gen',
+    ECONOMIC_COMPUTE_JOB: 'tsk_econ',
+    POW_SHARE: 'tsk_pow'
+  }[type];
   return Object.freeze({
     protocol_id: PROTOCOL_ID,
     protocol_version: PROTOCOL_VERSION,
@@ -153,7 +165,7 @@ export function buildReceipt({ task, consent, adapterId, proof, work = {} }) {
 }
 
 export class MockScienceAdapter extends BaseAdapter {
-  constructor() { super({ adapterId: 'mock-science-v0.2', taskType: 'SCIENCE_WORK_UNIT' }); }
+  constructor() { super({ adapterId: 'mock-science-v0.3', taskType: 'SCIENCE_WORK_UNIT' }); }
   async run(task, consent) {
     if (!this.supports(task)) throw new Error('TASK_TYPE_MISMATCH');
     return buildReceipt({ task, consent, adapterId: this.adapterId,
@@ -163,8 +175,24 @@ export class MockScienceAdapter extends BaseAdapter {
   }
 }
 
+export class MockGeneralAdapter extends BaseAdapter {
+  constructor() { super({ adapterId: 'mock-general-v0.3', taskType: 'GENERAL_COMPUTE_JOB' }); }
+  async run(task, consent) {
+    if (!this.supports(task)) throw new Error('TASK_TYPE_MISMATCH');
+    return buildReceipt({ task, consent, adapterId: this.adapterId,
+      proof: { kind: 'MOCK_GENERAL_COMPUTE_RECEIPT', upstream_status: 'SIMULATED' },
+      work: {
+        completed: true,
+        compute_seconds: Number(task.payload.compute_seconds || 1),
+        workload_class: task.payload.workload_class || 'generic-batch',
+        provider_ref: task.payload.provider_ref || 'mock-provider'
+      }
+    });
+  }
+}
+
 export class MockEconomicAdapter extends BaseAdapter {
-  constructor() { super({ adapterId: 'mock-economic-v0.2', taskType: 'ECONOMIC_COMPUTE_JOB' }); }
+  constructor() { super({ adapterId: 'mock-economic-v0.3', taskType: 'ECONOMIC_COMPUTE_JOB' }); }
   async run(task, consent) {
     if (!this.supports(task)) throw new Error('TASK_TYPE_MISMATCH');
     return buildReceipt({ task, consent, adapterId: this.adapterId,
@@ -181,7 +209,7 @@ export class MockEconomicAdapter extends BaseAdapter {
 }
 
 export class MockMiningAdapter extends BaseAdapter {
-  constructor() { super({ adapterId: 'mock-mining-v0.2', taskType: 'POW_SHARE' }); }
+  constructor() { super({ adapterId: 'mock-mining-v0.3', taskType: 'POW_SHARE' }); }
   async run(task, consent) {
     if (!this.supports(task)) throw new Error('TASK_TYPE_MISMATCH');
     return buildReceipt({ task, consent, adapterId: this.adapterId,
@@ -204,28 +232,37 @@ export class ReceiptVerifier {
     if (!task || receipt.task_id !== task.task_id || receipt.task_type !== task.type) errors.push('TASK_BINDING_INVALID');
 
     const kind = receipt.proof?.kind;
-    const mockKinds = new Set(['MOCK_SCIENCE_RECEIPT', 'MOCK_ECONOMIC_COMPUTE_RECEIPT', 'MOCK_POOL_SHARE']);
+    const mockKinds = new Set(['MOCK_SCIENCE_RECEIPT', 'MOCK_GENERAL_COMPUTE_RECEIPT', 'MOCK_ECONOMIC_COMPUTE_RECEIPT', 'MOCK_POOL_SHARE']);
     const mock = mockKinds.has(kind);
     if (mock && !this.simulation) errors.push('MOCK_PROOF_REJECTED_OUTSIDE_SIMULATION');
 
     if (!mock) {
       if (receipt.task_type === 'SCIENCE_WORK_UNIT' && kind !== 'SCIENCE_UPSTREAM_RECEIPT') errors.push('SCIENCE_PROOF_REQUIRED');
-      if (receipt.task_type === 'POW_SHARE' && kind !== 'POOL_SHARE_ACCEPTANCE') errors.push('POOL_PROOF_REQUIRED');
+      if (receipt.task_type === 'GENERAL_COMPUTE_JOB' && kind !== 'GENERAL_UPSTREAM_RECEIPT') errors.push('GENERAL_PROOF_REQUIRED');
       if (receipt.task_type === 'ECONOMIC_COMPUTE_JOB' && !['ECONOMIC_UPSTREAM_RECEIPT', 'GOLEM_PAYMENT_RECEIPT'].includes(kind)) errors.push('ECONOMIC_PROOF_REQUIRED');
+      if (receipt.task_type === 'POW_SHARE' && kind !== 'POOL_SHARE_ACCEPTANCE') errors.push('POOL_PROOF_REQUIRED');
     }
 
     return Object.freeze({ verified: errors.length === 0, status: errors.length === 0 ? 'VERIFIED' : 'REJECTED', errors });
   }
 }
 
-export function toContributionEntry(receipt, verification) {
+export function toContributionEntry(receipt, verification, { sink = null } = {}) {
   if (!verification?.verified) throw new Error('UNVERIFIED_RECEIPT_CANNOT_ENTER_LEDGER');
+  const defaultSink = {
+    SCIENCE_WORK_UNIT: 'IMPACT_LEDGER',
+    GENERAL_COMPUTE_JOB: 'GENERAL_COMPUTE_LEDGER',
+    ECONOMIC_COMPUTE_JOB: 'COMPUTE_TREASURY',
+    POW_SHARE: 'COMPUTE_TREASURY'
+  }[receipt.task_type];
+  const resolvedSink = sink || defaultSink;
+  if (!LEDGER_SINKS.includes(resolvedSink)) throw new Error('INVALID_LEDGER_SINK');
   return Object.freeze({
     protocol_id: PROTOCOL_ID,
     protocol_version: PROTOCOL_VERSION,
     contribution_id: randomId('ctr'),
     receipt_id: receipt.receipt_id,
-    lane: receipt.task_type === 'SCIENCE_WORK_UNIT' ? 'IMPACT_LEDGER' : 'COMPUTE_TREASURY',
+    lane: resolvedSink,
     subject_id: receipt.subject_id,
     adapter_id: receipt.adapter_id,
     work: structuredClone(receipt.work),
