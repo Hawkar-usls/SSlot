@@ -4,16 +4,16 @@
   "display_name": "Buyer-selected Data Center / Cloud",
   "route_class": "DATACENTER",
   "gateway_mode": "server",
-  "task_types": ["ECONOMIC_COMPUTE_JOB", "SCIENCE_WORK_UNIT"],
-  "receipt_kinds": ["ECONOMIC_UPSTREAM_RECEIPT", "SCIENCE_UPSTREAM_RECEIPT"],
+  "task_types": ["GENERAL_COMPUTE_JOB", "ECONOMIC_COMPUTE_JOB", "SCIENCE_WORK_UNIT"],
+  "receipt_kinds": ["GENERAL_UPSTREAM_RECEIPT", "ECONOMIC_UPSTREAM_RECEIPT", "SCIENCE_UPSTREAM_RECEIPT"],
   "capability_tags": ["CPU", "GPU", "BATCH", "BUYER_DEFINED_WORKLOAD"],
   "settlement": {"mode": "CONTRACT_DEFINED"},
-  "beneficiary_policy": {"mode": "CONTRACT_DEFINED", "supported_sinks": ["PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY", "IMPACT_LEDGER"]},
+  "beneficiary_policy": {"mode": "CONTRACT_DEFINED", "supported_sinks": ["GENERAL_COMPUTE_LEDGER", "PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY", "IMPACT_LEDGER"]},
   "gateway_alias": "datacenter",
   "browser_secret_policy": "FORBIDDEN",
   "enabled": true,
   "metadata": {
     "production_status": "BUYER_PROVIDER_CONTRACT_REQUIRED",
-    "note": "Workload class, pricing, verification and destination are supplied by the licensed operator/provider without changing the slot code."
+    "note": "General workloads can be routed here without pretending they are scientific or economic; workload class, pricing and verification remain provider-specific."
   }
 }
