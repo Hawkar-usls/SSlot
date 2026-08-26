@@ -10,8 +10,8 @@
     *{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif}
     #game{position:fixed;inset:0;width:100%;height:100%;border:0;background:#000}
     #pg-toggle{position:fixed;right:14px;top:14px;z-index:10020;border:1px solid var(--line);background:#0b1115;color:#fff;border-radius:999px;padding:10px 14px;font-weight:700;cursor:pointer;box-shadow:0 10px 35px #0009}
-    #pg-panel{position:fixed;right:14px;top:62px;z-index:10019;width:min(380px,calc(100vw - 28px));max-height:calc(100vh - 80px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 20px 60px #000c;backdrop-filter:blur(16px)}
-    #pg-panel[hidden]{display:none}.tag{display:inline-flex;padding:4px 8px;border:1px solid var(--line);border-radius:999px;font-size:11px;color:var(--accent);letter-spacing:.06em}.title{font-size:19px;font-weight:800;margin:8px 0 2px}.sub{color:var(--muted);font-size:12px;margin-bottom:14px}.box{border:1px solid var(--line);border-radius:13px;padding:12px;margin:10px 0;background:#091014cc}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.metric{font:700 18px ui-monospace,SFMono-Regular,Consolas,monospace}.small{font-size:11px;color:var(--muted)}label{display:block;margin:10px 0 5px;font-weight:650}input[type=range]{width:100%}.check{display:flex;gap:9px;align-items:flex-start;font-weight:400}.check input{margin-top:3px}.btn{width:100%;border:1px solid #3a4a55;background:#11202a;color:#fff;border-radius:12px;padding:11px 12px;font-weight:800;cursor:pointer;margin-top:8px}.btn.stop{background:#241315;border-color:#5d2b31}.btn:disabled{opacity:.45;cursor:not-allowed}.ok{color:var(--good)}.warn{color:var(--warn)}.ledger{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;background:#030607;border-radius:10px;padding:9px;min-height:70px}.sep{height:1px;background:var(--line);margin:12px 0}.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:#56636b;margin-right:6px}.pulse.on{background:var(--good);box-shadow:0 0 10px var(--good)}
+    #pg-panel{position:fixed;right:14px;top:62px;z-index:10019;width:min(390px,calc(100vw - 28px));max-height:calc(100vh - 80px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 20px 60px #000c;backdrop-filter:blur(16px)}
+    #pg-panel[hidden]{display:none}.tag{display:inline-flex;padding:4px 8px;border:1px solid var(--line);border-radius:999px;font-size:11px;color:var(--accent);letter-spacing:.06em}.title{font-size:19px;font-weight:800;margin:8px 0 2px}.sub{color:var(--muted);font-size:12px;margin-bottom:14px}.box{border:1px solid var(--line);border-radius:13px;padding:12px;margin:10px 0;background:#091014cc}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:3px 0}.metric{font:700 17px ui-monospace,SFMono-Regular,Consolas,monospace}.small{font-size:11px;color:var(--muted)}label{display:block;margin:10px 0 5px;font-weight:650}input[type=range]{width:100%}.check{display:flex;gap:9px;align-items:flex-start;font-weight:400}.check input{margin-top:3px}.btn{width:100%;border:1px solid #3a4a55;background:#11202a;color:#fff;border-radius:12px;padding:11px 12px;font-weight:800;cursor:pointer;margin-top:8px}.btn.stop{background:#241315;border-color:#5d2b31}.btn:disabled{opacity:.45;cursor:not-allowed}.ok{color:var(--good)}.warn{color:var(--warn)}.ledger{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;background:#030607;border-radius:10px;padding:9px;min-height:70px}.sep{height:1px;background:var(--line);margin:12px 0}.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:#56636b;margin-right:6px}.pulse.on{background:var(--good);box-shadow:0 0 10px var(--good)}
   </style>
 </head>
 <body>
@@ -26,7 +26,7 @@
       <div class="row"><span><span id="dot" class="pulse"></span><b id="status">OFF</b></span><span class="small">provider: GOLEM</span></div>
       <div class="sep"></div>
       <div class="small">Модель production-пути:</div>
-      <div style="margin-top:6px">Mini App → PLAYGRID Gateway → Yagna/Golem → Requestor workload → payment/receipt → Compute Treasury</div>
+      <div style="margin-top:6px">Mini App → PLAYGRID Gateway → Yagna/Golem → Requestor workload → payment/receipt → value split</div>
     </div>
 
     <label for="cpu">Лимит CPU: <span id="cpu-val">15%</span></label>
@@ -38,8 +38,9 @@
 
     <div class="box">
       <div class="row"><span>Compute credits</span><span id="credits" class="metric">0.00</span></div>
-      <div class="row"><span>Demo treasury</span><span id="treasury" class="metric">0.0000 tGLM</span></div>
-      <div class="small" style="margin-top:7px">На этой публичной странице значения <b>симулированы</b>. Реальный GLM/receipt засчитывается только после production gateway + upstream verification.</div>
+      <div class="row"><span>Твой compute earnings</span><span id="player" class="metric ok">0.0000 tGLM</span></div>
+      <div class="row"><span>Общий Compute Treasury</span><span id="treasury" class="metric">0.0000 tGLM</span></div>
+      <div class="small" style="margin-top:7px">Demo split: 70% player / 30% treasury. Это иллюстрация accounting-модели, а не обещанный коммерческий тариф. Compute earnings существуют отдельно от игрового баланса.</div>
     </div>
 
     <div class="small">Последний receipt</div>
@@ -47,44 +48,49 @@
 
     <div class="box">
       <b>Что получает игрок</b>
-      <div class="small" style="margin-top:5px">Прозрачное подтверждение вклада и участие в общей модели ценности/резерва по заранее опубликованным правилам. Личная игровая математика не меняется.</div>
+      <div class="small" style="margin-top:5px">Прозрачное подтверждение выполненной работы, отдельный compute-доход/кредит и видимый вклад в общий пул. Ничто из этого автоматически не покупает ставки, free spins или лучшие шансы.</div>
     </div>
-    <div class="small warn">DEMO / TEST ONLY · Golem mainnet не подключён · Yagna app-key никогда не хранится в браузере.</div>
+    <div class="small warn">DEMO / TEST ONLY · значения симулированы · Golem mainnet не подключён · Yagna app-key никогда не хранится в браузере.</div>
   </section>
 
 <script>
 (() => {
-  const $ = (id) => document.getElementById(id);
-  const panel=$('pg-panel'), toggle=$('pg-toggle'), cpu=$('cpu'), consent=$('consent');
-  const start=$('start'), stop=$('stop'), status=$('status'), dot=$('dot'), credits=$('credits'), treasury=$('treasury'), ledger=$('ledger');
-  let timer=null, n=0, c=0, t=0;
-  const tg=window.Telegram?.WebApp; try{tg?.ready(); tg?.expand();}catch(_){ }
+  const $=(id)=>document.getElementById(id);
+  const panel=$('pg-panel'),toggle=$('pg-toggle'),cpu=$('cpu'),consent=$('consent');
+  const start=$('start'),stop=$('stop'),status=$('status'),dot=$('dot'),credits=$('credits'),player=$('player'),treasury=$('treasury'),ledger=$('ledger');
+  let timer=null,n=0,c=0,p=0,t=0;
+  const tg=window.Telegram?.WebApp; try{tg?.ready();tg?.expand();}catch(_){ }
   toggle.onclick=()=>{panel.hidden=!panel.hidden};
   cpu.oninput=()=>{$('cpu-val').textContent=cpu.value+'%'};
   function renderReceipt(){
-    n++; c+=0.25; t+=0.001;
+    n++; c+=0.25;
+    const gross=0.001, playerPart=gross*0.70, treasuryPart=gross*0.30;
+    p+=playerPart; t+=treasuryPart;
     const r={
-      protocol:'janus.welfare.compute-protocol',
+      protocol:'janus.welfare.compute-protocol@0.2.0',
       mode:'SIMULATION',
       provider:'golem',
       task_type:'ECONOMIC_COMPUTE_JOB',
       receipt_id:'demo_golem_'+String(n).padStart(4,'0'),
       proof_kind:'MOCK_ECONOMIC_COMPUTE_RECEIPT',
       compute_credit:0.25,
-      settlement:'0.001 tGLM',
+      gross_value:gross,
+      settlement_asset:'tGLM',
+      allocation:{player_compute_earnings:playerPart,compute_treasury:treasuryPart},
+      wagering_conversion:'FORBIDDEN_AUTOMATICALLY',
       game_effect:'NONE',
       at:new Date().toISOString()
     };
-    credits.textContent=c.toFixed(2); treasury.textContent=t.toFixed(4)+' tGLM'; ledger.textContent=JSON.stringify(r,null,2);
+    credits.textContent=c.toFixed(2);player.textContent=p.toFixed(4)+' tGLM';treasury.textContent=t.toFixed(4)+' tGLM';ledger.textContent=JSON.stringify(r,null,2);
   }
   start.onclick=()=>{
     if(!consent.checked){alert('Нужно явное согласие на вычислительный слой.');return;}
     if(timer)return;
-    status.textContent='ACTIVE · SIMULATION'; status.className='ok'; dot.classList.add('on'); start.disabled=true; stop.disabled=false; consent.disabled=true; cpu.disabled=true;
-    renderReceipt(); timer=setInterval(renderReceipt,12000);
+    status.textContent='ACTIVE · SIMULATION';status.className='ok';dot.classList.add('on');start.disabled=true;stop.disabled=false;consent.disabled=true;cpu.disabled=true;
+    renderReceipt();timer=setInterval(renderReceipt,12000);
   };
   stop.onclick=()=>{
-    if(timer)clearInterval(timer); timer=null; status.textContent='OFF · CONSENT REVOKED'; status.className=''; dot.classList.remove('on'); start.disabled=false; stop.disabled=true; consent.disabled=false; consent.checked=false; cpu.disabled=false;
+    if(timer)clearInterval(timer);timer=null;status.textContent='OFF · CONSENT REVOKED';status.className='';dot.classList.remove('on');start.disabled=false;stop.disabled=true;consent.disabled=false;consent.checked=false;cpu.disabled=false;
   };
 })();
 </script>
