@@ -6,6 +6,7 @@
 ![Status](https://img.shields.io/badge/status-reactivation%20research-d4a72c)
 ![Class](https://img.shields.io/badge/class-welfare--first%20game%20R%26D-6e7681)
 ![Real Money](https://img.shields.io/badge/real--money-blocked%20pending%20review-b62324)
+![License](https://img.shields.io/badge/license-source--available%20evaluation-6f42c1)
 
 </div>
 
@@ -62,12 +63,29 @@ A player must never be told or nudged to believe that losing money, continuing t
 
 The historical single-file prototype contains mechanics that are explicitly incompatible with the welfare-first target, including outcome-sensitive teaser/near-miss presentation, feature-buy flow, automatic bonus spins, simulated big-win social proof, and pool-dependent outcome shaping. These are migration targets, not product requirements.
 
+## B2B compute layer
+
+The current R&D branch also defines a provider-agnostic compute layer for opt-in scientific/public-good work and a separate economic Compute Treasury lane. Compute contribution is intentionally isolated from RNG, RTP, personal odds, bet size, and personal jackpot weighting.
+
+- [`docs/DUAL_COMPUTE_TREASURY_ROADMAP.md`](docs/DUAL_COMPUTE_TREASURY_ROADMAP.md)
+- [`docs/PLAYGRID_B2B_INNOVATION_BRIEF.md`](docs/PLAYGRID_B2B_INNOVATION_BRIEF.md)
+- [`shared/compute-protocol/README.md`](shared/compute-protocol/README.md)
+
 ## Contracts
 
 - [`WELFARE_FIRST_CONSTITUTION.md`](WELFARE_FIRST_CONSTITUTION.md)
 - [`GAMBLING_SAFETY_CONTRACT.json`](GAMBLING_SAFETY_CONTRACT.json)
 - [`SOCIAL_IMPACT_LEDGER_SCHEMA.json`](SOCIAL_IMPACT_LEDGER_SCHEMA.json)
 - [`PROJECT_STATUS.json`](PROJECT_STATUS.json)
+
+## Licensing
+
+This repository is **source-available for evaluation, not open source**. Public access does not grant production or commercial rights.
+
+- [`LICENSE`](LICENSE)
+- [`docs/COMMERCIAL_LICENSING.md`](docs/COMMERCIAL_LICENSING.md)
+
+Commercial, pilot, OEM, operator, platform, hosted, white-label, or production use requires a separate written agreement with the copyright holder.
 
 ## Current status
 
@@ -76,6 +94,8 @@ MATURITY = REACTIVATION_RESEARCH
 REAL_MONEY = BLOCKED_PENDING_INDEPENDENT_REVIEW
 WELFARE_FIRST_CONTRACT = ADDED
 PUBLIC_IMPACT_LEDGER_SCHEMA = ADDED
+COMPUTE_PROTOCOL_FOUNDATION = ADDED
+COMMERCIAL_EVALUATION_LICENSE = ADDED
 LEGACY_GAMEPLAY_MIGRATION = OPEN
 PRODUCTION_READINESS = NOT_ESTABLISHED
 ```
