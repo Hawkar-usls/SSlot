@@ -20,7 +20,8 @@
     {"company":"Gcore","email":"sales@gcore.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
     {"company":"Continent 8","email":"sales@continent8.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
     {"company":"Playtech","email":"sales@playtech.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"Light & Wonder","email":"marketing@lnw.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"}
+    {"company":"Light & Wonder","email":"marketing@lnw.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Golem Network","email":"contact@golem.network","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE","fit":"PROVIDER_REQUESTOR_DECENTRALIZED_COMPUTE_BACKEND","notes":"Potential economic-compute alternative to generic mining; scientific workloads require a compatible Requestor/research workload and must not be represented as a built-in Golem vaccine project."}
   ],
   "current_reply_state": "NO_SUBSTANTIVE_INBOUND_RESPONSE_FOUND_AT_SYNC_TIME",
   "send_policy": {
@@ -54,6 +55,15 @@
       ]
     },
     "public_numeric_claims": "USE_REPRODUCIBLE_EXTERNAL_SOURCES_ONLY"
+  },
+  "golem_lane": {
+    "role": "OPTIONAL_PROVIDER_REQUESTOR_MARKET_BACKEND",
+    "provider_model": "USER_OR_OPERATOR_COMPANION_AGENT_CAN_OFFER_RESOURCES_SUBJECT_TO_EXPLICIT_CONSENT_AND_GOLEM_TERMS",
+    "requestor_model": "SCIENTIFIC_OR_COMMERCIAL_WORKLOAD_OWNER_PAYS_FOR_COMPUTE",
+    "settlement_asset": "GLM",
+    "telegram_role": "CONTROL_AND_VISUALIZATION_PLANE_ONLY",
+    "forbidden_claim": "GOLEM_ITSELF_SEARCHES_FOR_VACCINES",
+    "science_requirement": "COMPATIBLE_RESEARCH_REQUESTOR_WORKLOAD_REQUIRED"
   },
   "next_product_gate": "GITHUB_PAGES_DEMO_SPIN_TO_COMPUTE_REQUEST_TO_VERIFIED_RECEIPT",
   "real_money_deployment": "BLOCKED_PENDING_INDEPENDENT_REVIEW"
