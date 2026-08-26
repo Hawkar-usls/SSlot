@@ -1,0 +1,19 @@
+{
+  "manifest_version": "0.1.0",
+  "provider_id": "operator-custom",
+  "display_name": "Licensed Buyer Custom Route",
+  "route_class": "CUSTOM",
+  "gateway_mode": "server",
+  "task_types": ["ECONOMIC_COMPUTE_JOB", "SCIENCE_WORK_UNIT"],
+  "receipt_kinds": ["ECONOMIC_UPSTREAM_RECEIPT", "SCIENCE_UPSTREAM_RECEIPT"],
+  "capability_tags": ["BUYER_DEFINED", "EXTENSIBLE"],
+  "settlement": {"mode": "CONTRACT_DEFINED"},
+  "beneficiary_policy": {"mode": "CONTRACT_DEFINED"},
+  "gateway_alias": "custom",
+  "browser_secret_policy": "FORBIDDEN",
+  "enabled": false,
+  "metadata": {
+    "production_status": "DISABLED_UNTIL_SIGNED_OPERATOR_CONFIGURATION",
+    "rule": "A new direction is introduced by a provider manifest and server adapter, not by changing RNG/game math."
+  }
+}
