@@ -1,0 +1,60 @@
+{
+  "schema": "janus.playgrid.outreach-state.v1",
+  "as_of": "2026-08-26",
+  "canonical_product_name": "PLAYGRID",
+  "reference_surfaces": {
+    "science_lane": "Hawkar-usls/DIVINE_REALM",
+    "shared_value_lane": "Hawkar-usls/SSlot",
+    "successor_brand_candidate_for_sslot": "GRIDJACK"
+  },
+  "source_of_truth": {
+    "outreach": "GMAIL_SENT",
+    "repository_state": "GITHUB_BRANCH welfare-first-v0.1",
+    "rule": "Do not rely on chat summaries when Gmail/GitHub state differs."
+  },
+  "unique_recipients_contacted": [
+    {"company":"GR8 Tech","email":"info@gr8.tech","status":"SENT","duplicate_messages":2,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"EveryMatrix","email":"info@everymatrix.com","status":"SENT","duplicate_messages":2,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Evolution","email":"hello@evolution.com","status":"SENT","duplicate_messages":2,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"SOFTSWISS","email":"order@softswiss.com","status":"SENT","duplicate_messages":2,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Gcore","email":"sales@gcore.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Continent 8","email":"sales@continent8.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Playtech","email":"sales@playtech.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Light & Wonder","email":"marketing@lnw.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"}
+  ],
+  "current_reply_state": "NO_SUBSTANTIVE_INBOUND_RESPONSE_FOUND_AT_SYNC_TIME",
+  "send_policy": {
+    "no_additional_email_to_existing_recipients_until_reply": true,
+    "no_duplicate_followup_before_response_or_explicit_followup_window": true,
+    "new_recipient_requires_verified_business_channel": true,
+    "avoid_privacy_press_legal_addresses_for_first_contact": true
+  },
+  "ip_state": {
+    "canonical_license_file": "LICENSE",
+    "license_class": "PLAYGRID_SOURCE_AVAILABLE_EVALUATION_LICENSE_v0.1",
+    "commercial_boundary": "docs/COMMERCIAL_LICENSING.md",
+    "b2b_brief": "docs/PLAYGRID_B2B_INNOVATION_BRIEF.md",
+    "ip_notice_file": "NOT_PRESENT_IN_CANONICAL_BRANCH_AT_SYNC_TIME",
+    "license_md_file": "NOT_PRESENT_IN_CANONICAL_BRANCH_AT_SYNC_TIME",
+    "partnership_brief_file": "NOT_PRESENT_IN_CANONICAL_BRANCH_AT_SYNC_TIME"
+  },
+  "external_claim_policy": {
+    "internal_addiction_index": {
+      "name": "JANUS_ADDICTIVE_ENGAGEMENT_INDEX",
+      "reported_gambling_disorder_score": 82.2,
+      "reported_band": "EXTREME",
+      "reported_model_uncertainty": "74-90",
+      "reported_evidence_confidence": "MODERATE_HIGH",
+      "canonical_artifact_relink_status": "PENDING",
+      "allowed_use": "QUALITATIVE_RISK_CONTEXT_ONLY_UNTIL_CANONICAL_ARTIFACT_IS_RELINKED",
+      "forbidden_interpretations": [
+        "PROBABILITY_OF_ADDICTION",
+        "PERCENT_OF_ADDICTED_PLAYERS",
+        "REVENUE_MULTIPLIER"
+      ]
+    },
+    "public_numeric_claims": "USE_REPRODUCIBLE_EXTERNAL_SOURCES_ONLY"
+  },
+  "next_product_gate": "GITHUB_PAGES_DEMO_SPIN_TO_COMPUTE_REQUEST_TO_VERIFIED_RECEIPT",
+  "real_money_deployment": "BLOCKED_PENDING_INDEPENDENT_REVIEW"
+}
