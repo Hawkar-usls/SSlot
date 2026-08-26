@@ -1,13 +1,13 @@
-/* Welfare-First Compute Protocol v0.1
+/* Welfare-First Compute Protocol v0.2
  * Dependency-free reference implementation for browser/Node prototypes.
  * Compute is strictly independent from RNG, RTP, wager outcomes and personal game rewards.
  */
 
 export const PROTOCOL_ID = 'janus.welfare.compute-protocol';
-export const PROTOCOL_VERSION = '0.1.0';
+export const PROTOCOL_VERSION = '0.2.0';
 
-export const COMPUTE_MODES = Object.freeze(['off', 'science', 'mining', 'automatic']);
-export const TASK_TYPES = Object.freeze(['SCIENCE_WORK_UNIT', 'POW_SHARE']);
+export const COMPUTE_MODES = Object.freeze(['off', 'science', 'economic', 'mining', 'automatic']);
+export const TASK_TYPES = Object.freeze(['SCIENCE_WORK_UNIT', 'ECONOMIC_COMPUTE_JOB', 'POW_SHARE']);
 
 const FORBIDDEN_COUPLING_KEYS = new Set([
   'spin_id', 'wager_id', 'bet', 'rtp', 'odds', 'win_probability',
@@ -38,7 +38,7 @@ export function assertNoGameCoupling(value, path = 'root') {
 }
 
 export class ConsentGate {
-  constructor({ storage = null, storageKey = 'janus.compute.consent.v0.1', maxCpuPercent = 30 } = {}) {
+  constructor({ storage = null, storageKey = 'janus.compute.consent.v0.2', maxCpuPercent = 30 } = {}) {
     this.storage = storage;
     this.storageKey = storageKey;
     this.maxCpuPercent = clampInt(maxCpuPercent, 1, 100);
@@ -103,10 +103,11 @@ export function createTask({ type, payload = {}, deadline = null, priority = 'lo
   if (!TASK_TYPES.includes(type)) throw new Error('UNSUPPORTED_TASK_TYPE');
   assertPlainObject(payload, 'TASK_PAYLOAD');
   assertNoGameCoupling(payload, 'task.payload');
+  const prefix = type === 'SCIENCE_WORK_UNIT' ? 'tsk_sci' : type === 'ECONOMIC_COMPUTE_JOB' ? 'tsk_econ' : 'tsk_pow';
   return Object.freeze({
     protocol_id: PROTOCOL_ID,
     protocol_version: PROTOCOL_VERSION,
-    task_id: randomId(type === 'SCIENCE_WORK_UNIT' ? 'tsk_sci' : 'tsk_pow'),
+    task_id: randomId(prefix),
     type,
     payload: structuredClone(payload),
     deadline,
@@ -152,23 +153,38 @@ export function buildReceipt({ task, consent, adapterId, proof, work = {} }) {
 }
 
 export class MockScienceAdapter extends BaseAdapter {
-  constructor() { super({ adapterId: 'mock-science-v0.1', taskType: 'SCIENCE_WORK_UNIT' }); }
+  constructor() { super({ adapterId: 'mock-science-v0.2', taskType: 'SCIENCE_WORK_UNIT' }); }
   async run(task, consent) {
     if (!this.supports(task)) throw new Error('TASK_TYPE_MISMATCH');
-    return buildReceipt({
-      task, consent, adapterId: this.adapterId,
+    return buildReceipt({ task, consent, adapterId: this.adapterId,
       proof: { kind: 'MOCK_SCIENCE_RECEIPT', upstream_status: 'SIMULATED' },
       work: { completed: true, compute_seconds: 1, project: task.payload.project || 'mock-science' }
     });
   }
 }
 
-export class MockMiningAdapter extends BaseAdapter {
-  constructor() { super({ adapterId: 'mock-mining-v0.1', taskType: 'POW_SHARE' }); }
+export class MockEconomicAdapter extends BaseAdapter {
+  constructor() { super({ adapterId: 'mock-economic-v0.2', taskType: 'ECONOMIC_COMPUTE_JOB' }); }
   async run(task, consent) {
     if (!this.supports(task)) throw new Error('TASK_TYPE_MISMATCH');
-    return buildReceipt({
-      task, consent, adapterId: this.adapterId,
+    return buildReceipt({ task, consent, adapterId: this.adapterId,
+      proof: { kind: 'MOCK_ECONOMIC_COMPUTE_RECEIPT', upstream_status: 'SIMULATED' },
+      work: {
+        completed: true,
+        compute_seconds: Number(task.payload.compute_seconds || 1),
+        provider_market: task.payload.provider_market || 'mock-market',
+        settlement_asset: task.payload.settlement_asset || 'TEST_CREDIT',
+        gross_value: Number(task.payload.gross_value || 0)
+      }
+    });
+  }
+}
+
+export class MockMiningAdapter extends BaseAdapter {
+  constructor() { super({ adapterId: 'mock-mining-v0.2', taskType: 'POW_SHARE' }); }
+  async run(task, consent) {
+    if (!this.supports(task)) throw new Error('TASK_TYPE_MISMATCH');
+    return buildReceipt({ task, consent, adapterId: this.adapterId,
       proof: { kind: 'MOCK_POOL_SHARE', upstream_status: 'SIMULATED' },
       work: { accepted_shares: 1, difficulty: Number(task.payload.difficulty || 1), compute_seconds: 1 }
     });
@@ -188,19 +204,17 @@ export class ReceiptVerifier {
     if (!task || receipt.task_id !== task.task_id || receipt.task_type !== task.type) errors.push('TASK_BINDING_INVALID');
 
     const kind = receipt.proof?.kind;
-    const mock = kind === 'MOCK_SCIENCE_RECEIPT' || kind === 'MOCK_POOL_SHARE';
+    const mockKinds = new Set(['MOCK_SCIENCE_RECEIPT', 'MOCK_ECONOMIC_COMPUTE_RECEIPT', 'MOCK_POOL_SHARE']);
+    const mock = mockKinds.has(kind);
     if (mock && !this.simulation) errors.push('MOCK_PROOF_REJECTED_OUTSIDE_SIMULATION');
 
     if (!mock) {
       if (receipt.task_type === 'SCIENCE_WORK_UNIT' && kind !== 'SCIENCE_UPSTREAM_RECEIPT') errors.push('SCIENCE_PROOF_REQUIRED');
       if (receipt.task_type === 'POW_SHARE' && kind !== 'POOL_SHARE_ACCEPTANCE') errors.push('POOL_PROOF_REQUIRED');
+      if (receipt.task_type === 'ECONOMIC_COMPUTE_JOB' && !['ECONOMIC_UPSTREAM_RECEIPT', 'GOLEM_PAYMENT_RECEIPT'].includes(kind)) errors.push('ECONOMIC_PROOF_REQUIRED');
     }
 
-    return Object.freeze({
-      verified: errors.length === 0,
-      status: errors.length === 0 ? 'VERIFIED' : 'REJECTED',
-      errors
-    });
+    return Object.freeze({ verified: errors.length === 0, status: errors.length === 0 ? 'VERIFIED' : 'REJECTED', errors });
   }
 }
 
