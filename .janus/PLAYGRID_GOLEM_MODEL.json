@@ -1,0 +1,54 @@
+{
+  "schema": "janus.playgrid.golem-model.v1",
+  "surface": "SSlot / GRIDJACK candidate",
+  "goal": "Turn explicitly volunteered spare compute into independently verifiable economic value without changing gambling odds.",
+  "flow": [
+    "EXPLICIT_CONSENT",
+    "DEVICE_POLICY",
+    "PLAYGRID_GATEWAY",
+    "YAGNA_GOLEM_PROVIDER",
+    "REQUESTOR_WORKLOAD",
+    "AGREEMENT_ACTIVITY_INVOICE_PAYMENT",
+    "VERIFIED_COMPUTE_RECEIPT",
+    "VALUE_SPLIT",
+    "PLAYER_COMPUTE_EARNINGS_LEDGER",
+    "COMPUTE_TREASURY"
+  ],
+  "runtime_boundary": {
+    "browser": "CONTROL_AND_STATUS_ONLY",
+    "gateway": "SERVER_OR_APPROVED_COMPANION",
+    "yagna_app_key_in_browser": false,
+    "default_network_for_demo": "TESTNET",
+    "mainnet_enabled_by_default": false
+  },
+  "proof_basis": [
+    "GOLEM_AGREEMENT_ID",
+    "GOLEM_ACTIVITY_ID",
+    "GOLEM_INVOICE_ID",
+    "PAYMENT_STATUS_OR_TRANSACTION_REFERENCE"
+  ],
+  "player_benefit": {
+    "allowed": true,
+    "source": "VERIFIED_COMPUTE_REVENUE_ONLY",
+    "ledger": "PLAYER_COMPUTE_EARNINGS_LEDGER",
+    "may_be_withdrawable_separately": true,
+    "may_auto_credit_gambling_balance": false,
+    "may_buy_better_odds": false,
+    "may_change_rtp": false,
+    "may_change_jackpot_weight": false
+  },
+  "treasury": {
+    "source": "VERIFIED_COMPUTE_REVENUE_ONLY",
+    "ledger": "COMPUTE_TREASURY",
+    "split_formula": "PUBLIC_AND_PREDECLARED",
+    "demo_split_is_not_a_commercial_rate": true
+  },
+  "welfare_firewall": {
+    "spin_frequency_to_compute_reward_multiplier": false,
+    "loss_amount_to_compute_reward_multiplier": false,
+    "stake_size_to_compute_reward_multiplier": false,
+    "compute_to_rng": false,
+    "compute_to_rtp": false
+  },
+  "status": "PUBLIC_DEMO_MODEL_REAL_GOLEM_GATEWAY_PENDING"
+}
