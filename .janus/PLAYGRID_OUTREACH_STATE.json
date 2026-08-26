@@ -1,14 +1,14 @@
 {
-  "schema": "janus.playgrid.outreach-state.v2",
+  "schema": "janus.playgrid.outreach-state.v3",
   "as_of": "2026-08-26",
   "canonical_product_name": "PLAYGRID",
   "reference_surfaces": {
-    "science_lane": "Hawkar-usls/DIVINE_REALM",
-    "shared_value_lane": "Hawkar-usls/SSlot",
+    "science_default_surface": "Hawkar-usls/DIVINE_REALM",
+    "marketplace_default_surface": "Hawkar-usls/SSlot",
     "successor_brand_candidate_for_sslot": "GRIDJACK"
   },
   "source_of_truth": {
-    "outreach": "GMAIL_SENT",
+    "outreach": "GMAIL_SENT_PLUS_DELIVERY_STATUS",
     "repository_state": "GITHUB_MAIN_FOR_PUBLIC_DEMO_AND_WELFARE_FIRST_V0_1_FOR_ENGINEERING",
     "rule": "Do not rely on chat summaries when Gmail/GitHub state differs."
   },
@@ -21,54 +21,74 @@
     {"company":"Continent 8","emails":["sales@continent8.com"],"sent_messages":1,"action":"WAIT_FOR_RESPONSE"},
     {"company":"Playtech","emails":["sales@playtech.com"],"sent_messages":1,"action":"WAIT_FOR_RESPONSE"},
     {"company":"Light & Wonder","emails":["marketing@lnw.com"],"sent_messages":1,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"Golem Network","emails":["contact@golem.network","developers@golem.network"],"sent_messages":2,"action":"WAIT_FOR_RESPONSE","fit":"DECENTRALIZED_COMPUTE_PROVIDER_REQUESTOR_MARKET","notes":"Second Golem message was a distinct developer-facing integration proposal for the slot/provider channel, not a contradictory resend."}
+    {
+      "company":"Golem Network",
+      "emails":["contact@golem.network","developers@golem.network"],
+      "sent_messages":3,
+      "delivery_state": {
+        "contact@golem.network": "TWO_SENT_NO_BOUNCE_FOUND",
+        "developers@golem.network": "BOUNCED_550_5_1_1_ADDRESS_NOT_FOUND"
+      },
+      "latest_valid_send": "contact@golem.network",
+      "latest_subject": "PLAYGRID × Golem — one slot layer, many compute destinations",
+      "action":"WAIT_FOR_RESPONSE",
+      "fit":"DECENTRALIZED_COMPUTE_PROVIDER_REQUESTOR_MARKET"
+    }
   ],
   "current_reply_state": "NO_SUBSTANTIVE_INBOUND_RESPONSE_FOUND_AT_SYNC_TIME",
   "send_policy": {
     "no_additional_email_to_existing_companies_until_reply": true,
     "new_recipient_requires_verified_business_channel": true,
-    "avoid_privacy_press_legal_addresses_for_first_contact": true
+    "avoid_privacy_press_legal_addresses_for_first_contact": true,
+    "record_bounces_before_retrying": true
   },
   "public_demo_state": {
     "sslot_main_surface": "playgrid.html",
     "divine_realm_main_surface": "playgrid.html",
-    "sslot_demo": "GOLEM_SHARED_VALUE_SIMULATION",
-    "divine_demo": "SCIENCE_PUBLIC_GOOD_SIMULATION",
+    "routing_fabric_version": "0.1.0",
+    "route_classes": ["SCIENCE","PUBLIC_GOOD","MARKETPLACE","TREASURY","DATACENTER","OPERATOR","CUSTOM"],
+    "sslot_default_route": "MARKETPLACE",
+    "divine_default_route": "SCIENCE",
+    "both_surfaces_route_switchable": true,
     "production_receipts_claimed": false
   },
   "engineering_state": {
     "protocol_version": "0.2.0",
-    "economic_task_type": "ECONOMIC_COMPUTE_JOB",
+    "routing_fabric_version": "0.1.0",
+    "provider_registry": "ADDED",
+    "provider_manifest_validation": "ADDED",
+    "weighted_routing_plans": "ADDED",
+    "reference_manifests": ["GOLEM", "SCIENCE", "DATACENTER", "CUSTOM_OPERATOR"],
     "golem_gateway_adapter": "ADDED_SIMULATION_AND_PRODUCTION_BOUNDARY",
     "player_compute_earnings_ledger": "MODELED",
     "compute_treasury": "MODELED",
-    "local_invariant_test": "PASS",
+    "impact_ledger": "MODELED",
+    "core_v0_2_local_test": "PASS_BEFORE_ROUTER_ADDITION",
+    "router_test_suite": "CREATED_EXECUTION_PENDING",
     "ci": "OPEN"
   },
+  "routing_law": {
+    "source": "EXPLICIT_CONSENT_PLUS_DEVICE_POLICY",
+    "destination": "SIGNED_APPROVED_PROVIDER_PLAN",
+    "game_event_weighting": "FORBIDDEN",
+    "browser_provider_secrets": "FORBIDDEN",
+    "new_provider_integration": "MANIFEST_PLUS_SERVER_ADAPTER_PLUS_VERIFIER_PLUS_SINK_POLICY"
+  },
   "golem_lane": {
-    "role": "OPTIONAL_PROVIDER_REQUESTOR_MARKET_BACKEND",
-    "provider_model": "EXPLICITLY_CONSENTED_DEVICE_OR_OPERATOR_COMPANION_OFFERS_RESOURCES",
-    "requestor_model": "SCIENTIFIC_OR_COMMERCIAL_WORKLOAD_OWNER_PAYS_FOR_COMPUTE",
+    "role": "REFERENCE_MARKETPLACE_ROUTE_NOT_ARCHITECTURE_LOCK_IN",
+    "requestor_model": "WORKLOAD_OWNER_PAYS_FOR_COMPUTE",
     "settlement_asset": "GLM_OR_TESTNET_TGLM",
     "browser_role": "CONTROL_AND_VISUALIZATION_ONLY",
     "yagna_app_key_in_browser": false,
-    "proof_basis": ["AGREEMENT","ACTIVITY","INVOICE","PAYMENT"],
     "forbidden_claim": "GOLEM_ITSELF_SEARCHES_FOR_VACCINES",
     "science_requirement": "REAL_COMPATIBLE_RESEARCH_REQUESTOR_REQUIRED"
   },
-  "external_claim_policy": {
-    "internal_addiction_index": {
-      "name": "JANUS_ADDICTIVE_ENGAGEMENT_INDEX",
-      "reported_gambling_disorder_score": 82.2,
-      "reported_band": "EXTREME",
-      "reported_model_uncertainty": "74-90",
-      "reported_evidence_confidence": "MODERATE_HIGH",
-      "canonical_artifact_relink_status": "PENDING",
-      "allowed_use": "QUALITATIVE_RISK_CONTEXT_ONLY_UNTIL_CANONICAL_ARTIFACT_IS_RELINKED",
-      "forbidden_interpretations": ["PROBABILITY_OF_ADDICTION","PERCENT_OF_ADDICTED_PLAYERS","REVENUE_MULTIPLIER"]
-    },
-    "public_numeric_claims": "USE_REPRODUCIBLE_EXTERNAL_SOURCES_ONLY"
-  },
-  "next_product_gate": "REAL_GOLEM_TESTNET_GATEWAY_TO_AUTHORITATIVE_RECEIPT",
+  "next_product_gates": [
+    "EXECUTE_ROUTER_TEST_SUITE",
+    "SIGNED_PROVIDER_MANIFEST_MODEL",
+    "REAL_GOLEM_TESTNET_GATEWAY_TO_AUTHORITATIVE_RECEIPT",
+    "REAL_SCIENCE_REQUESTOR_TO_AUTHORITATIVE_RECEIPT",
+    "REAL_DATACENTER_ADAPTER_EXAMPLE"
+  ],
   "real_money_deployment": "BLOCKED_PENDING_INDEPENDENT_REVIEW"
 }
