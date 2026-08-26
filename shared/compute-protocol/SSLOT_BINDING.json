@@ -1,14 +1,17 @@
 {
-  "schema": "janus.compute-protocol.consumer-binding.v2",
+  "schema": "janus.compute-protocol.consumer-binding.v3",
   "protocol_id": "janus.welfare.compute-protocol",
   "protocol_version": "0.2.0",
+  "routing_fabric_version": "0.1.0",
   "consumer": "Hawkar-usls/SSlot",
-  "role": "TEMPORARY_CANONICAL_HOST_AND_SHARED_VALUE_COMPUTE_CONSUMER",
-  "allowed_task_types": ["ECONOMIC_COMPUTE_JOB", "POW_SHARE"],
-  "allowed_sinks": ["PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY"],
-  "preferred_provider_model": "GOLEM_PROVIDER_MARKET",
+  "role": "TEMPORARY_CANONICAL_HOST_AND_AMORPHOUS_COMPUTE_ROUTER_SURFACE",
+  "default_route_class": "MARKETPLACE",
+  "allowed_route_classes": ["SCIENCE", "PUBLIC_GOOD", "MARKETPLACE", "TREASURY", "DATACENTER", "OPERATOR", "CUSTOM"],
+  "allowed_task_types": ["SCIENCE_WORK_UNIT", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"],
+  "allowed_sinks": ["IMPACT_LEDGER", "PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY", "CONTRACT_DEFINED_AUDITED_SINK"],
+  "provider_selection_authority": "SIGNED_SERVER_ROUTING_PLAN",
   "compute_only_mode_required": true,
-  "game_surface_access": "READ_ONLY_STATUS",
+  "game_surface_access": "READ_ONLY_STATUS_AND_USER_CONSENT_CONTROLS",
   "forbidden_authority": [
     "RNG",
     "RTP",
@@ -17,13 +20,15 @@
     "FREE_SPIN_ENTITLEMENT",
     "BET_SIZE",
     "PERSONAL_JACKPOT_WEIGHT",
-    "LOSS_REBATE"
+    "LOSS_REBATE",
+    "ROUTE_WEIGHT_FROM_GAME_EVENT"
   ],
   "value_policy": {
     "verified_compute_may_pay_player_separately": true,
     "player_compute_earnings_ledger": "PLAYER_COMPUTE_EARNINGS_LEDGER",
     "verified_compute_may_fund_aggregate_treasury": true,
     "treasury_ledger": "COMPUTE_TREASURY",
+    "verified_science_may_enter_impact_ledger": true,
     "split_formula_must_be_public_and_predeclared": true,
     "automatic_conversion_to_gambling_balance": false,
     "personal_compute_to_personal_odds": false,
@@ -39,17 +44,23 @@
     "allow_on_battery_default": false,
     "cpu_policy_target_percent_max": 30
   },
-  "golem_boundary": {
-    "browser_is_control_plane_only": true,
-    "yagna_app_key_in_browser": false,
-    "production_path": "PLAYGRID_GATEWAY_TO_YAGNA_GOLEM",
-    "demo_network": "TESTNET",
-    "mainnet_enabled_by_default": false
+  "routing_policy": {
+    "basis": "CONSENT_DEVICE_POLICY_AND_PROVIDER_CAPACITY",
+    "spin_frequency_as_scheduler_input": false,
+    "game_outcome_as_scheduler_input": false,
+    "weighted_multi_provider_plans_allowed": true,
+    "fallback_only_to_preapproved_provider": true,
+    "fail_closed": true
+  },
+  "browser_boundary": {
+    "control_plane_only": true,
+    "provider_secrets_in_browser": false,
+    "wallet_private_material_in_browser": false,
+    "production_gateway_required": true
   },
   "proof_policy": {
     "unverified_receipt_has_value": false,
-    "production_economic_proof_kinds": ["ECONOMIC_UPSTREAM_RECEIPT", "GOLEM_PAYMENT_RECEIPT"],
-    "production_pow_proof_kind": "POOL_SHARE_ACCEPTANCE",
+    "production_proof_kinds": ["SCIENCE_UPSTREAM_RECEIPT", "ECONOMIC_UPSTREAM_RECEIPT", "GOLEM_PAYMENT_RECEIPT", "POOL_SHARE_ACCEPTANCE"],
     "mock_proofs_allowed_in_production": false
   }
 }
