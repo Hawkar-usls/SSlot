@@ -1,0 +1,80 @@
+{
+  "schema": "janus.dual_compute_slot_roadmap.v1",
+  "repository": "Hawkar-usls/SSlot",
+  "role": "VOLUNTARY_COMPUTE_TREASURY",
+  "paired_repository": "Hawkar-usls/DIVINE_REALM",
+  "status": "ROADMAP_ACTIVE_IMPLEMENTATION_PENDING",
+  "mission": "Use explicitly consented proof-of-work compute to produce verifiable economic revenue for a transparent common treasury while keeping gambling outcomes mathematically independent from hashrate and treasury state.",
+  "hard_invariants": {
+    "explicit_opt_in_required": true,
+    "instant_stop_required": true,
+    "cryptojacking_forbidden": true,
+    "resource_usage_visible": true,
+    "compute_may_change_rng": false,
+    "compute_may_change_rtp": false,
+    "compute_may_change_personal_odds": false,
+    "personal_hashrate_may_unlock_more_wagering": false,
+    "treasury_and_player_balance_ledgers_separate": true,
+    "energy_cost_visibility_required": true,
+    "profit_guarantee": false,
+    "standalone_compute_mode_preferred": true
+  },
+  "pipeline": [
+    "COMPUTE_CONSENT_GATE",
+    "MINING_ENDPOINT_ALLOWLIST",
+    "MINING_SIDECAR",
+    "VERIFIED_SHARES",
+    "PAYOUT_RECEIPT",
+    "COMPUTE_REVENUE_LEDGER",
+    "COMPUTE_TREASURY",
+    "JACKPOT_RESERVE_AND_OR_COMMON_SUBSIDY",
+    "PUBLIC_TREASURY_LEDGER"
+  ],
+  "candidate_adapter_classes": [
+    "MONERO_RANDOMX",
+    "P2POOL_STYLE_DECENTRALIZED_POOL",
+    "OTHER_AUDITED_POW_ADAPTERS_AFTER_REVIEW"
+  ],
+  "ledger_separation": [
+    "PLAYER_WAGER_LEDGER",
+    "PLAYER_PAYOUT_LEDGER",
+    "COMPUTE_REVENUE_LEDGER",
+    "JACKPOT_RESERVE_LEDGER"
+  ],
+  "economic_rule": {
+    "preferred": "AGGREGATE_VERIFIED_REVENUE_TO_FIXED_EPOCH_FORMULA",
+    "forbidden": "PERSONAL_HASHRATE_TO_PERSONAL_GAMBLING_ADVANTAGE",
+    "reserve_may_shape_rng": false,
+    "underfunded_liability_behavior": "FAIL_CLOSED_OR_PREFUND"
+  },
+  "phases": [
+    {"id": "P0", "name": "ECONOMIC_CONTRACT_FREEZE", "gate": "MINING_CANNOT_CHANGE_GAMBLING_OUTCOME"},
+    {"id": "P1", "name": "FAKE_SHARE_SIMULATOR"},
+    {"id": "P2", "name": "FIRST_REAL_MINING_ADAPTER", "gate": "REAL_COMPUTE_REVENUE_RECEIPT_VERIFIED"},
+    {"id": "P3", "name": "TREASURY_LEDGER_AND_RECONCILIATION"},
+    {"id": "P4", "name": "DEMO_JACKPOT_RESERVE"},
+    {"id": "P5", "name": "COMMON_CAPPED_SPIN_SUBSIDY_EXPERIMENT"},
+    {"id": "P6", "name": "SIDECAR_SECURITY_HARDENING"},
+    {"id": "P7", "name": "NON_MONEY_PILOT"},
+    {"id": "P8", "name": "REAL_MONEY_DEPLOYMENT_GATE", "status": "BLOCKED_UNTIL_EXTERNAL_REVIEWS_PASS"}
+  ],
+  "welfare_firewall": {
+    "self_exclusion_bypass_by_compute": false,
+    "spend_limit_bypass_by_compute": false,
+    "loss_limit_bypass_by_subsidy": false,
+    "high_risk_user_compute_marketing": false,
+    "cooling_off_return_prompt_from_mining": false
+  },
+  "success_gates": {
+    "hidden_mining": 0,
+    "explicit_consent": "PASS_REQUIRED",
+    "verified_shares_gt_zero": true,
+    "treasury_reconciliation": "PASS_REQUIRED",
+    "rng_dependence_on_hashrate": 0,
+    "personal_odds_advantage_from_hashrate": 0,
+    "reserve_solvency": "PASS_REQUIRED",
+    "energy_cost_visible": "PASS_REQUIRED",
+    "welfare_limit_bypass": 0
+  },
+  "human_roadmap": "docs/DUAL_COMPUTE_TREASURY_ROADMAP.md"
+}
