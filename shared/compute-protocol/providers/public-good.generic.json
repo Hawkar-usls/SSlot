@@ -1,0 +1,16 @@
+{
+  "manifest_version": "0.1.0",
+  "provider_id": "public-good-generic",
+  "display_name": "Approved Public-Good Workload",
+  "route_class": "PUBLIC_GOOD",
+  "gateway_mode": "server",
+  "task_types": ["SCIENCE_WORK_UNIT", "ECONOMIC_COMPUTE_JOB"],
+  "receipt_kinds": ["SCIENCE_UPSTREAM_RECEIPT", "ECONOMIC_UPSTREAM_RECEIPT"],
+  "capability_tags": ["PUBLIC_GOOD", "AUDITABLE_IMPACT"],
+  "settlement": {"mode": "IMPACT_OR_SPONSOR_DEFINED"},
+  "beneficiary_policy": {"mode": "PUBLIC_IMPACT_LEDGER"},
+  "gateway_alias": "public-good",
+  "browser_secret_policy": "FORBIDDEN",
+  "enabled": true,
+  "metadata": {"production_status": "BENEFICIARY_AND_VERIFICATION_REQUIRED"}
+}
