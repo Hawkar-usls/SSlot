@@ -1,52 +1,85 @@
-# JANUS Welfare-First Compute Protocol v0.2
+# JANUS Welfare-First Compute Protocol v0.2 + PLAYGRID Routing Fabric v0.1
 
 Shared executable contract for the paired `SSlot` and `DIVINE_REALM` compute architecture.
 
 ## Purpose
 
-The protocol separates voluntary device computation from gambling outcomes and now supports a provider-agnostic economic-compute lane in addition to science and legacy PoW.
+The protocol separates voluntary computation from gambling outcomes. The routing fabric makes the **destination replaceable**.
 
-Supported task types:
-
-- `SCIENCE_WORK_UNIT` -> verified contribution -> `IMPACT_LEDGER`
-- `ECONOMIC_COMPUTE_JOB` -> verified economic work -> `PLAYER_COMPUTE_EARNINGS_LEDGER` + `COMPUTE_TREASURY`
-- `POW_SHARE` -> verified pool contribution -> `COMPUTE_TREASURY`
-
-The protocol intentionally does **not** define RNG, RTP, wagers, payouts, bonus math or jackpot selection.
-
-## Core flow
+PLAYGRID is therefore not hard-wired to Golem, BOINC, mining, a laboratory, a data center, or one economic model.
 
 ```text
 USER
-  |
-  v
+  ↓
 ComputeConsentGate
-  |
-  v
-ComputeTask
-  |
-  +--> ScienceAdapter --------> upstream science project
-  |
-  +--> EconomicAdapter -------> Golem / approved compute market
-  |
-  +--> MiningAdapter ---------> approved pool
-  |
-  v
-ComputeReceipt (UNVERIFIED)
-  |
-  v
-ReceiptVerifier
-  |
-  +--> SCIENCE -------------> Impact Ledger
-  |
-  +--> ECONOMIC -----------> player compute earnings + Compute Treasury
-  |
-  +--> POW ----------------> Compute Treasury
+  ↓
+Compute Scheduler
+(consent + device policy + provider capacity)
+  ↓
+ProviderRegistry + RoutingPlan
+  ↓
+┌─────────┬────────────┬────────────┬──────────┬─────────┐
+│ SCIENCE │ MARKETPLACE│ DATACENTER │ OPERATOR │ CUSTOM  │
+└─────────┴────────────┴────────────┴──────────┴─────────┘
+  ↓
+Authoritative Receipt
+  ↓
+Impact / Player Compute Earnings / Compute Treasury / audited contract sink
 ```
+
+## Stable compute task types
+
+- `SCIENCE_WORK_UNIT`
+- `ECONOMIC_COMPUTE_JOB`
+- `POW_SHARE` (legacy/specialized PoW adapter class)
+
+The game surface never needs provider-specific logic in order to choose a route.
+
+## Routing fabric
+
+`router.js` adds:
+
+- `ProviderRegistry`
+- `ProviderManifest`
+- `RoutingPlan`
+- weighted multi-provider allocations
+- deterministic scheduler-side provider selection
+- route decisions with `game_effect: NONE`
+
+Provider classes:
+
+- `SCIENCE`
+- `PUBLIC_GOOD`
+- `MARKETPLACE`
+- `TREASURY`
+- `DATACENTER`
+- `OPERATOR`
+- `CUSTOM`
+
+Reference manifests live in `providers/`.
+
+A new provider requires:
+
+```text
+ProviderManifest
++ server-side adapter
++ authoritative receipt verifier
++ sink/accounting policy
+```
+
+—not changes to RNG, RTP, wager or bonus code.
+
+See `OPERATOR_HANDOFF_SPEC.json` and `../../docs/PLAYGRID_AMORPHOUS_ROUTING_FABRIC.md`.
+
+## HELIOS-style systems analogy
+
+The architecture behaves like a routing station: the available resource source is separate from its destination. A licensed operator can redirect approved compute to a different admitted provider or use a weighted routing plan.
+
+The routing decision belongs to the compute scheduler. It may **not** use spin result, stake, win/loss, balance, RTP, bonus state, near-miss state or player-risk signals as routing weights.
 
 ## Golem adapter
 
-`golem-adapter.js` models the production boundary:
+Golem remains a useful reference route, not the architecture itself:
 
 ```text
 Telegram/Web control surface
@@ -62,68 +95,65 @@ Agreement / Activity / Invoice / Payment evidence
 GOLEM_PAYMENT_RECEIPT
 ```
 
-The browser never stores a Yagna app-key. The public demo uses simulation/test receipts; production receipts must come from the authoritative gateway/upstream path.
+The browser never stores a Yagna app-key or wallet private material.
 
-## Player value
+## Player / public value
 
-`economic-allocation.js` defines a separate compute-value split. Verified economic revenue may be allocated between:
+Verified receipts can route value independently:
 
-- `PLAYER_COMPUTE_EARNINGS_LEDGER`
-- `COMPUTE_TREASURY`
+```text
+SCIENCE_UPSTREAM_RECEIPT
+  → IMPACT_LEDGER
 
-The split must be public and predeclared. Player compute earnings cannot automatically become gambling balance, free spins, better odds, improved RTP, or personal jackpot weight.
+ECONOMIC / GOLEM RECEIPT
+  → PLAYER_COMPUTE_EARNINGS_LEDGER
+  + COMPUTE_TREASURY
+
+BUYER-DEFINED VERIFIED RECEIPT
+  → CONTRACT_DEFINED_AUDITED_SINK
+```
+
+Player compute earnings cannot automatically become gambling balance, free spins, better odds, improved RTP or personal jackpot weight.
 
 ## Non-negotiable invariants
 
-1. No computation before explicit opt-in.
-2. Consent can be revoked immediately.
-3. Battery/thermal/user-pause gates are fail-closed.
-4. CPU use is capped by policy; current design target is <=30%.
-5. Compute tasks and receipts cannot contain wager/outcome coupling fields.
-6. A receipt is untrusted until server-side/upstream verification succeeds.
-7. Mock receipts are accepted only when `ReceiptVerifier({ simulation: true })` is explicitly enabled.
-8. Science contribution cannot alter personal RNG, RTP, win probability, payout multiplier or free-spin entitlement.
-9. Economic/mining contribution cannot alter personal RNG, RTP, win probability or personal jackpot weight.
-10. Compute participation is optional and a compute-only mode must remain possible.
-11. Compute revenue is accounted separately from gambling revenue.
-12. Player compute earnings are not an automatic wagering credit.
+1. Explicit opt-in before compute.
+2. Immediate revoke.
+3. Battery/thermal/user-pause fail closed.
+4. CPU cap policy (current reference target <=30%).
+5. No game-coupling fields in tasks, receipts, manifests or routing plans.
+6. No secrets in public provider manifests/browser config.
+7. Unverified receipts have zero ledger value.
+8. Mock receipts are simulation-only.
+9. Compute and route destination cannot alter RNG/RTP/odds/bet/bonus/jackpot weighting.
+10. Compute scheduling and routing are independent of spin frequency.
+11. Compute-only mode remains possible.
+12. Economic compute accounting remains separate from gambling accounting.
 
-## Why compute is NOT bound to a spin
+## Tests
 
-A spin may visualize current background work, but it must not start extra compute merely to encourage more wagering. The compute scheduler is governed by consent, resource limits and device state, not by gambling frequency.
-
-```text
-CONSENT + DEVICE POLICY -> COMPUTE
-COMPUTE -> VERIFIED CONTRIBUTION
-GAME -> READ-ONLY STATUS
-```
-
-## Production proof kinds
-
-- science: `SCIENCE_UPSTREAM_RECEIPT`
-- general economic compute: `ECONOMIC_UPSTREAM_RECEIPT`
-- Golem economic compute: `GOLEM_PAYMENT_RECEIPT`
-- mining: `POOL_SHARE_ACCEPTANCE`
-
-The exact cryptographic/upstream validation rules are not faked. Production verification must bind authoritative upstream evidence to the task, consent session and anti-replay state.
-
-## Prototype
-
-The package is dependency-free ESM and can be exercised with Node:
+Package test command:
 
 ```bash
-node shared/compute-protocol/tests/compute-protocol.test.mjs
+npm test
 ```
 
-The v0.2 invariant suite has been executed locally after the Golem/economic-allocation changes and passed. CI conformance is still an open gate.
+It runs:
 
-## Next gates
+- `tests/compute-protocol.test.mjs`
+- `tests/router.test.mjs`
 
-- production server-side signature + anti-replay model;
-- real Golem gateway using Yagna without browser-exposed credentials;
-- real scientific Requestor/upstream adapter and verification;
+The core v0.2 compute-protocol suite was executed locally after the Golem/economic-allocation changes and passed. The new routing-fabric suite has been added; CI/local execution of that new suite remains an explicit open verification gate until recorded by an actual runner.
+
+## Production gates
+
+- signed provider manifests and expiry/revocation;
+- server-side signature + anti-replay model;
+- real Golem/Yagna route;
+- real scientific Requestor route;
+- real data-center/operator adapter examples;
 - energy/thermal telemetry;
-- independent reconciliation of economic receipts and settlements;
-- dedicated neutral protocol repository;
+- receipt/settlement reconciliation;
+- neutral protocol repository;
 - non-money pilot;
-- real-money deployment remains blocked until independent gambling, crypto, security, privacy and jurisdictional review is complete.
+- independent legal, gambling, crypto/payment, privacy and security review before regulated deployment.
