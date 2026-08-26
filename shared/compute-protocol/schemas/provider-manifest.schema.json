@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://janus.local/schemas/playgrid-provider-manifest-v0.1.json",
+  "title": "PLAYGRID Provider Manifest v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["provider_id", "display_name", "route_class", "gateway_mode", "task_types", "receipt_kinds", "browser_secret_policy", "enabled"],
+  "properties": {
+    "manifest_version": {"type": "string"},
+    "provider_id": {"type": "string", "minLength": 1},
+    "display_name": {"type": "string", "minLength": 1},
+    "route_class": {"enum": ["SCIENCE", "PUBLIC_GOOD", "MARKETPLACE", "TREASURY", "DATACENTER", "OPERATOR", "CUSTOM"]},
+    "gateway_mode": {"enum": ["server", "local-agent", "hybrid", "simulation"]},
+    "task_types": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["SCIENCE_WORK_UNIT", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"]}
+    },
+    "receipt_kinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "capability_tags": {"type": "array", "items": {"type": "string"}},
+    "settlement": {"type": "object"},
+    "beneficiary_policy": {"type": "object"},
+    "gateway_alias": {"type": "string"},
+    "browser_secret_policy": {"const": "FORBIDDEN"},
+    "enabled": {"type": "boolean"},
+    "metadata": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "not": {
+        "anyOf": [
+          {"required": ["api_key"]},
+          {"required": ["app_key"]},
+          {"required": ["password"]},
+          {"required": ["private_key"]},
+          {"required": ["wallet_seed"]},
+          {"required": ["access_token"]}
+        ]
+      }
+    }
+  ]
+}
