@@ -1,0 +1,19 @@
+{
+  "manifest_version": "0.1.0",
+  "provider_id": "operator-approved",
+  "display_name": "Approved Operator Workload",
+  "route_class": "OPERATOR",
+  "gateway_mode": "server",
+  "task_types": ["ECONOMIC_COMPUTE_JOB"],
+  "receipt_kinds": ["ECONOMIC_UPSTREAM_RECEIPT"],
+  "capability_tags": ["OPERATOR_OWNED", "NON_SENSITIVE", "AUDITABLE"],
+  "settlement": {"mode": "INTERNAL_OR_CONTRACT_DEFINED"},
+  "beneficiary_policy": {"mode": "CONTRACT_DEFINED_AUDITED_SINK"},
+  "gateway_alias": "operator",
+  "browser_secret_policy": "FORBIDDEN",
+  "enabled": true,
+  "metadata": {
+    "production_status": "WORKLOAD_ALLOWLIST_REQUIRED",
+    "prohibited": ["HIDDEN_SURVEILLANCE", "MALWARE", "UNDECLARED_USER_DATA_PROCESSING"]
+  }
+}
