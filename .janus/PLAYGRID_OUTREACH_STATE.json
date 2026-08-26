@@ -1,5 +1,5 @@
 {
-  "schema": "janus.playgrid.outreach-state.v3",
+  "schema": "janus.playgrid.outreach-state.v4",
   "as_of": "2026-08-26",
   "canonical_product_name": "PLAYGRID",
   "reference_surfaces": {
@@ -26,7 +26,7 @@
       "emails":["contact@golem.network","developers@golem.network"],
       "sent_messages":3,
       "delivery_state": {
-        "contact@golem.network": "TWO_SENT_NO_BOUNCE_FOUND",
+        "contact@golem.network": "TWO_SENT_NO_BOUNCE_FOUND_AT_LAST_CHECK",
         "developers@golem.network": "BOUNCED_550_5_1_1_ADDRESS_NOT_FOUND"
       },
       "latest_valid_send": "contact@golem.network",
@@ -45,26 +45,31 @@
   "public_demo_state": {
     "sslot_main_surface": "playgrid.html",
     "divine_realm_main_surface": "playgrid.html",
+    "protocol_version_displayed": "0.3.0",
     "routing_fabric_version": "0.1.0",
     "route_classes": ["SCIENCE","PUBLIC_GOOD","MARKETPLACE","TREASURY","DATACENTER","OPERATOR","CUSTOM"],
     "sslot_default_route": "MARKETPLACE",
     "divine_default_route": "SCIENCE",
     "both_surfaces_route_switchable": true,
+    "general_compute_job_visible_for_datacenter_operator_custom": true,
     "production_receipts_claimed": false
   },
   "engineering_state": {
-    "protocol_version": "0.2.0",
+    "protocol_version": "0.3.0",
     "routing_fabric_version": "0.1.0",
+    "task_types": ["SCIENCE_WORK_UNIT","GENERAL_COMPUTE_JOB","ECONOMIC_COMPUTE_JOB","POW_SHARE"],
     "provider_registry": "ADDED",
     "provider_manifest_validation": "ADDED",
     "weighted_routing_plans": "ADDED",
-    "reference_manifests": ["GOLEM", "SCIENCE", "DATACENTER", "CUSTOM_OPERATOR"],
+    "reference_manifests": ["SCIENCE","PUBLIC_GOOD","GOLEM","TREASURY","DATACENTER","OPERATOR","CUSTOM"],
     "golem_gateway_adapter": "ADDED_SIMULATION_AND_PRODUCTION_BOUNDARY",
+    "general_compute_ledger": "MODELED",
     "player_compute_earnings_ledger": "MODELED",
     "compute_treasury": "MODELED",
     "impact_ledger": "MODELED",
-    "core_v0_2_local_test": "PASS_BEFORE_ROUTER_ADDITION",
-    "router_test_suite": "CREATED_EXECUTION_PENDING",
+    "verified_test_history": "V0_2_CORE_PASS_BEFORE_V0_3_ROUTER_GENERALIZATION",
+    "current_v0_3_core_test": "EXECUTION_PENDING",
+    "router_test_suite": "EXECUTION_PENDING",
     "ci": "OPEN"
   },
   "routing_law": {
@@ -72,23 +77,15 @@
     "destination": "SIGNED_APPROVED_PROVIDER_PLAN",
     "game_event_weighting": "FORBIDDEN",
     "browser_provider_secrets": "FORBIDDEN",
-    "new_provider_integration": "MANIFEST_PLUS_SERVER_ADAPTER_PLUS_VERIFIER_PLUS_SINK_POLICY"
-  },
-  "golem_lane": {
-    "role": "REFERENCE_MARKETPLACE_ROUTE_NOT_ARCHITECTURE_LOCK_IN",
-    "requestor_model": "WORKLOAD_OWNER_PAYS_FOR_COMPUTE",
-    "settlement_asset": "GLM_OR_TESTNET_TGLM",
-    "browser_role": "CONTROL_AND_VISUALIZATION_ONLY",
-    "yagna_app_key_in_browser": false,
-    "forbidden_claim": "GOLEM_ITSELF_SEARCHES_FOR_VACCINES",
-    "science_requirement": "REAL_COMPATIBLE_RESEARCH_REQUESTOR_REQUIRED"
+    "new_provider_integration": "MANIFEST_PLUS_SERVER_ADAPTER_PLUS_VERIFIER_PLUS_SINK_POLICY",
+    "unknown_future_workload_container": "GENERAL_COMPUTE_JOB"
   },
   "next_product_gates": [
-    "EXECUTE_ROUTER_TEST_SUITE",
+    "EXECUTE_CURRENT_V0_3_CORE_AND_ROUTER_TESTS",
     "SIGNED_PROVIDER_MANIFEST_MODEL",
     "REAL_GOLEM_TESTNET_GATEWAY_TO_AUTHORITATIVE_RECEIPT",
     "REAL_SCIENCE_REQUESTOR_TO_AUTHORITATIVE_RECEIPT",
-    "REAL_DATACENTER_ADAPTER_EXAMPLE"
+    "REAL_GENERAL_DATACENTER_OR_OPERATOR_ADAPTER"
   ],
   "real_money_deployment": "BLOCKED_PENDING_INDEPENDENT_REVIEW"
 }
