@@ -1,0 +1,29 @@
+{
+  "schema": "janus.playgrid.golem-gateway-contract.v1",
+  "protocol_version": "0.2.0",
+  "browser_secret_policy": "NO_YAGNA_APP_KEY_OR_WALLET_SECRET_IN_BROWSER",
+  "create_job": {
+    "method": "POST",
+    "path": "/v1/golem/jobs",
+    "input": ["protocol_id", "protocol_version", "task.task_id", "task.type=ECONOMIC_COMPUTE_JOB", "task.payload", "consent.consent_id", "consent.subject_id", "consent.cpu_limit_percent", "consent.gpu_enabled", "consent.allow_on_battery"],
+    "output": {
+      "proof.kind": "GOLEM_PAYMENT_RECEIPT",
+      "proof.required_refs": ["agreement_id", "activity_id", "invoice_id", "payment_status_or_transaction_reference"],
+      "work.required": ["provider_market=golem", "compute_seconds", "settlement_asset", "gross_value"]
+    }
+  },
+  "stop_job": {
+    "method": "POST",
+    "path": "/v1/golem/jobs/stop",
+    "input": ["task_id"],
+    "requirement": "BEST_EFFORT_IMMEDIATE_STOP_AND_NO_NEW_WORK_AFTER_CONSENT_REVOKE"
+  },
+  "accounting": {
+    "gross_value_source": "AUTHORITATIVE_RECONCILED_GOLEM_PAYMENT_ONLY",
+    "player_ledger": "PLAYER_COMPUTE_EARNINGS_LEDGER",
+    "treasury_ledger": "COMPUTE_TREASURY",
+    "split": "PUBLIC_AND_PREDECLARED",
+    "automatic_wagering_conversion": false
+  },
+  "game_authority": "NONE"
+}
