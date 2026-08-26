@@ -1,5 +1,5 @@
 {
-  "schema": "janus.playgrid.outreach-state.v1",
+  "schema": "janus.playgrid.outreach-state.v2",
   "as_of": "2026-08-26",
   "canonical_product_name": "PLAYGRID",
   "reference_surfaces": {
@@ -9,35 +9,52 @@
   },
   "source_of_truth": {
     "outreach": "GMAIL_SENT",
-    "repository_state": "GITHUB_BRANCH welfare-first-v0.1",
+    "repository_state": "GITHUB_MAIN_FOR_PUBLIC_DEMO_AND_WELFARE_FIRST_V0_1_FOR_ENGINEERING",
     "rule": "Do not rely on chat summaries when Gmail/GitHub state differs."
   },
-  "unique_recipients_contacted": [
-    {"company":"GR8 Tech","email":"info@gr8.tech","status":"SENT","duplicate_messages":2,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"EveryMatrix","email":"info@everymatrix.com","status":"SENT","duplicate_messages":2,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"Evolution","email":"hello@evolution.com","status":"SENT","duplicate_messages":2,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"SOFTSWISS","email":"order@softswiss.com","status":"SENT","duplicate_messages":2,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"Gcore","email":"sales@gcore.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"Continent 8","email":"sales@continent8.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"Playtech","email":"sales@playtech.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"Light & Wonder","email":"marketing@lnw.com","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE"},
-    {"company":"Golem Network","email":"contact@golem.network","status":"SENT","duplicate_messages":1,"action":"WAIT_FOR_RESPONSE","fit":"PROVIDER_REQUESTOR_DECENTRALIZED_COMPUTE_BACKEND","notes":"Potential economic-compute alternative to generic mining; scientific workloads require a compatible Requestor/research workload and must not be represented as a built-in Golem vaccine project."}
+  "unique_companies_contacted": [
+    {"company":"GR8 Tech","emails":["info@gr8.tech"],"sent_messages":2,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"EveryMatrix","emails":["info@everymatrix.com"],"sent_messages":2,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Evolution","emails":["hello@evolution.com"],"sent_messages":2,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"SOFTSWISS","emails":["order@softswiss.com"],"sent_messages":2,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Gcore","emails":["sales@gcore.com"],"sent_messages":1,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Continent 8","emails":["sales@continent8.com"],"sent_messages":1,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Playtech","emails":["sales@playtech.com"],"sent_messages":1,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Light & Wonder","emails":["marketing@lnw.com"],"sent_messages":1,"action":"WAIT_FOR_RESPONSE"},
+    {"company":"Golem Network","emails":["contact@golem.network","developers@golem.network"],"sent_messages":2,"action":"WAIT_FOR_RESPONSE","fit":"DECENTRALIZED_COMPUTE_PROVIDER_REQUESTOR_MARKET","notes":"Second Golem message was a distinct developer-facing integration proposal for the slot/provider channel, not a contradictory resend."}
   ],
   "current_reply_state": "NO_SUBSTANTIVE_INBOUND_RESPONSE_FOUND_AT_SYNC_TIME",
   "send_policy": {
-    "no_additional_email_to_existing_recipients_until_reply": true,
-    "no_duplicate_followup_before_response_or_explicit_followup_window": true,
+    "no_additional_email_to_existing_companies_until_reply": true,
     "new_recipient_requires_verified_business_channel": true,
     "avoid_privacy_press_legal_addresses_for_first_contact": true
   },
-  "ip_state": {
-    "canonical_license_file": "LICENSE",
-    "license_class": "PLAYGRID_SOURCE_AVAILABLE_EVALUATION_LICENSE_v0.1",
-    "commercial_boundary": "docs/COMMERCIAL_LICENSING.md",
-    "b2b_brief": "docs/PLAYGRID_B2B_INNOVATION_BRIEF.md",
-    "ip_notice_file": "NOT_PRESENT_IN_CANONICAL_BRANCH_AT_SYNC_TIME",
-    "license_md_file": "NOT_PRESENT_IN_CANONICAL_BRANCH_AT_SYNC_TIME",
-    "partnership_brief_file": "NOT_PRESENT_IN_CANONICAL_BRANCH_AT_SYNC_TIME"
+  "public_demo_state": {
+    "sslot_main_surface": "playgrid.html",
+    "divine_realm_main_surface": "playgrid.html",
+    "sslot_demo": "GOLEM_SHARED_VALUE_SIMULATION",
+    "divine_demo": "SCIENCE_PUBLIC_GOOD_SIMULATION",
+    "production_receipts_claimed": false
+  },
+  "engineering_state": {
+    "protocol_version": "0.2.0",
+    "economic_task_type": "ECONOMIC_COMPUTE_JOB",
+    "golem_gateway_adapter": "ADDED_SIMULATION_AND_PRODUCTION_BOUNDARY",
+    "player_compute_earnings_ledger": "MODELED",
+    "compute_treasury": "MODELED",
+    "local_invariant_test": "PASS",
+    "ci": "OPEN"
+  },
+  "golem_lane": {
+    "role": "OPTIONAL_PROVIDER_REQUESTOR_MARKET_BACKEND",
+    "provider_model": "EXPLICITLY_CONSENTED_DEVICE_OR_OPERATOR_COMPANION_OFFERS_RESOURCES",
+    "requestor_model": "SCIENTIFIC_OR_COMMERCIAL_WORKLOAD_OWNER_PAYS_FOR_COMPUTE",
+    "settlement_asset": "GLM_OR_TESTNET_TGLM",
+    "browser_role": "CONTROL_AND_VISUALIZATION_ONLY",
+    "yagna_app_key_in_browser": false,
+    "proof_basis": ["AGREEMENT","ACTIVITY","INVOICE","PAYMENT"],
+    "forbidden_claim": "GOLEM_ITSELF_SEARCHES_FOR_VACCINES",
+    "science_requirement": "REAL_COMPATIBLE_RESEARCH_REQUESTOR_REQUIRED"
   },
   "external_claim_policy": {
     "internal_addiction_index": {
@@ -48,23 +65,10 @@
       "reported_evidence_confidence": "MODERATE_HIGH",
       "canonical_artifact_relink_status": "PENDING",
       "allowed_use": "QUALITATIVE_RISK_CONTEXT_ONLY_UNTIL_CANONICAL_ARTIFACT_IS_RELINKED",
-      "forbidden_interpretations": [
-        "PROBABILITY_OF_ADDICTION",
-        "PERCENT_OF_ADDICTED_PLAYERS",
-        "REVENUE_MULTIPLIER"
-      ]
+      "forbidden_interpretations": ["PROBABILITY_OF_ADDICTION","PERCENT_OF_ADDICTED_PLAYERS","REVENUE_MULTIPLIER"]
     },
     "public_numeric_claims": "USE_REPRODUCIBLE_EXTERNAL_SOURCES_ONLY"
   },
-  "golem_lane": {
-    "role": "OPTIONAL_PROVIDER_REQUESTOR_MARKET_BACKEND",
-    "provider_model": "USER_OR_OPERATOR_COMPANION_AGENT_CAN_OFFER_RESOURCES_SUBJECT_TO_EXPLICIT_CONSENT_AND_GOLEM_TERMS",
-    "requestor_model": "SCIENTIFIC_OR_COMMERCIAL_WORKLOAD_OWNER_PAYS_FOR_COMPUTE",
-    "settlement_asset": "GLM",
-    "telegram_role": "CONTROL_AND_VISUALIZATION_PLANE_ONLY",
-    "forbidden_claim": "GOLEM_ITSELF_SEARCHES_FOR_VACCINES",
-    "science_requirement": "COMPATIBLE_RESEARCH_REQUESTOR_WORKLOAD_REQUIRED"
-  },
-  "next_product_gate": "GITHUB_PAGES_DEMO_SPIN_TO_COMPUTE_REQUEST_TO_VERIFIED_RECEIPT",
+  "next_product_gate": "REAL_GOLEM_TESTNET_GATEWAY_TO_AUTHORITATIVE_RECEIPT",
   "real_money_deployment": "BLOCKED_PENDING_INDEPENDENT_REVIEW"
 }
