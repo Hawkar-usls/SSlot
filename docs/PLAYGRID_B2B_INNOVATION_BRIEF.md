@@ -2,238 +2,226 @@
 
 ## Executive proposition
 
-PLAYGRID is a proposed reusable infrastructure layer for regulated gaming in which a conventional game surface remains separated from a voluntary, verifiable compute layer.
+PLAYGRID is a reusable infrastructure layer for gaming in which a conventional game surface remains separated from a **voluntary, verifiable and replaceably routed compute layer**.
 
-The core commercial proposition is not "a slot that secretly mines" and not "charity that excuses gambling losses". It is:
+The commercial primitive is not "a slot that mines" and not "gambling for charity".
 
-> **A game can remain auditable and regulator-facing while a separately consented compute channel produces a measurable external output that can be routed to science/public-good work or to a transparent pooled economic treasury.**
+> **One consented compute source can be redirected among approved workloads/providers without changing the slot or its certified game mathematics.**
 
 Reference surfaces:
 
-- **DIVINE_REALM** — science/public-good compute lane;
-- **SSlot / successor brand** — economic pooled-compute / treasury lane;
-- **Compute Protocol** — consent, task, receipt, verification, routing;
+- **DIVINE_REALM** — science-default presentation;
+- **SSlot / GRIDJACK candidate** — marketplace/shared-value-default presentation;
+- **Compute Protocol** — consent, tasks, receipts, verification and accounting;
+- **Routing Fabric** — provider registry, manifests and single/weighted routing plans;
 - **Welfare Firewall** — RNG/RTP/limits/eligibility remain outside compute authority.
+
+## Amorphous routing model
+
+```text
+PLAYER CONSENT + DEVICE POLICY
+            ↓
+       PLAYGRID ROUTER
+            ↓
+   ┌────────┼────────────┬────────────┬──────────┬─────────┐
+   ↓        ↓            ↓            ↓          ↓         ↓
+SCIENCE  PUBLIC GOOD  MARKETPLACE  DATACENTER  OPERATOR  CUSTOM
+   │        │            │            │          │         │
+   └────────┴────────────┴────────────┴──────────┴─────────┘
+            ↓
+      VERIFIED RECEIPT
+            ↓
+   IMPACT / PLAYER COMPUTE EARNINGS /
+       COMPUTE TREASURY / AUDITED SINK
+```
+
+The buyer changes:
+
+```text
+ProviderManifest
++ server adapter
++ receipt verifier
++ sink/accounting policy
+```
+
+The buyer does **not** need to rewrite the game surface or game mathematics.
+
+## Reference directions
+
+### Science / public good
+
+Approved research or public-interest workloads can produce authoritative receipts into an `IMPACT_LEDGER`. A provider such as Golem, a BOINC-family project, a university cluster or a data center is infrastructure; scientific validity remains with the real workload owner/research partner.
+
+### Compute marketplace
+
+A marketplace such as Golem can be a route for useful paid Requestor workloads. Verified economic value may be split under a predeclared policy between a separate `PLAYER_COMPUTE_EARNINGS_LEDGER` and `COMPUTE_TREASURY`.
+
+### Self-supporting treasury / jackpot-reserve economics
+
+Verified compute revenue can enter a separately accounted treasury/reserve. The reserve may fund an operator-approved shared-value mechanism only under legal/accounting/game-math review. Treasury size may never rewrite outcomes or personal odds.
+
+### Data center / cloud
+
+A buyer can point the routing fabric at its own approved cloud/data-center gateway for divisible CPU/GPU/batch workloads. Pricing, workload classes and verification are provider/contract-specific.
+
+### Operator workload
+
+Approved non-sensitive operator-owned jobs can use the same route interface. This is not permission for hidden surveillance, undeclared personal-data processing, malware, or browser-secret exposure.
+
+### Future custom provider
+
+A future provider class can be admitted through a signed manifest and server adapter. `CUSTOM` is disabled by default until provider identity, security, workload validation, receipt verification and legal terms pass admission.
 
 ## What is novel
 
-The novelty is the composition of five normally separate systems into one auditable product boundary:
+PLAYGRID composes normally separate systems into one auditable boundary:
 
-1. regulated game mechanics;
-2. explicit resource-consent and device-policy controls;
-3. distributed compute provider routing;
-4. proof/receipt verification and public accounting;
-5. a hard architectural firewall preventing compute contribution from buying better gambling outcomes.
+1. game mechanics;
+2. explicit compute consent/resource controls;
+3. provider-agnostic routing;
+4. authoritative proof/receipt verification;
+5. independent impact/economic ledgers;
+6. a hard firewall preventing compute contribution or destination from buying better gambling outcomes.
 
-The important primitive is therefore not a specific miner or BOINC client. It is **provider-agnostic verified compute attached to a game experience without becoming part of the game's randomness**.
+The game is therefore a **control/visualization surface and distribution channel**, not a provider-specific worker implementation.
 
-## Two lanes
+## Routing law
 
-### 1. Scientific / public-good lane
+Compute scheduling must use:
 
 ```text
-Player opt-in
-   ↓
-ComputeConsentGate
-   ↓
-Science provider adapter
-   ↓
-Upstream scientific work
-   ↓
-Verified receipt
-   ↓
-Impact Ledger
+CONSENT + DEVICE POLICY + PROVIDER CAPACITY
 ```
 
-Potential partner value:
-
-- measurable ESG / public-benefit activity with technical proof rather than marketing-only claims;
-- an opt-in contribution mechanism that can exist even in compute-only mode without wagering;
-- new partnerships with research institutions, foundations, universities, or approved distributed-compute providers;
-- differentiated brand positioning based on verifiable contribution.
-
-### 2. Economic pooled-compute lane
+It must not use:
 
 ```text
-Player opt-in
-   ↓
-ComputeConsentGate
-   ↓
-Economic compute provider
-   ↓
-Verified economic work / revenue
-   ↓
-Compute Treasury
-   ↓
-predeclared public accounting rule
+SPIN COUNT
+BET SIZE
+WIN / LOSS
+RTP
+NEAR MISS
+BONUS STATE
+BALANCE
+VIP STATE
+RISK SCORE
 ```
 
-Potential partner value:
+Weighted routing plans are allowed only from neutral scheduler state/capacity and signed operator policy.
 
-- an additional funding stream for a shared reserve, jackpot infrastructure, platform subsidy, or other operator-approved pool;
-- a provider-agnostic architecture: the economic backend can be replaced without changing game mathematics;
-- independent accounting separates compute revenue from wager revenue;
-- future workloads need not be limited to cryptocurrency mining if another auditable compute market is legally and economically superior.
+## Player value
 
-## Why operators and B2B gaming suppliers may care
-
-### Product differentiation
-
-Most slot differentiation happens in theme, volatility, mechanics, bonuses, or distribution. PLAYGRID introduces a new infrastructure dimension: **the session can create a second independently measurable output**.
-
-### Partnership surface
-
-A supplier can integrate once at the Compute Protocol boundary and then route to different approved providers by jurisdiction, operator, campaign, research partner, or infrastructure policy.
-
-### Responsible-gaming relevance
-
-The architecture deliberately rejects the feedback loop:
+The player can receive value without tying it back into wagering:
 
 ```text
-more compute → better personal odds → more wagering
+verified science work
+  → visible impact contribution
+
+verified paid compute
+  → separate player compute earnings
+  + shared compute treasury
 ```
 
-and instead uses:
+Player compute earnings must not automatically become gambling balance, free spins, better odds or personal jackpot weighting.
+
+## Why operators / aggregators may care
+
+- a new platform primitive rather than one more slot skin;
+- one integration boundary for multiple provider classes;
+- new B2B partnerships with compute markets, data centers and research projects;
+- independently auditable compute/impact reporting;
+- optional shared-value economics separated from wager accounting;
+- backend/provider replacement by configuration rather than game rewrite.
+
+## Why compute/data-center partners may care
+
+PLAYGRID can become a distribution/onboarding channel for approved compute demand or provider capacity:
+
+- opt-in edge capacity;
+- operator/server capacity;
+- geographic/time/resource-class routing;
+- auditable workload IDs, outputs and receipts;
+- new requestor/provider relationships through gaming platforms.
+
+This does not imply every workload is suitable. Distributed compute still depends on workload divisibility, runtime support, data sensitivity, transfer size, verification, hardware fit, latency and economics.
+
+## Telegram / web model
 
 ```text
-consent + device policy → compute
-compute → verified contribution
-casino surface → read-only status
-```
-
-This matters because gambling harm is not a marginal policy concern. WHO's 2 December 2024 gambling fact sheet reports an estimated 1.2% of the global adult population with gambling disorder and cites evidence that people gambling at harmful levels generate around 60% of gambling losses/revenue. Source: https://www.who.int/news-room/fact-sheets/detail/gambling
-
-PLAYGRID does not claim to solve gambling disorder. Its engineering claim is narrower and testable: **compute contribution must not be allowed to create a stronger wagering incentive or modify personal game odds.**
-
-### Auditability
-
-A serious deployment can expose separate ledgers for:
-
-- game mathematics and certified RTP;
-- player protection actions;
-- compute consent versions;
-- accepted compute receipts;
-- scientific impact allocations;
-- treasury revenue and downstream allocation.
-
-This separation makes regulator, auditor, partner, and operator questions easier to answer.
-
-## Why data-centre / infrastructure partners may care
-
-PLAYGRID creates a controllable edge-compute acquisition channel rather than assuming all computation must occur in a central data centre.
-
-A data-centre, cloud, scientific-compute, or infrastructure partner could participate as:
-
-- gateway operator;
-- authoritative receipt verifier;
-- workload scheduler;
-- scientific project bridge;
-- treasury/accounting backend;
-- overflow compute provider when edge devices are unavailable;
-- telemetry and energy-efficiency partner.
-
-The architecture also supports hybrid scheduling:
-
-```text
-EDGE VOLUNTEER CAPACITY
-        +
-DATA-CENTRE CAPACITY
+Telegram Mini App / Web
         ↓
-PROVIDER ROUTER
+consent + limits + route status
         ↓
-VERIFIED WORKLOAD
+PLAYGRID Gateway
+        ↓
+approved provider infrastructure
 ```
 
-This can be attractive where workloads are divisible, delay-tolerant, independently verifiable, and safe to distribute. It is not a claim that every data-centre workload is suitable for volunteer devices.
+The browser is the control/visualization plane. Provider credentials, Yagna/app keys, wallets, settlement secrets and production anti-fraud logic remain server-side.
 
-## Telegram / web delivery model
+## Responsible-gaming relevance
 
-The Telegram Mini App or GitHub Pages demo should be treated as the **control and visualization plane**, not as a hidden native compute engine.
+The JANUS `JANUS_ADDICTIVE_ENGAGEMENT_INDEX` artifact exists at:
 
-```text
-Telegram Mini App / Web demo
-        ↓
-consent + limits + status
-        ↓
-Compute Gateway API
-        ↓
-approved companion agent / provider infrastructure
-```
+`Hawkar-usls/janus-meta-registry/data/AI-LOVER-ADDICTIVE-ENGAGEMENT-INDEX-2026-08-24-v1.0.json`
 
-The player must always be able to see whether compute is active, its resource policy, the selected provider class, and a clear stop/revoke action.
+It models Gambling disorder at `82.2/100`, `EXTREME`, interval `74–90`, confidence `MODERATE_HIGH`. The artifact explicitly states this is a synthetic evidence-anchored model output — **not prevalence and not the probability that an individual player becomes addicted**.
 
-## Operator handoff / sale model
+That high-risk context is a reason to forbid reinforcement coupling, not a multiplier for revenue forecasts.
 
-The commercial handoff should be configuration-driven.
+External pitch baselines should remain tied to reproducible public-health/regulator sources. WHO's gambling fact sheet reports an estimated 1.2% of the adult population with gambling disorder and cites evidence that people gambling at harmful levels account for around 60% of gambling losses/revenue.
 
-A licensed partner may replace, under agreement:
+PLAYGRID does not claim to solve gambling disorder. Its narrower engineering claim is testable: **compute activity, route selection and compute value must not make personal gambling outcomes more favorable or reward more wagering.**
 
-- compute gateway endpoint;
+## Operator handoff
+
+A licensed buyer may replace under agreement:
+
+- provider manifests;
+- gateway endpoint mapping;
 - provider allowlist;
 - public verification keys;
-- beneficiary/research destination;
-- treasury destination;
+- routing plan;
+- workload allowlist;
+- beneficiary/treasury destination;
+- player compute-value split;
 - ledger endpoint;
-- branding and presentation;
-- regional policy configuration.
+- regional policy;
+- branding.
 
-The partner must not gain a configuration switch that allows compute contribution to alter:
+Compute configuration may not override RNG/RTP/odds/bet/free-spin/jackpot/risk/self-exclusion authority.
 
-- RNG;
-- RTP;
-- win probability;
-- bet size;
-- loss chasing;
-- personal jackpot weight;
-- free-spin entitlement;
-- risk or self-exclusion controls.
+## Pilot questions
 
-## Evidence and dependency-scale lane
+A non-money sandbox should measure:
 
-The wider JANUS research program contains an internal dependency/addiction evidence track. The exact canonical scale artifact should be linked here only after its file, methodology, version, and provenance are independently located and frozen.
+1. user understanding and opt-in rate without gambling-linked rewards;
+2. verified compute per opted-in resource-hour;
+3. energy/thermal cost;
+4. provider compatibility and receipt verification;
+5. end-to-end ledger reconciliation;
+6. route switching without touching game math;
+7. multi-provider routing/failover behavior;
+8. UX performance overhead;
+9. adversarial welfare/firewall integrity.
 
-Until that happens:
-
-```text
-INTERNAL_DEPENDENCY_SCALE = PENDING_CANONICAL_RELINK
-USE_IN_EXTERNAL_NUMERIC_CLAIMS = FORBIDDEN
-```
-
-External baseline figures for pitch material should remain tied to reproducible sources such as WHO, national regulators, peer-reviewed public-health work, and operator reports.
-
-## What a partner gets from a pilot
-
-A non-money sandbox pilot can answer concrete questions:
-
-1. Do users understand and trust the compute consent flow?
-2. What proportion voluntarily opts in when gambling rewards are not tied to compute?
-3. How much verified compute is produced per opted-in device-hour?
-4. What is the actual energy/thermal cost?
-5. Can upstream receipts be independently verified?
-6. Can the public ledger be reconciled end-to-end?
-7. Does compute materially degrade game UX?
-8. Can the operator replace the backend provider without touching RNG/game math?
-9. Does the welfare firewall remain invariant under adversarial testing?
-
-## Commercial forms worth discussing
+## Commercial forms
 
 - paid proof-of-concept;
 - non-money sandbox pilot;
 - OEM / SDK integration;
-- per-operator licence;
-- platform-wide licence;
-- hosted Compute Gateway;
+- per-operator or platform licence;
+- hosted PLAYGRID Gateway;
 - research partnership;
-- exclusive field/territory licence where commercially justified.
+- data-center/compute-market partnership;
+- field/territory exclusivity where justified.
 
 No production right is granted by the public repository. See `LICENSE` and `docs/COMMERCIAL_LICENSING.md`.
 
 ## Current maturity
 
-The repositories contain an executable protocol foundation and mock lanes. Real upstream science/mining adapters, production receipt verification, legal/regulatory clearance, and non-money pilot evidence remain open gates.
+Public route-switchable demos, an executable compute protocol, provider registry/manifests and router tests exist. Real upstream Golem/science/data-center adapters, signed production manifests, authoritative reconciliation, CI and independent legal/security review remain open.
 
-The appropriate first B2B claim is therefore:
+The appropriate claim is:
 
-> **We have a concrete architecture and prototype path for a new compute-aware gaming primitive, and we are looking for a platform/operator partner to evaluate a controlled sandbox pilot.**
-
-—not a claim that a regulated commercial product is already finished.
+> **PLAYGRID is a concrete prototype and architecture for a provider-agnostic compute-routing primitive beneath gaming surfaces; we are seeking partners to connect real approved workloads in a controlled sandbox.**
