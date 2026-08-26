@@ -1,0 +1,30 @@
+{
+  "schema": "playgrid.public-operator-handoff.v1",
+  "concept": "ONE_CONSENTED_COMPUTE_SOURCE_MANY_REPLACEABLE_DESTINATIONS",
+  "default_surface_route": "MARKETPLACE",
+  "route_classes": ["SCIENCE", "PUBLIC_GOOD", "MARKETPLACE", "TREASURY", "DATACENTER", "OPERATOR", "CUSTOM"],
+  "buyer_changes": {
+    "provider_manifest": "provider identity + capabilities + expected receipt",
+    "gateway_alias": "server-side mapping to buyer/provider endpoint",
+    "routing_plan": "single route or weighted approved routes",
+    "verification_keys": "authoritative receipt validation",
+    "sink_policy": "impact / player compute earnings / treasury / contract-defined audited sink",
+    "branding": "presentation only"
+  },
+  "buyer_does_not_change_through_compute_config": [
+    "RNG",
+    "RTP",
+    "ODDS",
+    "BET_SIZE",
+    "BONUS_PROBABILITY",
+    "PERSONAL_JACKPOT_WEIGHT",
+    "SELF_EXCLUSION",
+    "RISK_LIMITS"
+  ],
+  "client_boundary": "CONTROL_AND_VISUALIZATION_ONLY",
+  "browser_secrets": "FORBIDDEN",
+  "scheduling_basis": "CONSENT_DEVICE_POLICY_AND_PROVIDER_CAPACITY",
+  "spin_frequency_as_compute_driver": false,
+  "public_demo": "playgrid.html",
+  "engineering_source": "welfare-first-v0.1/shared/compute-protocol"
+}
