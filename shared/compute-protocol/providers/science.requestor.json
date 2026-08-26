@@ -1,0 +1,19 @@
+{
+  "manifest_version": "0.1.0",
+  "provider_id": "science-requestor",
+  "display_name": "Approved Scientific Requestor",
+  "route_class": "SCIENCE",
+  "gateway_mode": "server",
+  "task_types": ["SCIENCE_WORK_UNIT"],
+  "receipt_kinds": ["SCIENCE_UPSTREAM_RECEIPT"],
+  "capability_tags": ["RESEARCH", "PUBLIC_GOOD", "UPSTREAM_VERIFICATION"],
+  "settlement": {"mode": "IMPACT_ONLY"},
+  "beneficiary_policy": {"mode": "IMPACT_LEDGER", "supported_sinks": ["IMPACT_LEDGER"]},
+  "gateway_alias": "science",
+  "browser_secret_policy": "FORBIDDEN",
+  "enabled": true,
+  "metadata": {
+    "production_status": "REQUIRES_APPROVED_RESEARCH_PARTNER",
+    "admission_gate": ["OWNER", "PURPOSE", "TERMS", "VALIDATION", "PRIVACY", "SECURITY", "CURRENT_STATUS"]
+  }
+}
