@@ -1,0 +1,16 @@
+{
+  "manifest_version": "0.1.0",
+  "provider_id": "treasury-economic-generic",
+  "display_name": "Approved Treasury Compute Provider",
+  "route_class": "TREASURY",
+  "gateway_mode": "server",
+  "task_types": ["ECONOMIC_COMPUTE_JOB", "POW_SHARE"],
+  "receipt_kinds": ["ECONOMIC_UPSTREAM_RECEIPT", "POOL_SHARE_ACCEPTANCE"],
+  "capability_tags": ["MONETIZABLE_COMPUTE", "AUDITED_SETTLEMENT"],
+  "settlement": {"mode": "VERIFIED_REVENUE"},
+  "beneficiary_policy": {"mode": "PREDECLARED_SPLIT", "supported_sinks": ["PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY"]},
+  "gateway_alias": "treasury",
+  "browser_secret_policy": "FORBIDDEN",
+  "enabled": true,
+  "metadata": {"production_status": "PROVIDER_AND_LEGAL_ACCOUNTING_REVIEW_REQUIRED"}
+}
