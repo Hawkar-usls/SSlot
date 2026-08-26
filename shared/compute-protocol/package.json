@@ -1,0 +1,13 @@
+{
+  "name": "@janus/welfare-compute-protocol",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Dependency-free welfare-first consent/task/receipt protocol shared by SSlot and DIVINE_REALM.",
+  "scripts": {
+    "test": "node tests/compute-protocol.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
