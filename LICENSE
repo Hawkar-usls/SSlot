@@ -1,0 +1,50 @@
+PLAYGRID SOURCE-AVAILABLE EVALUATION LICENSE v0.1
+
+Copyright (c) 2026 Hawkar-usls. All rights reserved.
+
+1. Scope
+This license applies to the source code, documentation, schemas, protocols, designs, visual assets, and other copyrightable material in this repository (the "Materials"), except where a file expressly states another license.
+
+2. Evaluation permission
+Subject to this license, you are granted a limited, revocable, non-exclusive, non-transferable, non-sublicensable right to access, inspect, run, and internally evaluate the Materials solely to assess a potential research, pilot, partnership, licensing, investment, procurement, or commercial relationship with the copyright holder.
+
+3. No commercial or production rights
+Without a separate written agreement from the copyright holder, you may NOT:
+(a) use the Materials, or any substantial portion or derivative of them, in production;
+(b) operate or offer a gambling, gaming, wagering, mining, distributed-compute, jackpot, platform, software-as-a-service, white-label, aggregation, or other commercial service based on the Materials;
+(c) sell, license, sublicense, lease, monetize, distribute, publish, or commercially exploit the Materials or derivative works;
+(d) use the Materials to create or improve a competing commercial product or service;
+(e) remove or obscure copyright, attribution, licensing, safety, provenance, or audit notices;
+(f) represent the Materials as your own original work.
+
+4. Demonstration and security research
+Non-commercial demonstration, interoperability testing, benchmarking, and good-faith security review are allowed only to the extent reasonably necessary for evaluation. Public disclosure of vulnerabilities should follow coordinated disclosure and must not include unnecessary proprietary implementation detail.
+
+5. Copies and GitHub functionality
+You may make the minimum copies reasonably necessary for permitted evaluation. Rights required solely for ordinary operation of the hosting platform, including GitHub's platform-level repository functionality, are unaffected. No broader redistribution right is granted by this clause.
+
+6. Contributions
+Unless separately agreed in writing, submitting a contribution does not transfer ownership of the existing Materials. Contributors represent that they have the right to submit their contribution. Acceptance of a contribution does not grant the contributor commercial rights to the project as a whole.
+
+7. Trademarks and names
+No trademark, trade-name, branding, endorsement, or publicity right is granted. Project names including PLAYGRID, DIVINE_REALM, and any successor branding may not be used to imply affiliation, approval, or sponsorship without written permission.
+
+8. Patents and know-how
+No patent license, covenant not to sue, trade-secret license, or other implied intellectual-property license is granted. Publication of the Materials does not grant permission to commercially practice any method beyond rights that cannot lawfully be reserved.
+
+9. Safety and regulated use
+This license does not authorize real-money gambling, financial services, cryptocurrency operations, medical use, or deployment in any regulated environment. Any such activity requires separate legal, regulatory, security, fairness, privacy, and compliance review and any commercial license required by the copyright holder.
+
+10. Termination
+Your rights under this license terminate automatically if you breach its terms. Upon termination you must stop use of the Materials and delete copies not required by law, except for immutable records retained solely for compliance or evidentiary purposes.
+
+11. No warranty
+THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, ACCURACY, SECURITY, OR FITNESS FOR REGULATED DEPLOYMENT.
+
+12. Commercial licensing
+Commercial, pilot, OEM, operator, platform, white-label, hosted, or other production rights are available only under a separate written agreement with the copyright holder.
+
+13. Reservation of rights
+All rights not expressly granted are reserved.
+
+This is a source-available evaluation license, not an open-source license.
