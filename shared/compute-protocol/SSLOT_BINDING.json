@@ -1,0 +1,42 @@
+{
+  "schema": "janus.compute-protocol.consumer-binding.v1",
+  "protocol_id": "janus.welfare.compute-protocol",
+  "protocol_version": "0.1.0",
+  "consumer": "Hawkar-usls/SSlot",
+  "role": "TEMPORARY_CANONICAL_HOST_AND_MINING_CONSUMER",
+  "allowed_task_types": ["POW_SHARE"],
+  "allowed_sink": "COMPUTE_TREASURY",
+  "compute_only_mode_required": true,
+  "game_surface_access": "READ_ONLY_STATUS",
+  "forbidden_authority": [
+    "RNG",
+    "RTP",
+    "WIN_PROBABILITY",
+    "PAYOUT_MULTIPLIER",
+    "FREE_SPIN_ENTITLEMENT",
+    "BET_SIZE",
+    "PERSONAL_JACKPOT_WEIGHT",
+    "LOSS_REBATE"
+  ],
+  "treasury_policy": {
+    "personal_share_to_personal_odds": false,
+    "personal_share_to_personal_rtp": false,
+    "personal_share_to_personal_jackpot_weight": false,
+    "verified_pool_revenue_may_enter_aggregate_treasury": true,
+    "treasury_distribution_formula_must_be_public": true,
+    "treasury_cannot_rewrite_game_math": true
+  },
+  "consent_requirements": {
+    "explicit_opt_in": true,
+    "revocable_immediately": true,
+    "default_mode": "off",
+    "default_gpu": false,
+    "allow_on_battery_default": false,
+    "cpu_policy_target_percent_max": 30
+  },
+  "proof_policy": {
+    "unverified_receipt_has_value": false,
+    "production_proof_kind": "POOL_SHARE_ACCEPTANCE",
+    "mock_proofs_allowed_in_production": false
+  }
+}
