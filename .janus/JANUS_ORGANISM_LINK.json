@@ -1,0 +1,31 @@
+{
+  "schema": "janus.organism.link.v1",
+  "organism_id": "JANUS_FEDERATED_ORGANISM",
+  "organism_repository": "Hawkar-usls/Janus",
+  "repository_ecology": "organism/JANUS_REPOSITORY_ECOLOGY_v1.3.json",
+  "membership": {
+    "class": "SUBTISSUE",
+    "subtissue_key": "welfare_first_slot_reference",
+    "parent_organ": "simulation_habitat",
+    "role": "REFERENCE_GAME_AND_WELFARE_SURFACE",
+    "authority": "GAME_PROTOTYPE_SCOPE_ONLY",
+    "evidence_authority": false
+  },
+  "paired_repository": {
+    "repository": "Hawkar-usls/DIVINE_REALM",
+    "relationship": "NARRATIVE_AND_SOCIAL_IMPACT_SURFACE",
+    "shared_contracts": [
+      "GAMBLING_SAFETY_CONTRACT.json",
+      "SOCIAL_IMPACT_LEDGER_SCHEMA.json"
+    ]
+  },
+  "authority_delta": 0,
+  "write_back_default": "DENY",
+  "boundaries": [
+    "GAME_PROTOTYPE != DEPLOYMENT_APPROVAL",
+    "THEME_STATE != RNG_AUTHORITY",
+    "RISK_SIGNAL -> RESTRICT_ONLY",
+    "PLAYER_LOSS != CHARITABLE_DONATION",
+    "REAL_MONEY_REQUIRES_INDEPENDENT_GATES"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "schema_id": "janus.slot-legacy-migration.v0.1",
+  "project": "SSlot",
+  "source": "index.html",
+  "status": "OPEN",
+  "gates": [
+    {
+      "id": "REMOVE_OUTCOME_SENSITIVE_TEASER",
+      "observed_pattern": "Third reel delay and teaser styling are increased when first two reels show scatter symbols.",
+      "required_state": "Reel timing, audio, haptics and suspense are independent of whether a losing result is near a bonus or win.",
+      "pass": false
+    },
+    {
+      "id": "REMOVE_AUTOMATIC_BONUS_SPINS",
+      "observed_pattern": "Bonus rounds schedule subsequent spin() calls automatically.",
+      "required_state": "Every paid or value-bearing round requires deliberate player initiation; no autoplay-equivalent continuation.",
+      "pass": false
+    },
+    {
+      "id": "DISABLE_FEATURE_BUY",
+      "observed_pattern": "confirmBuyBonus deducts balance and forces bonus symbols/spins.",
+      "required_state": "Feature-buy is disabled in the baseline welfare-first build and cannot bypass session/risk gates.",
+      "pass": false
+    },
+    {
+      "id": "REMOVE_FAKE_SOCIAL_PROOF",
+      "observed_pattern": "A big-win ticker presents recent wins and 'waiting for first big hit' messaging as live social proof.",
+      "required_state": "No simulated, selectively sampled or urgency-producing social proof; any public statistics require auditable provenance and neutral presentation.",
+      "pass": false
+    },
+    {
+      "id": "REMOVE_POOL_DEPENDENT_OUTCOME_SHAPING",
+      "observed_pattern": "Outcome construction checks a local pool before preserving certain wins.",
+      "required_state": "Certified RNG/game mathematics are independent of house pool state, player balance, loss history, risk state and marketing state.",
+      "pass": false
+    },
+    {
+      "id": "SESSION_TRUTH_PANEL",
+      "observed_pattern": "Balance and stake are visible, but complete elapsed-time, total-staked, total-returned and net-session accounting is not the primary persistent truth surface.",
+      "required_state": "Persistent session truth shows elapsed time, total staked, total returned and net position.",
+      "pass": false
+    },
+    {
+      "id": "LOSS_IS_NOT_WIN",
+      "observed_pattern": "Legacy celebration logic requires review against net outcome semantics.",
+      "required_state": "Payout <= stake cannot trigger win celebration, win sound, win haptic or misleading positive copy.",
+      "pass": false
+    },
+    {
+      "id": "WELFARE_GATE_PRECEDES_SPIN",
+      "observed_pattern": "Legacy spin path checks balance but not a unified eligibility/limit/risk decision.",
+      "required_state": "Every real-money round must receive ALLOW from age/jurisdiction/session/limit/self-exclusion/risk gates before stake commitment.",
+      "pass": false
+    }
+  ],
+  "release_rule": "REAL_MONEY_REMAINS_BLOCKED_UNTIL_ALL_GATES_PASS_AND_INDEPENDENT_REVIEW_PASSES"
+}

@@ -1,0 +1,115 @@
+{
+  "schema_id": "janus.welfare-first-gambling.v0.1",
+  "project": "SSlot",
+  "role": "REFERENCE_GAME_CLIENT",
+  "status": "DESIGN_CONTRACT",
+  "real_money_deployment": "BLOCKED_PENDING_INDEPENDENT_REVIEW",
+  "prime_invariant": "A product change fails if it increases operator value primarily by increasing player loss of control.",
+  "game_design": {
+    "autoplay": false,
+    "turbo_or_quick_spin": false,
+    "slam_stop": false,
+    "outcome_sensitive_reel_timing": false,
+    "engineered_near_miss": false,
+    "losses_disguised_as_wins": false,
+    "minimum_paid_round_interval_ms": 3000,
+    "player_must_initiate_each_paid_round": true,
+    "feature_buy_default_enabled": false,
+    "adaptive_rtp": false,
+    "personalized_rtp": false,
+    "personalized_volatility": false
+  },
+  "fairness": {
+    "published_paytable_required": true,
+    "published_theoretical_rtp_required": true,
+    "same_math_for_all_players_within_version_and_jurisdiction": true,
+    "cryptographically_secure_rng_required_for_production": true,
+    "rng_independent_of_balance_loss_history_risk_score_and_marketing_state": true,
+    "external_certification_required_for_real_money": true,
+    "immutable_game_version_id_required": true
+  },
+  "session_truth": {
+    "show_elapsed_time": true,
+    "show_total_staked": true,
+    "show_total_returned": true,
+    "show_net_position": true,
+    "show_current_stake": true,
+    "celebrate_only_if_payout_gt_stake": true,
+    "break_even_is_not_a_win": true
+  },
+  "player_controls": {
+    "deposit_limit": "REQUIRED_FOR_REAL_MONEY",
+    "loss_limit": "REQUIRED_FOR_REAL_MONEY",
+    "stake_limit": "REQUIRED_FOR_REAL_MONEY",
+    "session_time_limit": "REQUIRED_FOR_REAL_MONEY",
+    "cooling_off": "REQUIRED_FOR_REAL_MONEY",
+    "self_exclusion": "REQUIRED_FOR_REAL_MONEY",
+    "limit_reduction_applies_immediately": true,
+    "limit_increase_requires_cooling_off": true,
+    "self_exclusion_cannot_be_overridden_during_selected_period": true
+  },
+  "harm_detection": {
+    "signals": [
+      "spend_escalation",
+      "loss_chasing_pattern",
+      "extended_session",
+      "repeated_failed_deposits",
+      "rapid_limit_increase_attempts",
+      "repeated_cooling_off_use",
+      "erratic_high_intensity_play"
+    ],
+    "allowed_responses": [
+      "show_factual_session_summary",
+      "increase_friction",
+      "reduce_stake_or_deposit_cap",
+      "enforce_break",
+      "cooling_off",
+      "suspend_real_money_play",
+      "self_exclusion_support",
+      "human_review_where_required"
+    ],
+    "forbidden_responses": [
+      "bonus_offer",
+      "vip_offer",
+      "higher_stake_prompt",
+      "deposit_prompt",
+      "lossback_or_cashback",
+      "reactivation_campaign",
+      "personalized_rtp_or_odds_change"
+    ]
+  },
+  "marketing": {
+    "loss_based_rewards": false,
+    "wager_volume_loyalty": false,
+    "vip_for_high_losses": false,
+    "fake_or_simulated_social_proof": false,
+    "urgency_based_reengagement_after_risk_signal": false,
+    "charity_or_spiritual_framing_as_reason_to_continue_gambling": false
+  },
+  "social_impact": {
+    "operator_funded": true,
+    "player_loss_is_not_described_as_a_donation": true,
+    "allocation_rule_declared_before_accounting_period": true,
+    "allocation_rule_cannot_be_reduced_retroactively": true,
+    "public_ledger_required": true,
+    "harm_prevention_fund_has_priority_over_brand_promotion": true,
+    "permitted_destinations": [
+      "independent_gambling_harm_prevention_and_treatment",
+      "community_projects",
+      "public_interest_research",
+      "transparent_charitable_grants"
+    ]
+  },
+  "deployment_gates": [
+    "AGE_AND_IDENTITY",
+    "JURISDICTION_AND_LICENSE",
+    "PAYMENTS_AND_AML",
+    "SECURITY_REVIEW",
+    "RNG_AND_MATH_CERTIFICATION",
+    "RESPONSIBLE_GAMBLING_REVIEW",
+    "PRIVACY_AND_DATA_MINIMIZATION",
+    "ACCESSIBILITY",
+    "PUBLIC_IMPACT_LEDGER"
+  ],
+  "fail_closed": true
+}
