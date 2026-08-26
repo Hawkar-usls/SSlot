@@ -15,7 +15,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": {"enum": ["SCIENCE_WORK_UNIT", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"]}
+      "items": {"enum": ["SCIENCE_WORK_UNIT", "GENERAL_COMPUTE_JOB", "ECONOMIC_COMPUTE_JOB", "POW_SHARE"]}
     },
     "receipt_kinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "capability_tags": {"type": "array", "items": {"type": "string"}},
@@ -26,18 +26,14 @@
     "enabled": {"type": "boolean"},
     "metadata": {"type": "object"}
   },
-  "allOf": [
-    {
-      "not": {
-        "anyOf": [
-          {"required": ["api_key"]},
-          {"required": ["app_key"]},
-          {"required": ["password"]},
-          {"required": ["private_key"]},
-          {"required": ["wallet_seed"]},
-          {"required": ["access_token"]}
-        ]
-      }
-    }
-  ]
+  "allOf": [{
+    "not": {"anyOf": [
+      {"required": ["api_key"]},
+      {"required": ["app_key"]},
+      {"required": ["password"]},
+      {"required": ["private_key"]},
+      {"required": ["wallet_seed"]},
+      {"required": ["access_token"]}
+    ]}
+  }]
 }
