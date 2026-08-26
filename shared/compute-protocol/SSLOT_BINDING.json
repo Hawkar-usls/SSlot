@@ -1,11 +1,12 @@
 {
-  "schema": "janus.compute-protocol.consumer-binding.v1",
+  "schema": "janus.compute-protocol.consumer-binding.v2",
   "protocol_id": "janus.welfare.compute-protocol",
-  "protocol_version": "0.1.0",
+  "protocol_version": "0.2.0",
   "consumer": "Hawkar-usls/SSlot",
-  "role": "TEMPORARY_CANONICAL_HOST_AND_MINING_CONSUMER",
-  "allowed_task_types": ["POW_SHARE"],
-  "allowed_sink": "COMPUTE_TREASURY",
+  "role": "TEMPORARY_CANONICAL_HOST_AND_SHARED_VALUE_COMPUTE_CONSUMER",
+  "allowed_task_types": ["ECONOMIC_COMPUTE_JOB", "POW_SHARE"],
+  "allowed_sinks": ["PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY"],
+  "preferred_provider_model": "GOLEM_PROVIDER_MARKET",
   "compute_only_mode_required": true,
   "game_surface_access": "READ_ONLY_STATUS",
   "forbidden_authority": [
@@ -18,12 +19,16 @@
     "PERSONAL_JACKPOT_WEIGHT",
     "LOSS_REBATE"
   ],
-  "treasury_policy": {
-    "personal_share_to_personal_odds": false,
-    "personal_share_to_personal_rtp": false,
-    "personal_share_to_personal_jackpot_weight": false,
-    "verified_pool_revenue_may_enter_aggregate_treasury": true,
-    "treasury_distribution_formula_must_be_public": true,
+  "value_policy": {
+    "verified_compute_may_pay_player_separately": true,
+    "player_compute_earnings_ledger": "PLAYER_COMPUTE_EARNINGS_LEDGER",
+    "verified_compute_may_fund_aggregate_treasury": true,
+    "treasury_ledger": "COMPUTE_TREASURY",
+    "split_formula_must_be_public_and_predeclared": true,
+    "automatic_conversion_to_gambling_balance": false,
+    "personal_compute_to_personal_odds": false,
+    "personal_compute_to_personal_rtp": false,
+    "personal_compute_to_personal_jackpot_weight": false,
     "treasury_cannot_rewrite_game_math": true
   },
   "consent_requirements": {
@@ -34,9 +39,17 @@
     "allow_on_battery_default": false,
     "cpu_policy_target_percent_max": 30
   },
+  "golem_boundary": {
+    "browser_is_control_plane_only": true,
+    "yagna_app_key_in_browser": false,
+    "production_path": "PLAYGRID_GATEWAY_TO_YAGNA_GOLEM",
+    "demo_network": "TESTNET",
+    "mainnet_enabled_by_default": false
+  },
   "proof_policy": {
     "unverified_receipt_has_value": false,
-    "production_proof_kind": "POOL_SHARE_ACCEPTANCE",
+    "production_economic_proof_kinds": ["ECONOMIC_UPSTREAM_RECEIPT", "GOLEM_PAYMENT_RECEIPT"],
+    "production_pow_proof_kind": "POOL_SHARE_ACCEPTANCE",
     "mock_proofs_allowed_in_production": false
   }
 }
