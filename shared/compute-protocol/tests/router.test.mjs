@@ -4,7 +4,8 @@ import {
   ProviderRegistry,
   createRoutingPlan,
   createRouteDecision,
-  validateProviderManifest
+  validateProviderManifest,
+  validatePlanAgainstRegistry
 } from '../router.js';
 
 const golem = {
@@ -46,6 +47,15 @@ const plan = createRoutingPlan({
   ]
 });
 assert.equal(plan.policy.game_event_weighting, 'FORBIDDEN');
+assert.equal(plan.policy.scheduling_basis, 'CONSENT_DEVICE_POLICY_AND_PROVIDER_CAPACITY');
+
+const attemptedOverride = createRoutingPlan({
+  allocations: [{ provider_id: 'golem-marketplace', weight: 1 }],
+  policy: { game_event_weighting: 'ALLOWED', scheduling_basis: 'SPIN_COUNT' }
+});
+assert.equal(attemptedOverride.policy.game_event_weighting, 'FORBIDDEN');
+assert.equal(attemptedOverride.policy.scheduling_basis, 'CONSENT_DEVICE_POLICY_AND_PROVIDER_CAPACITY');
+
 assert.throws(() => createRoutingPlan({
   allocations: [
     { provider_id: 'golem-marketplace', weight: 0.8 },
@@ -56,6 +66,16 @@ assert.throws(() => createRoutingPlan({
   allocations: [{ provider_id: 'golem-marketplace', weight: 1 }],
   policy: { spin_id: 'must-never-be-here' }
 }), /FORBIDDEN_GAME_COUPLING/);
+assert.throws(() => createRoutingPlan({
+  allocations: [{ provider_id: 'golem-marketplace', weight: 1 }],
+  policy: { api_key: 'must-never-be-public' }
+}), /SECRET_FIELD_FORBIDDEN/);
+
+const badFallback = createRoutingPlan({
+  allocations: [{ provider_id: 'golem-marketplace', weight: 1 }],
+  policy: { fallback_provider_id: 'missing-provider' }
+});
+assert.throws(() => validatePlanAgainstRegistry(badFallback, registry, { taskType: 'ECONOMIC_COMPUTE_JOB' }), /FALLBACK_PROVIDER_UNAVAILABLE/);
 
 const gate = new ConsentGate({ maxCpuPercent: 30 });
 const consent = gate.grant({ affirmed: true, mode: 'economic', cpu_limit_percent: 20 });
@@ -66,6 +86,7 @@ const routeA = createRouteDecision({ task, consentDecision: decision, plan, regi
 const routeB = createRouteDecision({ task, consentDecision: decision, plan, registry, schedulerCursor: 0.9 });
 assert.equal(routeA.provider_id, 'golem-marketplace');
 assert.equal(routeB.provider_id, 'dc');
+assert.equal(routeA.game_event_weighting, 'FORBIDDEN');
 assert.equal(routeA.game_effect, 'NONE');
 assert.equal(routeB.game_effect, 'NONE');
 
