@@ -1,0 +1,17 @@
+{
+  "schema": "janus.helios.child-binding.v1",
+  "parent": "Hawkar-usls/Janus-HELIOS",
+  "child": "Hawkar-usls/SSlot",
+  "child_role": "SPECIALIZED_SHARED_MINING_POOL_JACKPOT_REFERENCE_SURFACE",
+  "default_route_class": "TREASURY",
+  "default_task_types": ["POW_SHARE", "ECONOMIC_COMPUTE_JOB"],
+  "default_value_sink": "COMPUTE_TREASURY",
+  "may_use_parent_router_contract": true,
+  "must_remain_specialized": true,
+  "may_override_parent_branding": true,
+  "may_override_parent_default_route": true,
+  "may_override_parent_game_theme": true,
+  "may_override_parent_rng_or_rtp_from_compute": false,
+  "compute_scheduling_independent_from_spin_frequency": true,
+  "note": "SSlot remains the fixed shared mining-pool/jackpot demonstration. Janus-HELIOS is the configurable universal parent asset."
+}
