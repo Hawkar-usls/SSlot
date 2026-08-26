@@ -1,9 +1,9 @@
 {
   "name": "@janus/welfare-compute-protocol",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
-  "description": "Dependency-free welfare-first compute protocol plus provider-agnostic routing fabric for science, marketplaces, data centers, operator workloads and future adapters.",
+  "description": "Dependency-free welfare-first general compute protocol plus provider-agnostic PLAYGRID routing fabric for science, marketplaces, data centers, operator workloads and future adapters.",
   "scripts": {
     "test": "node tests/compute-protocol.test.mjs && node tests/router.test.mjs"
   },
