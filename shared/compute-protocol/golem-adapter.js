@@ -2,7 +2,7 @@ import { BaseAdapter, buildReceipt, assertNoGameCoupling } from './protocol.js';
 
 export class GolemGatewayAdapter extends BaseAdapter {
   constructor({ gatewayUrl = null, simulation = true, network = 'testnet' } = {}) {
-    super({ adapterId: `golem-gateway-${network}-v0.2`, taskType: 'ECONOMIC_COMPUTE_JOB' });
+    super({ adapterId: `golem-gateway-${network}-v0.3`, taskType: 'ECONOMIC_COMPUTE_JOB' });
     this.gatewayUrl = gatewayUrl ? String(gatewayUrl).replace(/\/$/, '') : null;
     this.simulation = simulation;
     this.network = network;
@@ -73,7 +73,9 @@ export class GolemGatewayAdapter extends BaseAdapter {
       adapter_id: this.adapterId,
       status: this.simulation ? 'simulation-ready' : (this.gatewayUrl ? 'gateway-configured' : 'gateway-missing'),
       network: this.network,
-      browser_holds_yagna_app_key: false
+      browser_holds_yagna_app_key: false,
+      route_class: 'MARKETPLACE',
+      game_effect: 'NONE'
     };
   }
 }
