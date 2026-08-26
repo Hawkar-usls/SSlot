@@ -10,6 +10,7 @@ import {
   assertNoGameCoupling
 } from '../protocol.js';
 import { GolemGatewayAdapter } from '../golem-adapter.js';
+import { allocateVerifiedEconomicReceipt } from '../economic-allocation.js';
 
 async function run() {
   const gate = new ConsentGate({ maxCpuPercent: 30 });
@@ -41,11 +42,18 @@ async function run() {
 
   const economicGate = new ConsentGate({ maxCpuPercent: 30 });
   const economicConsent = economicGate.grant({ affirmed: true, mode: 'economic', cpu_limit_percent: 20 });
-  const economicTask = createTask({ type: 'ECONOMIC_COMPUTE_JOB', payload: { provider_market: 'golem', compute_seconds: 5, gross_value: 0.001, settlement_asset: 'tGLM' } });
+  const economicTask = createTask({ type: 'ECONOMIC_COMPUTE_JOB', payload: { provider_market: 'golem', compute_seconds: 5, gross_value: 1, settlement_asset: 'tGLM' } });
   const economicReceipt = await new MockEconomicAdapter().run(economicTask, economicConsent);
   const economicVerification = simVerifier.verify(economicReceipt, { consent: economicConsent, task: economicTask });
   assert.equal(economicVerification.verified, true);
   assert.equal(toContributionEntry(economicReceipt, economicVerification).lane, 'COMPUTE_TREASURY');
+
+  const allocation = allocateVerifiedEconomicReceipt(economicReceipt, economicVerification, { playerShare: 0.7, treasuryShare: 0.3 });
+  assert.equal(allocation.player_compute_earnings.amount, 0.7);
+  assert.equal(allocation.compute_treasury.amount, 0.3);
+  assert.equal(allocation.player_compute_earnings.may_auto_credit_gambling_balance, false);
+  assert.equal(allocation.game_effect, 'NONE');
+  assert.throws(() => allocateVerifiedEconomicReceipt(economicReceipt, economicVerification, { playerShare: 0.8, treasuryShare: 0.3 }), /INVALID_VALUE_SPLIT/);
 
   const golemReceipt = await new GolemGatewayAdapter({ simulation: true, network: 'testnet' }).run(economicTask, economicConsent);
   const golemVerification = simVerifier.verify(golemReceipt, { consent: economicConsent, task: economicTask });
