@@ -1,0 +1,21 @@
+{
+  "manifest_version": "0.1.0",
+  "provider_id": "golem-marketplace",
+  "display_name": "Golem Network Marketplace",
+  "route_class": "MARKETPLACE",
+  "gateway_mode": "server",
+  "task_types": ["ECONOMIC_COMPUTE_JOB"],
+  "receipt_kinds": ["GOLEM_PAYMENT_RECEIPT"],
+  "capability_tags": ["DISTRIBUTED_COMPUTE", "REQUESTOR_PROVIDER_MARKET", "GLM_SETTLEMENT"],
+  "settlement": {"mode": "UPSTREAM_MARKET_PAYMENT", "asset": "GLM"},
+  "beneficiary_policy": {"mode": "CONFIGURABLE_SPLIT", "supported_sinks": ["PLAYER_COMPUTE_EARNINGS_LEDGER", "COMPUTE_TREASURY"]},
+  "gateway_alias": "golem",
+  "browser_secret_policy": "FORBIDDEN",
+  "enabled": true,
+  "metadata": {
+    "production_status": "ADAPTER_PENDING_REAL_UPSTREAM_INTEGRATION",
+    "requestor_required": true,
+    "science_claim": "NONE_BY_DEFAULT",
+    "note": "A scientific claim requires a real compatible research Requestor/workload; Golem itself is a general compute market."
+  }
+}
